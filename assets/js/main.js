@@ -63,9 +63,8 @@
     }).join("");
     mount.innerHTML =
       '<div class="container header-inner">' +
-        '<a class="brand" href="index.html">' +
+        '<a class="brand" href="index.html" aria-label="ISE HORIZON home">' +
           '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="ISE HORIZON logo">' +
-          '<span class="brand-name">ISE <span style="color:var(--brand-orange)">HORIZON</span></span>' +
         "</a>" +
         '<nav class="nav" id="mainNav" aria-label="Main"><ul>' + links + "</ul></nav>" +
         '<div class="header-actions">' +
@@ -288,10 +287,10 @@
       }
       var stats = $("#homeStats");
       if (stats) {
-        var memberCount = (d.members || []).length;
+        var members = (d.settings && d.settings.activeMembers) || 0;
         var hosted = (d.settings && d.settings.eventsHosted) || 0;
         stats.innerHTML =
-          '<div class="stat"><div class="num">' + memberCount + '</div><div class="lbl">Active members</div></div>' +
+          '<div class="stat"><div class="num">' + esc(members) + '</div><div class="lbl">Active members</div></div>' +
           '<div class="stat"><div class="num">' + esc(hosted) + '</div><div class="lbl">Events hosted</div></div>';
       }
 
@@ -420,6 +419,10 @@
       if (!data.name || !data.email || !data.usn) { note.className = "notice err show"; note.textContent = "Please fill in your name, email and USN."; return; }
       var interests = $$('input[name="interests"]:checked', jf).map(function (c) { return c.value; });
       S.add("members", { name: data.name, usn: data.usn, year: data.year || "", branch: data.branch || "", email: data.email, phone: data.phone || "", interests: interests, role: "Active member", why: data.why || "", joined: new Date().toISOString().slice(0, 10) });
+      // a new member joined -> bump the Active-members count
+      var st = S.get().settings;
+      st.activeMembers = (parseInt(st.activeMembers, 10) || 0) + 1;
+      S.save();
       note.className = "notice ok show";
       note.textContent = "Thanks, " + data.name + "! Your membership request has been recorded.";
       jf.reset();

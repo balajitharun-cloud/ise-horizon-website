@@ -15,7 +15,7 @@
 
   function defaults() {
     return {
-      settings: { passcode: PASSCODE, eventsHosted: 40 },
+      settings: { passcode: PASSCODE, activeMembers: 8, eventsHosted: 40 },
       hackathon: {
         title: "HORIZON Hackathon",
         date: "",

@@ -161,15 +161,15 @@
 
   function statsSection() {
     var d = S.get();
-    var count = (d.members || []).length;
+    var members = (d.settings && d.settings.activeMembers) || 0;
     var hosted = (d.settings && d.settings.eventsHosted) || 0;
     return '<div class="form-card" style="max-width:620px;margin:0 auto">' +
       '<h2 style="margin-top:0">Home-page stats</h2>' +
-      '<p class="muted small">These two numbers are shown on the home page.</p>' +
-      '<div class="field"><label>Active members</label>' +
-        '<input type="text" value="' + count + '" disabled>' +
-        '<div class="hint">Counted automatically from the member list — it grows when a new member joins.</div></div>' +
+      '<p class="muted small">These two numbers are shown on the home page. You can change them any time.</p>' +
       '<form id="sf">' +
+        '<div class="field"><label for="f-activeMembers">Active members</label>' +
+        '<input id="f-activeMembers" name="activeMembers" type="number" min="0" value="' + esc(members) + '">' +
+        '<div class="hint">Also grows automatically by 1 each time a new member joins through the Join Us form.</div></div>' +
         '<div class="field"><label for="f-eventsHosted">Events hosted</label>' +
         '<input id="f-eventsHosted" name="eventsHosted" type="number" min="0" value="' + esc(hosted) + '">' +
         '<div class="hint">Set by an elite member.</div></div>' +
@@ -264,9 +264,9 @@
     if (!f) return;
     f.addEventListener("submit", function (e) {
       e.preventDefault();
-      var v = parseInt(f.elements.eventsHosted.value, 10);
-      if (isNaN(v) || v < 0) v = 0;
-      S.get().settings.eventsHosted = v; S.save();
+      var m = parseInt(f.elements.activeMembers.value, 10); if (isNaN(m) || m < 0) m = 0;
+      var v = parseInt(f.elements.eventsHosted.value, 10); if (isNaN(v) || v < 0) v = 0;
+      var st = S.get().settings; st.activeMembers = m; st.eventsHosted = v; S.save();
       var n = $("#sf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
     });
   }
