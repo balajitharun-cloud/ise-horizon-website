@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ISE HORIZON — Information Science & Engineering Club | KIT Tiptur</title>
+<meta name="description" content="ISE HORIZON is the Information Science & Engineering student club of Kalpataru Institute of Technology, Tiptur. Events, projects, workshops, resources and community.">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/images/college-logo.jpeg">
+<link rel="apple-touch-icon" href="assets/images/college-logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-page="home">
+<header class="site-header" id="siteHeader"></header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-logos">
+        <img src="assets/images/vtu-seal.jpeg" alt="Visvesvaraya Technological University seal">
+        <span class="divider"></span>
+        <img src="assets/images/college-logo.jpeg" alt="Kalpataru Institute of Technology logo">
+        <span class="small" style="color:rgba(255,255,255,.8)">VTU Belagavi · KIT Tiptur</span>
+      </div>
+      <h1 class="club-name">ISE <span class="accent">HORIZON</span></h1>
+      <p class="tagline">The Information Science &amp; Engineering student community of Kalpataru Institute of Technology — where students build, learn and lead.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="join.html">Join Us →</a>
+        <a class="btn btn-light" href="events.html">Upcoming Events</a>
+        <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" href="certificate.html">🎓 Certificate Portal</a>
+      </div>
+
+      <div class="hero-event" id="heroEventCard">
+        <span class="label">Next up</span>
+        <h3>HORIZON Hackathon 2026</h3>
+        <p>Our flagship 24-hour build sprint. Teams of 2–4 · AI, Web &amp; IoT tracks · Prizes worth ₹50,000.</p>
+        <div class="countdown" id="heroCountdown"></div>
+        <div class="hero-cta" style="margin-top:14px">
+          <a class="btn btn-primary btn-sm" href="events.html#ev-hack-2026">Register now</a>
+          <a class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">See all events</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="stats" id="homeStats"></div>
+    </div>
+  </section>
+
+  <!-- UPCOMING -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">What's happening</span>
+        <h2>Upcoming events</h2>
+        <p>Workshops, hackathons, tech talks and competitions — open to all students of the department and beyond.</p>
+      </div>
+      <div class="grid grid-3" id="homeUpcoming"></div>
+      <div class="mt-3"><a class="btn btn-blue" href="events.html">View full calendar →</a></div>
+    </div>
+  </section>
+
+  <!-- ABOUT TEASER -->
+  <section class="section" style="background:var(--surface-2)">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Who we are</span>
+          <h2>More than a club — a launchpad</h2>
+          <p class="muted">ISE HORIZON brings together curious minds from the Department of Information Science &amp; Engineering. We run weekly coding circles, hands-on workshops, hackathons and industry talks, and we build real projects that solve campus and community problems.</p>
+          <div class="grid grid-2 mt-2">
+            <div class="feature"><div class="ico">💻</div><div><h3>Build real projects</h3><p>Ship apps, tools and research with your peers.</p></div></div>
+            <div class="feature"><div class="ico">📚</div><div><h3>Learn by doing</h3><p>Hands-on workshops and curated roadmaps.</p></div></div>
+            <div class="feature"><div class="ico">🤝</div><div><h3>Grow your network</h3><p>Mentors, alumni and industry connections.</p></div></div>
+            <div class="feature"><div class="ico">🏆</div><div><h3>Compete &amp; win</h3><p>Hackathons, contests and certifications.</p></div></div>
+          </div>
+          <div class="mt-3"><a class="btn btn-primary" href="about.html">Learn more about us</a></div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h3>What members gain</h3>
+            <ul class="muted small" style="padding-left:18px">
+              <li>Priority access to all club events &amp; workshops</li>
+              <li>Membership certificate and event participation certificates</li>
+              <li>Access to the exclusive Learning Hub</li>
+              <li>A team for hackathons and competitions</li>
+              <li>Peer mentoring and placement preparation</li>
+              <li>A strong LinkedIn / résumé boost</li>
+            </ul>
+            <div class="card-actions"><a class="btn btn-blue btn-block" href="join.html">Join ISE HORIZON</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">What we build</span>
+        <h2>Featured projects</h2>
+        <p>Student-built apps and systems — from campus utilities to AI for social good.</p>
+      </div>
+      <div class="grid grid-3" id="homeProjects"></div>
+      <div class="mt-3"><a class="btn btn-ghost" href="projects.html">See all projects →</a></div>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section class="section" style="background:var(--surface-2)">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Announcements</span>
+        <h2>Latest news</h2>
+      </div>
+      <div class="grid grid-3" id="homeNews"></div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Supported by</span>
+        <h2>Our partners</h2>
+      </div>
+      <div class="grid grid-3" id="homePartners"></div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="card" style="background:linear-gradient(140deg,#0b2a5b,#123a7a);color:#fff;border:none">
+        <div class="card-body center" style="padding:34px 22px">
+          <h2 style="color:#fff">Never miss an update</h2>
+          <p style="color:rgba(255,255,255,.85);max-width:52ch;margin:0 auto 18px">Subscribe to the HORIZON newsletter for event announcements, resources and opportunities — straight to your inbox.</p>
+          <form id="newsletterForm" style="max-width:440px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap">
+            <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address" style="flex:1;min-width:220px;padding:12px 14px;border-radius:999px;border:none">
+            <button class="btn btn-primary" type="submit">Subscribe</button>
+          </form>
+          <div class="notice" id="nlNote"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="siteFooter"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

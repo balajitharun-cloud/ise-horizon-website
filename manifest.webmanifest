@@ -1,0 +1,45 @@
+{
+  "name": "ISE HORIZON — KIT Tiptur",
+  "short_name": "ISE HORIZON",
+  "description": "Information Science & Engineering student club of Kalpataru Institute of Technology, Tiptur — events, projects, resources and certificates.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f4f6fb",
+  "theme_color": "#0b2a5b",
+  "icons": [
+    {
+      "src": "assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Events",
+      "url": "events.html"
+    },
+    {
+      "name": "Certificate Portal",
+      "url": "certificate.html"
+    },
+    {
+      "name": "Join Us",
+      "url": "join.html"
+    }
+  ]
+}

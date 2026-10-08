@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projects Showcase — ISE HORIZON</title>
+<meta name="description" content="Ongoing and completed student projects by ISE HORIZON members — with tech stack, team and GitHub links.">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/images/college-logo.jpeg">
+<link rel="apple-touch-icon" href="assets/images/college-logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-page="projects">
+<header class="site-header" id="siteHeader"></header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Projects</div>
+      <h1>Projects Showcase</h1>
+      <p>Real software built by ISE HORIZON members — campus tools, AI for good, and everything in between.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Our work</span><h2>Student projects</h2><p>Filter by status. Every project lists its stack, team and repository.</p></div>
+      <div class="tabs" id="projectTabs">
+        <button class="tab active" data-filter="All">All</button>
+        <button class="tab" data-filter="Ongoing">Ongoing</button>
+        <button class="tab" data-filter="Completed">Completed</button>
+      </div>
+      <div class="grid grid-3" id="projectGrid"></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-2)">
+    <div class="container">
+      <div class="card" style="background:linear-gradient(140deg,#0b2a5b,#123a7a);border:none;color:#fff">
+        <div class="card-body center" style="padding:30px 22px">
+          <h2 style="color:#fff">Have an idea?</h2>
+          <p style="color:rgba(255,255,255,.85);max-width:50ch;margin:0 auto 16px">Pitch it to HORIZON. We'll help you find a team, mentors and the resources to build it.</p>
+          <a class="btn btn-primary" href="contact.html">Submit your project idea</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="siteFooter"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

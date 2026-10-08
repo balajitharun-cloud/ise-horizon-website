@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Contact &amp; Socials — ISE HORIZON</title>
+<meta name="description" content="Contact ISE HORIZON and join our Instagram, LinkedIn, WhatsApp and Discord community.">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/images/college-logo.jpeg">
+<link rel="apple-touch-icon" href="assets/images/college-logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-page="contact">
+<header class="site-header" id="siteHeader"></header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Contact</div>
+      <h1>Contact &amp; Socials</h1>
+      <p>Questions, ideas, sponsorships or collaborations — we'd love to hear from you.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="two-col">
+        <div class="form-card">
+          <h2 style="margin-top:0">Send us a message</h2>
+          <form id="contactForm" novalidate>
+            <div class="field-row two">
+              <div class="field">
+                <label for="c-name">Name <span class="req">*</span></label>
+                <input id="c-name" name="name" type="text" required placeholder="Your name">
+              </div>
+              <div class="field">
+                <label for="c-email">Email</label>
+                <input id="c-email" name="email" type="email" placeholder="you@example.com">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c-subject">Subject</label>
+              <select id="c-subject" name="subject">
+                <option>General enquiry</option>
+                <option>Membership</option>
+                <option>Event / workshop</option>
+                <option>Sponsorship / partnership</option>
+                <option>Report a website issue</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c-message">Message <span class="req">*</span></label>
+              <textarea id="c-message" name="message" rows="4" required placeholder="How can we help?"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Send message</button>
+            <div class="notice" id="contactNote" role="status"></div>
+          </form>
+        </div>
+
+        <div>
+          <div class="card mb-2">
+            <div class="card-body">
+              <h3>Reach us directly</h3>
+              <p class="small"><strong>Email</strong><br><a href="mailto:ise.horizon@kit.edu.in">ise.horizon@kit.edu.in</a></p>
+              <p class="small"><strong>Phone</strong><br><a href="tel:+919876543210">+91 98765 43210</a></p>
+              <p class="small"><strong>Address</strong><br>Kalpataru Institute of Technology, B.H. Road, Tiptur, Tumakuru District, Karnataka – 572201</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h3>Join the community</h3>
+              <p class="muted small">Get instant updates and chat with fellow members.</p>
+              <div class="pill-row">
+                <a class="btn btn-blue btn-sm" href="https://chat.whatsapp.com/ISEHORIZON" target="_blank" rel="noopener">💬 WhatsApp</a>
+                <a class="btn btn-ghost btn-sm" href="https://discord.gg/ise-horizon" target="_blank" rel="noopener">🎮 Discord</a>
+                <a class="btn btn-ghost btn-sm" href="https://instagram.com/ise.horizon" target="_blank" rel="noopener">📷 Instagram</a>
+                <a class="btn btn-ghost btn-sm" href="https://linkedin.com/company/ise-horizon" target="_blank" rel="noopener">in LinkedIn</a>
+                <a class="btn btn-ghost btn-sm" href="https://github.com/ise-horizon" target="_blank" rel="noopener">🐙 GitHub</a>
+                <a class="btn btn-ghost btn-sm" href="https://youtube.com/@isehorizon" target="_blank" rel="noopener">▶️ YouTube</a>
+              </div>
+            </div>
+          </div>
+          <div class="card mt-2">
+            <div class="card-body">
+              <h3>Find us</h3>
+              <div class="avatar-ph" style="height:170px;font-size:2.4rem">🗺️</div>
+              <p class="small muted mt-1">Kalpataru Institute of Technology, Tiptur — on the Bengaluru–Shivamogga highway (NH-206).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="siteFooter"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

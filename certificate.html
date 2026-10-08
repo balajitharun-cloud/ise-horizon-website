@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Certificate Portal — ISE HORIZON</title>
+<meta name="description" content="Participants of ISE HORIZON events: enter your name and USN to instantly generate your certificate. Club members upload the participant list here.">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/images/college-logo.jpeg">
+<link rel="apple-touch-icon" href="assets/images/college-logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-page="certificate">
+<header class="site-header" id="siteHeader"></header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Certificate Portal</div>
+      <h1>Certificate Portal</h1>
+      <p>Participants: enter your name and USN to instantly generate your participation certificate. Club members: upload the participant list from the member panel.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="tabs" id="certModeTabs">
+        <button class="tab active" data-mode="student">🎓 I'm a participant</button>
+        <button class="tab" data-mode="member">🛠️ Club member panel</button>
+      </div>
+
+      <!-- ================= STUDENT ================= -->
+      <div id="modeStudent">
+        <div class="two-col">
+          <div class="form-card">
+            <h2 style="margin-top:0">Get your certificate</h2>
+            <p class="muted small">Enter the same name and USN that the club recorded for you at the event.</p>
+            <form id="certLookupForm" novalidate>
+              <div class="field">
+                <label for="s-name">Full name <span class="req">*</span></label>
+                <input id="s-name" name="name" type="text" required placeholder="e.g. Aarav Kulkarni" autocomplete="name">
+              </div>
+              <div class="field">
+                <label for="s-usn">USN <span class="req">*</span></label>
+                <input id="s-usn" name="usn" type="text" required placeholder="e.g. 1KT23IS001" style="text-transform:uppercase">
+                <div class="hint">University Seat Number, exactly as submitted.</div>
+              </div>
+              <div class="field">
+                <label for="s-event">Event</label>
+                <select id="s-event" name="event"></select>
+              </div>
+              <button class="btn btn-primary btn-block" type="submit">Generate my certificate</button>
+              <div class="notice" id="certNote" role="status"></div>
+            </form>
+            <div class="divider-line"></div>
+            <p class="small muted">Not on the list? Contact the club at <a href="contact.html">our contact page</a> — a member needs to add your name and USN first.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h3>How it works</h3>
+              <ol class="muted small" style="padding-left:18px">
+                <li>The club member uploads the participant list (name + USN) for the event.</li>
+                <li>You enter your name and USN here.</li>
+                <li>The portal verifies your entry and generates your certificate.</li>
+                <li>Download it as a PNG or print/save as PDF.</li>
+              </ol>
+              <div class="chip chip--blue" id="certCountChip">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="certStageWrap" class="hidden mt-3">
+          <div class="cert-actions no-print">
+            <button class="btn btn-primary" id="certPrint">🖨️ Print / Save as PDF</button>
+            <button class="btn btn-blue" id="certPng">⬇️ Download PNG</button>
+            <button class="btn btn-ghost" id="certReset">Clear</button>
+          </div>
+          <div class="cert-stage">
+            <div class="certificate" id="certificate">
+              <div class="cert-id" id="certId"></div>
+              <div class="cert-inner">
+                <div class="cert-top">
+                  <img id="certUniSeal" src="assets/images/vtu-seal.jpeg" alt="VTU seal">
+                  <div>
+                    <div class="cert-uni" id="certUni">Visvesvaraya Technological University, Belagavi</div>
+                    <div class="cert-uni-sub">Karnataka, India</div>
+                  </div>
+                  <img id="certCollegeLogo" src="assets/images/college-logo.jpeg" alt="KIT logo">
+                </div>
+                <div class="cert-college" id="certCollege">Kalpataru Institute of Technology, Tiptur</div>
+                <div class="cert-college-sub">Department of Information Science &amp; Engineering · ISE HORIZON</div>
+                <div class="cert-rule"></div>
+                <div class="cert-title">Certificate</div>
+                <div class="cert-subtitle" id="certSubtitle">of Participation</div>
+                <div class="cert-body" style="margin-top:10px">This is to certify that</div>
+                <div class="cert-name" id="certName">Participant Name</div>
+                <div class="cert-usn" id="certUsn">USN: —</div>
+                <div class="cert-body" id="certBody">has actively participated in the event and is hereby awarded this certificate of participation.</div>
+                <div class="cert-foot">
+                  <div class="sig" id="sigLeft"></div>
+                  <div class="sig" id="sigCenter"></div>
+                  <div class="sig" id="sigRight"></div>
+                </div>
+              </div>
+              <div class="cert-seal"><img src="assets/images/college-logo.jpeg" alt="" style="width:78px;height:78px;opacity:.85"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= MEMBER ================= -->
+      <div id="modeMember" class="hidden">
+        <div id="memberGate" class="form-card" style="max-width:460px;margin:0 auto">
+          <h2 style="margin-top:0">Member access</h2>
+          <p class="muted small">This panel lets club members manage the participant list and certificate details. Enter the club passcode to continue.</p>
+          <div class="field">
+            <label for="m-pass">Passcode</label>
+            <input id="m-pass" type="password" placeholder="Enter passcode">
+            <div class="hint">Demo passcode: <code>HORIZON2026</code> — change it in the code before going live.</div>
+          </div>
+          <button class="btn btn-blue btn-block" id="m-unlock">Unlock panel</button>
+          <div class="notice" id="mGateNote" role="status"></div>
+        </div>
+
+        <div id="memberPanel" class="hidden">
+          <div class="two-col">
+            <div class="form-card">
+              <h2 style="margin-top:0">1. Event details</h2>
+              <div class="field">
+                <label for="m-event-title">Event name</label>
+                <input id="m-event-title" type="text" placeholder="e.g. HORIZON Hackathon 2026">
+              </div>
+              <div class="field-row two">
+                <div class="field">
+                  <label for="m-event-date">Event date</label>
+                  <input id="m-event-date" type="date">
+                </div>
+                <div class="field">
+                  <label for="m-cert-sub">Certificate wording</label>
+                  <input id="m-cert-sub" type="text" placeholder="of Participation">
+                </div>
+              </div>
+              <div class="field">
+                <label for="m-cert-body">Certificate body text</label>
+                <textarea id="m-cert-body" rows="3"></textarea>
+              </div>
+
+              <div class="divider-line"></div>
+              <h2>2. Participants</h2>
+              <p class="muted small">Paste one participant per line as <code>Name, USN</code>, or upload a <code>.csv</code> / <code>.txt</code> file.</p>
+              <div class="field">
+                <label for="m-bulk">Add participants</label>
+                <textarea id="m-bulk" rows="4" placeholder="Aarav Kulkarni, 1KT23IS001&#10;Meghana Shetty, 1KT23IS002"></textarea>
+              </div>
+              <div class="pill-row mb-2">
+                <button class="btn btn-blue btn-sm" id="m-add">Add to list</button>
+                <label class="btn btn-ghost btn-sm" style="cursor:pointer">📄 Upload file<input type="file" id="m-file" accept=".csv,.txt" hidden></label>
+                <button class="btn btn-ghost btn-sm" id="m-sample">Load sample</button>
+                <button class="btn btn-ghost btn-sm" id="m-clear">Clear all</button>
+              </div>
+              <div class="chip chip--green" id="m-count">0 participants</div>
+              <div id="m-list" class="mt-2" style="max-height:260px;overflow:auto"></div>
+            </div>
+
+            <div>
+              <div class="form-card mb-2">
+                <h2 style="margin-top:0">3. Signatories</h2>
+                <p class="muted small">Add up to three signatures. Leave the photo blank to keep an empty placeholder box.</p>
+                <div id="m-signs"></div>
+                <button class="btn btn-ghost btn-sm mt-1" id="m-add-sign">+ Add signatory</button>
+              </div>
+              <div class="form-card">
+                <h2 style="margin-top:0">4. Save &amp; share</h2>
+                <p class="muted small">Data is stored in this browser (localStorage). Export a JSON backup, or import one to restore.</p>
+                <div class="pill-row">
+                  <button class="btn btn-primary btn-sm" id="m-save">💾 Save</button>
+                  <button class="btn btn-blue btn-sm" id="m-export">⬆️ Export JSON</button>
+                  <label class="btn btn-ghost btn-sm" style="cursor:pointer">⬇️ Import JSON<input type="file" id="m-import" accept=".json" hidden></label>
+                  <button class="btn btn-ghost btn-sm" id="m-logout">Lock panel</button>
+                </div>
+                <div class="notice" id="mSaveNote" role="status"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="siteFooter"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/assets-data.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/certificate.js"></script>
+</body>
+</html>

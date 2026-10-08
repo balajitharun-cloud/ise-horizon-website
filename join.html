@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Join Us / Membership — ISE HORIZON</title>
+<meta name="description" content="Become a member of ISE HORIZON — the ISE student club of KIT Tiptur. Fill the membership form.">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/images/college-logo.jpeg">
+<link rel="apple-touch-icon" href="assets/images/college-logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-page="join">
+<header class="site-header" id="siteHeader"></header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Join Us</div>
+      <h1>Join ISE HORIZON</h1>
+      <p>Open to all students of the Department of Information Science &amp; Engineering. Membership is free.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="two-col">
+        <div class="form-card">
+          <h2 style="margin-top:0">Membership form</h2>
+          <p class="muted small">Fill in your details and we'll add you to the community and event updates.</p>
+          <form id="joinForm" novalidate>
+            <div class="field-row two">
+              <div class="field">
+                <label for="j-name">Full name <span class="req">*</span></label>
+                <input id="j-name" name="name" type="text" required placeholder="e.g. Aarav Kulkarni">
+              </div>
+              <div class="field">
+                <label for="j-usn">USN <span class="req">*</span></label>
+                <input id="j-usn" name="usn" type="text" required placeholder="e.g. 1KT23IS001" pattern="[A-Za-z0-9]+">
+                <div class="hint">Your university seat number.</div>
+              </div>
+            </div>
+            <div class="field-row two">
+              <div class="field">
+                <label for="j-year">Year of study</label>
+                <select id="j-year" name="year">
+                  <option value="">Select year</option>
+                  <option>1st Year</option><option>2nd Year</option>
+                  <option>3rd Year</option><option>4th Year</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="j-branch">Branch</label>
+                <select id="j-branch" name="branch">
+                  <option>Information Science &amp; Engineering</option>
+                  <option>Computer Science &amp; Engineering</option>
+                  <option>Electronics &amp; Communication</option>
+                  <option>Mechanical Engineering</option>
+                  <option>Civil Engineering</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row two">
+              <div class="field">
+                <label for="j-email">Email <span class="req">*</span></label>
+                <input id="j-email" name="email" type="email" required placeholder="you@example.com">
+              </div>
+              <div class="field">
+                <label for="j-phone">Phone</label>
+                <input id="j-phone" name="phone" type="tel" placeholder="+91 …" inputmode="tel">
+              </div>
+            </div>
+            <div class="field">
+              <label>Areas of interest</label>
+              <div class="checkbox-row">
+                <label><input type="checkbox" name="interests" value="Web Dev"> Web Dev</label>
+                <label><input type="checkbox" name="interests" value="AI/ML"> AI/ML</label>
+                <label><input type="checkbox" name="interests" value="DSA"> DSA</label>
+                <label><input type="checkbox" name="interests" value="Cloud"> Cloud</label>
+                <label><input type="checkbox" name="interests" value="App Dev"> App Dev</label>
+                <label><input type="checkbox" name="interests" value="UI/UX"> UI/UX</label>
+                <label><input type="checkbox" name="interests" value="Cybersecurity"> Cybersecurity</label>
+                <label><input type="checkbox" name="interests" value="IoT"> IoT</label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="j-why">Why do you want to join?</label>
+              <textarea id="j-why" name="why" rows="3" placeholder="Tell us what you're excited about…"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Submit membership request</button>
+            <div class="notice" id="joinNote" role="status"></div>
+          </form>
+        </div>
+
+        <div>
+          <div class="card mb-2">
+            <div class="card-body">
+              <h3>Why join?</h3>
+              <div class="feature" style="margin-bottom:12px"><div class="ico">📅</div><div><h3>Priority events</h3><p>Early registration for hackathons and workshops.</p></div></div>
+              <div class="feature" style="margin-bottom:12px"><div class="ico">📜</div><div><h3>Certificates</h3><p>Membership + participation certificates.</p></div></div>
+              <div class="feature" style="margin-bottom:12px"><div class="ico">📚</div><div><h3>Learning Hub</h3><p>Exclusive notes, roadmaps and recordings.</p></div></div>
+              <div class="feature"><div class="ico">🤝</div><div><h3>Community</h3><p>WhatsApp, Discord and alumni network.</p></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h3>Prefer a quick form?</h3>
+              <p class="muted small">You can also register through our Google Form, or just message us on WhatsApp.</p>
+              <div class="card-actions">
+                <a class="btn btn-blue btn-sm" href="#" data-href="google-form">Google Form ↗</a>
+                <a class="btn btn-ghost btn-sm" href="contact.html">Contact us</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="siteFooter"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

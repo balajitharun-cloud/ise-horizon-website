@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Events &amp; Calendar — ISE HORIZON</title>
+<meta name="description" content="Upcoming events, calendar, registration and past event archive of ISE HORIZON, KIT Tiptur.">
+<meta name="theme-color" content="#0b2a5b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/images/college-logo.jpeg">
+<link rel="apple-touch-icon" href="assets/images/college-logo.jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body data-page="events">
+<header class="site-header" id="siteHeader"></header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Events</div>
+      <h1>Events</h1>
+      <p>Workshops, hackathons, tech talks and competitions. Register early — seats are limited.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <div class="section-head"><span class="eyebrow">Calendar</span><h2>Event calendar</h2><p>Tap a highlighted date to jump to that event.</p></div>
+          <div class="calendar" id="eventCalendar"></div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h3>How registration works</h3>
+            <ol class="muted small" style="padding-left:18px">
+              <li>Pick an event and hit <strong>Register / RSVP</strong>.</li>
+              <li>Fill the form with your name, USN and details.</li>
+              <li>You'll get a confirmation before the event.</li>
+              <li>Attend, and your participation certificate is generated automatically in the <a href="certificate.html">Certificate Portal</a>.</li>
+            </ol>
+            <div class="card-actions"><a class="btn btn-blue btn-block" href="certificate.html">Go to Certificate Portal</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-2)">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Upcoming</span><h2>Register for an event</h2></div>
+      <div class="grid grid-3" id="eventList"></div>
+    </div>
+  </section>
+
+  <section class="section" id="past">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Archive</span><h2>Past events &amp; results</h2><p>A look back at what we've done — with participation numbers and outcomes.</p></div>
+      <div class="grid grid-3" id="pastList"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="siteFooter"></footer>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
