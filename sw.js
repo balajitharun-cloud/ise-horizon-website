@@ -1,5 +1,5 @@
 /* ISE HORIZON — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v3";
+var CACHE = "horizon-v4";
 var ASSETS = [
   "./",
   "index.html",
