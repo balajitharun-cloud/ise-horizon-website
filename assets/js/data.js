@@ -24,13 +24,6 @@ window.HORIZON = {
     }
   },
 
-  stats: [
-    { num: "600+", lbl: "Active members" },
-    { num: "40+", lbl: "Events hosted" },
-    { num: "25+", lbl: "Projects built" },
-    { num: "15+", lbl: "Competitions won" }
-  ],
-
   team: [
     { name: "Dr. Sunitha R.", role: "Faculty Coordinator", dept: "Dept. of ISE", bio: "Guides the club's technical direction and industry collaborations.", initials: "SR", socials: { linkedin: "#" } },
     { name: "Aarav Kulkarni", role: "President", dept: "ISE · Final Year", bio: "Full-stack developer; led two hackathon-winning teams.", initials: "AK", socials: { linkedin: "#", github: "#" } },

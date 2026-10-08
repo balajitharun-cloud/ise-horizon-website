@@ -287,7 +287,13 @@
         }
       }
       var stats = $("#homeStats");
-      if (stats) stats.innerHTML = (H.stats || []).map(function (s) { return '<div class="stat"><div class="num">' + esc(s.num) + '</div><div class="lbl">' + esc(s.lbl) + "</div></div>"; }).join("");
+      if (stats) {
+        var memberCount = (d.members || []).length;
+        var hosted = (d.settings && d.settings.eventsHosted) || 0;
+        stats.innerHTML =
+          '<div class="stat"><div class="num">' + memberCount + '</div><div class="lbl">Active members</div></div>' +
+          '<div class="stat"><div class="num">' + esc(hosted) + '</div><div class="lbl">Events hosted</div></div>';
+      }
 
       var up = $("#homeUpcoming");
       if (up) up.innerHTML = (d.events || []).length

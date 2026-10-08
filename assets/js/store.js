@@ -15,7 +15,7 @@
 
   function defaults() {
     return {
-      settings: { passcode: PASSCODE },
+      settings: { passcode: PASSCODE, eventsHosted: 40 },
       hackathon: {
         title: "HORIZON Hackathon",
         date: "",
@@ -37,7 +37,16 @@
         { id: "g3", caption: "Weekly coding circle", emoji: "🧩" },
         { id: "g4", caption: "Tech talk — packed auditorium", emoji: "🎙️" }
       ],
-      members: []        // club members / applications (managed)
+      members: [
+        { id: "m1", name: "Dr. Sunitha R.", role: "Active member", year: "", branch: "ISE" },
+        { id: "m2", name: "Aarav Kulkarni", role: "Event host", year: "4th Year", branch: "ISE" },
+        { id: "m3", name: "Meghana Shetty", role: "Event host", year: "3rd Year", branch: "ISE" },
+        { id: "m4", name: "Rahul Naik", role: "Active member", year: "3rd Year", branch: "ISE" },
+        { id: "m5", name: "Sneha Patil", role: "Event host", year: "3rd Year", branch: "ISE" },
+        { id: "m6", name: "Kiran Kumar", role: "Active member", year: "2nd Year", branch: "ISE" },
+        { id: "m7", name: "Divya Rao", role: "Active member", year: "2nd Year", branch: "ISE" },
+        { id: "m8", name: "Arjun Hegde", role: "Active member", year: "3rd Year", branch: "ISE" }
+      ]
     };
   }
 

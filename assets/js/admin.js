@@ -73,7 +73,7 @@
         { k: "branch", l: "Branch", t: "text" },
         { k: "email", l: "Email", t: "text" },
         { k: "phone", l: "Phone", t: "text" },
-        { k: "role", l: "Role", t: "select", o: ["Active member", "Event host", "Core committee", "Elite member"] },
+        { k: "role", l: "Role", t: "select", o: ["Active member", "Event host"] },
         { k: "interests", l: "Interests (comma separated)", t: "list" }
       ],
       title: function (it) { return it.name + (it.usn ? " · " + it.usn : ""); },
@@ -81,7 +81,7 @@
     }
   };
 
-  var TABS = ["events", "news", "projects", "gallery", "members", "hackathon", "data"];
+  var TABS = ["events", "news", "projects", "gallery", "members", "hackathon", "stats", "data"];
   var current = "events";
   var editingId = null;
 
@@ -159,6 +159,25 @@
       "</form></div>";
   }
 
+  function statsSection() {
+    var d = S.get();
+    var count = (d.members || []).length;
+    var hosted = (d.settings && d.settings.eventsHosted) || 0;
+    return '<div class="form-card" style="max-width:620px;margin:0 auto">' +
+      '<h2 style="margin-top:0">Home-page stats</h2>' +
+      '<p class="muted small">These two numbers are shown on the home page.</p>' +
+      '<div class="field"><label>Active members</label>' +
+        '<input type="text" value="' + count + '" disabled>' +
+        '<div class="hint">Counted automatically from the member list — it grows when a new member joins.</div></div>' +
+      '<form id="sf">' +
+        '<div class="field"><label for="f-eventsHosted">Events hosted</label>' +
+        '<input id="f-eventsHosted" name="eventsHosted" type="number" min="0" value="' + esc(hosted) + '">' +
+        '<div class="hint">Set by an elite member.</div></div>' +
+        '<button class="btn btn-primary" type="submit">Save</button>' +
+        '<div class="notice" id="sf-note"></div>' +
+      "</form></div>";
+  }
+
   function dataSection() {
     return '<div class="two-col">' +
       '<div class="form-card"><h2 style="margin-top:0">Backup &amp; restore</h2>' +
@@ -180,7 +199,7 @@
   /* ---------- render ---------- */
   function renderTabs() {
     $("#adminTabs").innerHTML = TABS.map(function (k) {
-      var l = k === "hackathon" ? "🏆 Hackathon" : k === "data" ? "💾 Data" : SCHEMAS[k].icon + " " + SCHEMAS[k].label;
+      var l = k === "hackathon" ? "🏆 Hackathon" : k === "stats" ? "📊 Stats" : k === "data" ? "💾 Data" : SCHEMAS[k].icon + " " + SCHEMAS[k].label;
       return '<button class="tab' + (k === current ? " active" : "") + '" data-tab="' + k + '">' + l + "</button>";
     }).join("");
     $$("#adminTabs .tab").forEach(function (b) {
@@ -191,6 +210,7 @@
   function renderBody() {
     var body = $("#adminBody");
     if (current === "hackathon") { body.innerHTML = hackathonSection(); wireHackathon(); return; }
+    if (current === "stats") { body.innerHTML = statsSection(); wireStats(); return; }
     if (current === "data") { body.innerHTML = dataSection(); wireData(); return; }
     body.innerHTML = listSection(current);
     wireList(current);
@@ -236,6 +256,18 @@
       h.description = form.elements.description.value; h.link = form.elements.link.value; h.active = form.elements.active.checked;
       S.save();
       var n = $("#hf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
+    });
+  }
+
+  function wireStats() {
+    var f = $("#sf");
+    if (!f) return;
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = parseInt(f.elements.eventsHosted.value, 10);
+      if (isNaN(v) || v < 0) v = 0;
+      S.get().settings.eventsHosted = v; S.save();
+      var n = $("#sf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
     });
   }
 
