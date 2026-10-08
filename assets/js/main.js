@@ -71,7 +71,7 @@
     mount.innerHTML =
       '<div class="container header-inner">' +
         '<a class="brand" href="index.html">' +
-          '<img src="assets/images/college-logo.jpeg" alt="Kalpataru Institute of Technology logo">' +
+          '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="ISE HORIZON club logo">' +
           '<span class="brand-txt">' +
             '<span class="brand-name">ISE <span style="color:var(--brand-orange)">HORIZON</span></span>' +
             '<span class="brand-sub">Kalpataru Institute of Technology</span>' +
@@ -117,7 +117,7 @@
         '<div class="footer-grid">' +
           "<div>" +
             '<div class="footer-brand">' +
-              '<img src="assets/images/college-logo.jpeg" alt="KIT logo">' +
+              '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="ISE HORIZON club logo">' +
               '<div><strong>ISE HORIZON</strong><br><span class="small">Kalpataru Institute of Technology, Tiptur</span></div>' +
             "</div>" +
             "<p class=\"small\">" + esc(club.tagline) + "</p>" +

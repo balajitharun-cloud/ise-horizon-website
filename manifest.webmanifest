@@ -1,12 +1,12 @@
 {
-  "name": "ISE HORIZON — KIT Tiptur",
+  "name": "ISE HORIZON",
   "short_name": "ISE HORIZON",
-  "description": "Information Science & Engineering student club of Kalpataru Institute of Technology, Tiptur — events, projects, resources and certificates.",
+  "description": "ISE HORIZON — Information Science & Engineering student club of Kalpataru Institute of Technology, Tiptur. Events, projects, resources and certificates.",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#f4f6fb",
+  "background_color": "#000000",
   "theme_color": "#0b2a5b",
   "icons": [
     {

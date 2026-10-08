@@ -249,8 +249,9 @@
       x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1332);
     }
 
-    // small college seal watermark bottom-centre
-    if (logo) { x.globalAlpha = .85; x.drawImage(logo, W / 2 - 39, 1330, 78, 78); x.globalAlpha = 1; }
+    // club logo watermark, bottom-centre
+    var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
+    if (club) { x.globalAlpha = .92; x.drawImage(club, W / 2 - 50, 1318, 100, 95); x.globalAlpha = 1; }
 
     // certificate id
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";

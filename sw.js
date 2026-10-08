@@ -1,5 +1,5 @@
 /* ISE HORIZON — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v1";
+var CACHE = "horizon-v2";
 var ASSETS = [
   "./",
   "index.html",
@@ -19,6 +19,10 @@ var ASSETS = [
   "assets/js/certificate.js",
   "assets/images/college-logo.jpeg",
   "assets/images/vtu-seal.jpeg",
+  "assets/images/ise-horizon-logo.png",
+  "assets/images/ise-horizon-badge.png",
+  "assets/images/icon-192.png",
+  "assets/images/icon-512.png",
   "manifest.webmanifest"
 ];
 
