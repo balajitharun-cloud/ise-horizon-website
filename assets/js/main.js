@@ -63,16 +63,13 @@
     }).join("");
     mount.innerHTML =
       '<div class="container header-inner">' +
-        '<a class="brand" href="index.html" aria-label="ISE HORIZON home">' +
-          '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="ISE HORIZON logo">' +
-        "</a>" +
-        '<nav class="nav" id="mainNav" aria-label="Main"><ul>' + links + "</ul></nav>" +
+        '<button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>' +
+        '<button class="header-search" id="searchBtn" aria-label="Search the site">🔍 <span>Search</span></button>' +
         '<div class="header-actions">' +
-          '<button class="search-btn" id="searchBtn" aria-label="Search" title="Search">🔍</button>' +
           '<button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">🌙</button>' +
           '<a class="btn btn-primary btn-sm header-cta" href="join.html">Join Us</a>' +
-          '<button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>' +
         "</div>" +
+        '<nav class="nav" id="mainNav" aria-label="Main"><ul>' + links + "</ul></nav>" +
       "</div>";
     $("#navToggle").addEventListener("click", function () {
       var open = $("#mainNav").classList.toggle("open");
