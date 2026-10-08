@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Events &amp; Calendar — ISE HORIZON</title>
-<meta name="description" content="Upcoming events, calendar, registration and past event archive of ISE HORIZON, KIT Tiptur.">
+<meta name="description" content="Upcoming events and calendar of ISE HORIZON, KIT Tiptur. Events are added by the club committee.">
 <meta name="theme-color" content="#0b2a5b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/images/icon-192.png">
@@ -23,7 +23,7 @@
     <div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> / Events</div>
       <h1>Events</h1>
-      <p>Workshops, hackathons, tech talks and competitions. Register early — seats are limited.</p>
+      <p>Workshops, hackathons, competitions, cultural and sports meets. Events appear here once the club committee adds them.</p>
     </div>
   </section>
 
@@ -31,17 +31,16 @@
     <div class="container">
       <div class="two-col">
         <div>
-          <div class="section-head"><span class="eyebrow">Calendar</span><h2>Event calendar</h2><p>Tap a highlighted date to jump to that event.</p></div>
+          <div class="section-head"><span class="eyebrow">Calendar</span><h2>Event calendar</h2><p>Highlighted dates have an event — tap one to jump to it.</p></div>
           <div class="calendar" id="eventCalendar"></div>
         </div>
         <div class="card">
           <div class="card-body">
-            <h3>How registration works</h3>
+            <h3>How it works</h3>
             <ol class="muted small" style="padding-left:18px">
-              <li>Pick an event and hit <strong>Register / RSVP</strong>.</li>
-              <li>Fill the form with your name, USN and details.</li>
-              <li>You'll get a confirmation before the event.</li>
-              <li>Attend, and your participation certificate is generated automatically in the <a href="certificate.html">Certificate Portal</a>.</li>
+              <li>The club committee adds an event with its date and details.</li>
+              <li>It appears here with a registration link, if one is provided.</li>
+              <li>Attend, and your participation certificate is generated in the <a href="certificate.html">Certificate Portal</a>.</li>
             </ol>
             <div class="card-actions"><a class="btn btn-blue btn-block" href="certificate.html">Go to Certificate Portal</a></div>
           </div>
@@ -52,14 +51,14 @@
 
   <section class="section" style="background:var(--surface-2)">
     <div class="container">
-      <div class="section-head"><span class="eyebrow">Upcoming</span><h2>Register for an event</h2></div>
+      <div class="section-head"><span class="eyebrow">Upcoming</span><h2>What's coming up</h2></div>
       <div class="grid grid-3" id="eventList"></div>
     </div>
   </section>
 
   <section class="section" id="past">
     <div class="container">
-      <div class="section-head"><span class="eyebrow">Archive</span><h2>Past events &amp; results</h2><p>A look back at what we've done — with participation numbers and outcomes.</p></div>
+      <div class="section-head"><span class="eyebrow">Archive</span><h2>Past events &amp; results</h2><p>Completed events are archived here by the committee.</p></div>
       <div class="grid grid-3" id="pastList"></div>
     </div>
   </section>
@@ -67,6 +66,7 @@
 
 <footer class="site-footer" id="siteFooter"></footer>
 <script src="assets/js/data.js"></script>
+<script src="assets/js/store.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

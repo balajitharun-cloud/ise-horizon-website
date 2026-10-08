@@ -305,6 +305,7 @@ p { margin: 0 0 1rem; }
 .footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .footer-brand img { width: 46px; height: 46px; border-radius: 50%; background: #fff; padding: 3px; }
 .footer-brand img.logo-badge { width: 52px; height: 52px; border-radius: 14px; background: #000; padding: 3px; object-fit: contain; }
+.footer-brand img.logo-round { width: 52px; height: 52px; border-radius: 50%; background: #fff; padding: 3px; object-fit: contain; }
 .footer-brand strong { color: #fff; font-family: var(--font-display); }
 .footer-col h4 { color: #fff; font-size: .95rem; margin-bottom: 12px; }
 .footer-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .9rem; }
@@ -327,9 +328,10 @@ p { margin: 0 0 1rem; }
 
 /* ---------- Certificate ---------- */
 .cert-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-.cert-stage { background: var(--surface-2); border: 1px dashed var(--border); border-radius: var(--radius); padding: 14px; overflow-x: auto; }
+.cert-stage { background: var(--surface-2); border: 1px dashed var(--border); border-radius: var(--radius); padding: 14px; overflow: hidden; }
+.cert-scaler { width: 1000px; margin: 0 auto; transform-origin: top left; }
 .certificate {
-  width: 1000px; max-width: 100%; aspect-ratio: 1.414 / 1; background: #fffdf7; color: #12203a;
+  width: 1000px; aspect-ratio: 1.414 / 1; background: #fffdf7; color: #12203a;
   margin: 0 auto; position: relative; padding: 30px;
   border: 14px solid var(--brand-blue); box-shadow: var(--shadow-lg);
   font-family: "Georgia", "Times New Roman", serif;
@@ -354,13 +356,13 @@ p { margin: 0 0 1rem; }
 .cert-name { font-size: 2rem; font-weight: 700; color: #12203a; font-family: "Georgia", serif; border-bottom: 2px solid var(--brand-gold); display: inline-block; padding: 0 22px 4px; margin: 14px 0 6px; min-width: 40%; }
 .cert-body { font-size: .98rem; color: #33415c; max-width: 720px; line-height: 1.7; }
 .cert-usn { font-size: .82rem; color: #5a6b88; letter-spacing: .1em; margin-top: 4px; }
-.cert-foot { margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding: 0 10px; }
+.cert-foot { margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding: 0 10px 62px; }
 .sig { text-align: center; width: 190px; }
 .sig .sig-photo { width: 130px; height: 62px; margin: 0 auto 6px; border: 1px dashed #b9a45a; border-radius: 6px; display: grid; place-items: center; color: #b9a45a; font-size: .62rem; background: #fffef9; overflow: hidden; }
 .sig .sig-photo img { width: 100%; height: 100%; object-fit: contain; }
 .sig .sig-line { border-top: 1.5px solid #12203a; padding-top: 5px; font-size: .82rem; font-weight: 700; color: #12203a; }
 .sig .sig-desig { font-size: .7rem; color: #5a6b88; }
-.cert-seal { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); opacity: .9; }
+.cert-seal { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); opacity: .92; }
 .cert-id { position: absolute; top: 18px; right: 22px; font-size: .62rem; color: #8a7a3a; letter-spacing: .06em; }
 
 /* ---------- Utility ---------- */
@@ -395,8 +397,8 @@ p { margin: 0 0 1rem; }
     position: static; transform: none; background: transparent; border: none; box-shadow: none;
     padding: 0; max-height: none; overflow: visible; flex: 1;
   }
-  .nav ul { flex-direction: row; justify-content: center; gap: 2px; }
-  .nav a { padding: 9px 12px; font-size: .92rem; }
+  .nav ul { flex-direction: row; justify-content: center; gap: 0; flex-wrap: nowrap; }
+  .nav a { padding: 8px 9px; font-size: .84rem; }
   .header-cta { display: inline-flex; }
   .grid-3 { grid-template-columns: repeat(3, 1fr); }
   .grid-4 { grid-template-columns: repeat(4, 1fr); }

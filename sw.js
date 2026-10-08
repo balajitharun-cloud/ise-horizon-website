@@ -1,21 +1,23 @@
 /* ISE HORIZON — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v2";
+var CACHE = "horizon-v3";
 var ASSETS = [
   "./",
   "index.html",
   "about.html",
   "events.html",
   "projects.html",
-  "resources.html",
   "team.html",
   "gallery.html",
   "join.html",
   "contact.html",
   "certificate.html",
+  "admin.html",
   "assets/css/style.css",
   "assets/js/data.js",
+  "assets/js/store.js",
   "assets/js/assets-data.js",
   "assets/js/main.js",
+  "assets/js/admin.js",
   "assets/js/certificate.js",
   "assets/images/college-logo.jpeg",
   "assets/images/vtu-seal.jpeg",

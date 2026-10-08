@@ -82,6 +82,7 @@
             <button class="btn btn-ghost" id="certReset">Clear</button>
           </div>
           <div class="cert-stage">
+            <div class="cert-scaler" id="certScaler">
             <div class="certificate" id="certificate">
               <div class="cert-id" id="certId"></div>
               <div class="cert-inner">
@@ -110,6 +111,7 @@
               </div>
               <div class="cert-seal"><img src="assets/images/ise-horizon-logo.png" alt="ISE HORIZON logo" style="width:86px;height:86px;opacity:.9"></div>
             </div>
+            </div>
           </div>
         </div>
       </div>
@@ -122,7 +124,7 @@
           <div class="field">
             <label for="m-pass">Passcode</label>
             <input id="m-pass" type="password" placeholder="Enter passcode">
-            <div class="hint">Demo passcode: <code>HORIZON2026</code> — change it in the code before going live.</div>
+            <div class="hint">Ask a core committee member for the club passcode.</div>
           </div>
           <button class="btn btn-blue btn-block" id="m-unlock">Unlock panel</button>
           <div class="notice" id="mGateNote" role="status"></div>
@@ -197,6 +199,7 @@
 <footer class="site-footer" id="siteFooter"></footer>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/assets-data.js"></script>
+<script src="assets/js/store.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/certificate.js"></script>
 </body>

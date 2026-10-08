@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Gallery — ISE HORIZON</title>
-<meta name="description" content="Photos and highlights from ISE HORIZON events and activities.">
+<title>Member Panel — ISE HORIZON</title>
+<meta name="description" content="Member panel for ISE HORIZON — elite members manage events, news, projects, gallery and members.">
 <meta name="theme-color" content="#0b2a5b">
+<meta name="robots" content="noindex">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/images/icon-192.png">
 <link rel="apple-touch-icon" href="assets/images/icon-192.png">
@@ -15,22 +16,37 @@
 <link rel="stylesheet" href="assets/css/style.css">
 <script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
-<body data-page="gallery">
+<body data-page="admin">
 <header class="site-header" id="siteHeader"></header>
 
 <main>
   <section class="page-hero">
     <div class="container">
-      <div class="breadcrumb"><a href="index.html">Home</a> / Gallery</div>
-      <h1>Gallery</h1>
-      <p>Moments from our hackathons, workshops, competitions and celebrations — updated by the committee after each event.</p>
+      <div class="breadcrumb"><a href="index.html">Home</a> / Member Panel</div>
+      <h1>Member Panel</h1>
+      <p>Elite members manage everything shown on the website from here — events, news, projects, gallery and members.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container">
-      <div class="section-head"><span class="eyebrow">Captured moments</span><h2>Photos &amp; highlights</h2></div>
-      <div class="gallery" id="galleryGrid"></div>
+      <!-- GATE -->
+      <div id="adminGate" class="form-card" style="max-width:460px;margin:0 auto">
+        <h2 style="margin-top:0">Member access</h2>
+        <p class="muted small">Enter the club passcode to manage site content.</p>
+        <div class="field">
+          <label for="adminPass">Passcode</label>
+          <input id="adminPass" type="password" placeholder="Enter passcode" autocomplete="current-password">
+        </div>
+        <button class="btn btn-blue btn-block" id="adminUnlock">Unlock panel</button>
+        <div class="notice" id="adminGateNote" role="status"></div>
+      </div>
+
+      <!-- PANEL -->
+      <div id="adminPanel" class="hidden">
+        <div class="tabs" id="adminTabs"></div>
+        <div id="adminBody"></div>
+      </div>
     </div>
   </section>
 </main>
@@ -39,5 +55,6 @@
 <script src="assets/js/data.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/admin.js"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   "use strict";
   var KEY = "horizon-cert-db";
   var SESSION = "horizon-member-unlocked";
-  var DEFAULT_PASSCODE = "HORIZON2026";
+  var DEFAULT_PASSCODE = "123@2007";
 
   var $ = window.HorizonApp.$;
   var $$ = window.HorizonApp.$$;
@@ -108,6 +108,7 @@
     renderSignatories();
     $("#certStageWrap").classList.remove("hidden");
     window.__certCurrent = p;
+    fitCertificate();
     $("#certStageWrap").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -122,6 +123,19 @@
     $("#sigLeft").innerHTML = s[0] ? sigBlock(s[0]) : "";
     $("#sigCenter").innerHTML = s[1] ? sigBlock(s[1]) : "";
     $("#sigRight").innerHTML = s[2] ? sigBlock(s[2]) : "";
+  }
+
+  /* ---------- scale the certificate to fit the screen (mobile) ---------- */
+  function fitCertificate() {
+    var stage = document.querySelector(".cert-stage");
+    var scaler = document.getElementById("certScaler");
+    if (!stage || !scaler) return;
+    var avail = stage.clientWidth - 28;
+    if (avail <= 0) return;
+    var scale = Math.min(1, avail / 1000);
+    scaler.style.width = (1000 * scale) + "px";
+    scaler.style.height = (707 * scale) + "px";
+    scaler.style.transform = "scale(" + scale + ")";
   }
 
   function initStudent() {
@@ -231,12 +245,12 @@
     var lines = wrapText(x, body, 1500);
     lines.forEach(function (l, i) { x.fillText(l, cx, 710 + i * 38); });
 
-    // signatories
+    // signature row sits above the club-logo watermark
     var signs = (DB.signatories || []).slice(0, 3);
     var cxs = signs.length === 1 ? [1000] : signs.length === 2 ? [560, 1440] : [420, 1000, 1580];
     for (var i = 0; i < signs.length; i++) {
       var s = signs[i], scx = cxs[i];
-      var boxW = 300, boxH = 116, boxY = 1130;
+      var boxW = 300, boxH = 112, boxY = 1030;
       // photo box
       x.strokeStyle = "#b9a45a"; x.lineWidth = 2; x.setLineDash([8, 6]);
       x.strokeRect(scx - boxW / 2, boxY, boxW, boxH); x.setLineDash([]);
@@ -244,14 +258,14 @@
       if (ph) x.drawImage(ph, scx - boxW / 2 + 4, boxY + 4, boxW - 8, boxH - 8);
       else { x.font = "16px Arial, sans-serif"; x.fillStyle = "#c9a227"; x.textAlign = "center"; x.fillText("signature / photo", scx, boxY + boxH / 2 + 6); }
       // line + name + designation
-      x.strokeStyle = "#12203a"; x.lineWidth = 2; x.beginPath(); x.moveTo(scx - 150, 1272); x.lineTo(scx + 150, 1272); x.stroke();
-      x.font = "700 22px Georgia, serif"; x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1305);
-      x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1332);
+      x.strokeStyle = "#12203a"; x.lineWidth = 2; x.beginPath(); x.moveTo(scx - 150, 1180); x.lineTo(scx + 150, 1180); x.stroke();
+      x.font = "700 22px Georgia, serif"; x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1214);
+      x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1240);
     }
 
-    // club logo watermark, bottom-centre
+    // club logo watermark, bottom-centre (below the signatures)
     var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
-    if (club) { x.globalAlpha = .92; x.drawImage(club, W / 2 - 50, 1318, 100, 95); x.globalAlpha = 1; }
+    if (club) { x.globalAlpha = .92; x.drawImage(club, W / 2 - 44, 1288, 88, 74); x.globalAlpha = 1; }
 
     // certificate id
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";
@@ -400,6 +414,8 @@
     refreshCount();
     initStudent();
     initMember();
+    fitCertificate();
+    window.addEventListener("resize", fitCertificate);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
