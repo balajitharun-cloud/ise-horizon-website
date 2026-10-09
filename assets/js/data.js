@@ -38,7 +38,7 @@ window.HORIZON = {
     { name: "B.B Fareeha", role: "Cultural", initials: "BF" },
     { name: "Saraswati", role: "Cultural", initials: "S" },
     { name: "Balaji Tharun", role: "Technical Team", initials: "BT" },
-    { name: "Subhdeep", role: "Technical Team", initials: "S" },
+    { name: "Shubhadeep B P", role: "Technical Team", initials: "SB" },
     { name: "Shreyas", role: "Technical Team", initials: "S" }
   ]
 };
