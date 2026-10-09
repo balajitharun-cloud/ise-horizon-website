@@ -129,14 +129,12 @@
   /* ---------- scale the certificate to fit the screen (mobile) ---------- */
   function fitCertificate() {
     var stage = document.querySelector(".cert-stage");
-    var scaler = document.getElementById("certScaler");
-    if (!stage || !scaler) return;
-    var avail = stage.clientWidth - 28;
-    if (avail <= 0) return;
+    var cert = document.getElementById("certificate");
+    if (!stage || !cert) return;
+    var avail = stage.clientWidth - 28;      // minus the stage's 14px padding each side
+    if (avail <= 0) return;                  // stage hidden — will fit again when shown
     var scale = Math.min(1, avail / 1000);
-    scaler.style.width = (1000 * scale) + "px";
-    scaler.style.height = (707 * scale) + "px";
-    scaler.style.transform = "scale(" + scale + ")";
+    cert.style.zoom = scale;                 // real layout scale, so it stays centred
   }
 
   function initStudent() {

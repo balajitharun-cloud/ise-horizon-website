@@ -339,7 +339,7 @@ p { margin: 0 0 1rem; }
 /* ---------- Certificate ---------- */
 .cert-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
 .cert-stage { background: var(--surface-2); border: 1px dashed var(--border); border-radius: var(--radius); padding: 14px; overflow: hidden; }
-.cert-scaler { width: 1000px; margin: 0 auto; transform-origin: top left; }
+.cert-scaler { width: 100%; display: flex; justify-content: center; }
 .certificate {
   width: 1000px; aspect-ratio: 1.414 / 1; background: #fffdf7; color: #12203a;
   margin: 0 auto; position: relative; padding: 30px;
