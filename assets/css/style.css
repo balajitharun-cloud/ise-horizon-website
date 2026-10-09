@@ -339,31 +339,34 @@ p { margin: 0 0 1rem; }
 /* ---------- Certificate ---------- */
 .cert-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
 /* ================= certificate document ================= */
+/* ================= certificate document ================= */
 .cert-stage { background: var(--surface-2); border: 1px dashed var(--border); border-radius: var(--radius); padding: 14px; overflow: hidden; }
 .cert-scaler { width: 100%; display: flex; justify-content: center; }
 .certificate {
   width: 1000px; aspect-ratio: 1.414 / 1; background: #fffdf7; color: #12203a;
-  margin: 0 auto; position: relative; padding: 30px;
+  margin: 0 auto; position: relative; padding: 28px;
   border: 14px solid var(--brand-blue); box-shadow: var(--shadow-lg);
   font-family: "Georgia", "Times New Roman", serif;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   overflow: hidden;
 }
 /* double gold rule inside the navy border */
-.certificate::before { content: ""; position: absolute; inset: 6px; border: 3px solid var(--brand-gold); pointer-events: none; z-index: 4; }
+.certificate::before { content: ""; position: absolute; inset: 5px; border: 3px solid var(--brand-gold); pointer-events: none; z-index: 4; }
 .certificate::after { content: ""; position: absolute; inset: 15px; border: 1px solid rgba(201,162,39,.55); pointer-events: none; z-index: 4; }
 
-/* faint emblem watermark behind everything */
+/* engraved guilloche rosette + emblem watermark */
+.cert-guilloche { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.cert-guilloche svg { width: 100%; height: 100%; display: block; }
 .cert-watermark { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 0; }
-.cert-watermark img { width: 58%; max-height: 80%; object-fit: contain; opacity: .055; filter: grayscale(1); }
+.cert-watermark img { width: 52%; max-height: 74%; object-fit: contain; opacity: .05; filter: grayscale(1); }
 
-/* corner diamonds sitting on the inner gold rule */
-.cert-corner { position: absolute; width: 11px; height: 11px; background: var(--brand-gold); transform: rotate(45deg); z-index: 5;
-  box-shadow: 0 0 0 4px #fffdf7, 0 0 0 5px rgba(201,162,39,.55); }
-.cert-corner.tl { top: 20px; left: 20px; }
-.cert-corner.tr { top: 20px; right: 20px; }
-.cert-corner.bl { bottom: 20px; left: 20px; }
-.cert-corner.br { bottom: 20px; right: 20px; }
+/* filigree corner ornaments */
+.cert-corner { position: absolute; width: 116px; height: 116px; z-index: 5; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23c9a227%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M4%20116%20A112%20112%200%200%201%20116%204%22%2F%3E%3Cpath%20d%3D%22M20%20116%20A96%2096%200%200%201%20116%2020%22%2F%3E%3Cpath%20d%3D%22M116%2020%20C%2088%2020%2068%2030%2062%2050%20C%2058%2064%2068%2074%2080%2070%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M4%20110%20l%205%206%20l%20-5%206%20l%20-5%20-6%20z%22%20fill%3D%22%23c9a227%22%2F%3E%3Cpath%20d%3D%22M116%204%20l%206%205%20l%20-6%205%20l%20-6%20-5%20z%22%20fill%3D%22%23c9a227%22%2F%3E%3C%2Fsvg%3E") no-repeat center / contain; }
+.cert-corner.tl { top: 0; left: 0; }
+.cert-corner.tr { top: 0; right: 0; transform: rotate(90deg); }
+.cert-corner.br { bottom: 0; right: 0; transform: rotate(180deg); }
+.cert-corner.bl { bottom: 0; left: 0; transform: rotate(270deg); }
 
 /* one-time shine sweep */
 .cert-shine { position: absolute; inset: 0; z-index: 6; pointer-events: none; overflow: hidden; }
@@ -373,45 +376,61 @@ p { margin: 0 0 1rem; }
 
 .cert-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; }
 .cert-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-.cert-top img { width: 60px; height: 60px; object-fit: contain; }
-.cert-top img#certClubLogo { width: 54px; height: 60px; }
-.cert-uni { font-size: 1.3rem; font-weight: 700; letter-spacing: .05em; color: var(--brand-blue); text-transform: uppercase; margin-top: 8px; }
+.cert-top > img { width: 56px; height: 56px; object-fit: contain; }
+/* gold medallion crest holding the club emblem */
+.cert-crest { position: relative; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 28%, #fffaea, #f0e2b6 70%, #e2cf94);
+  border: 2px solid var(--brand-gold);
+  box-shadow: 0 0 0 4px #fffdf7, 0 0 0 5px rgba(201,162,39,.55); }
+.cert-crest img { width: 50px; height: 58px; object-fit: contain; }
+.cert-crest::before { content: ""; position: absolute; top: -12px; left: 50%; width: 9px; height: 9px;
+  background: var(--brand-gold); transform: translateX(-50%) rotate(45deg); }
+.cert-crest::after { content: ""; position: absolute; bottom: -11px; left: 50%; width: 7px; height: 7px;
+  background: var(--brand-gold); transform: translateX(-50%) rotate(45deg); }
+
+.cert-uni { font-size: 1.28rem; font-weight: 700; letter-spacing: .05em; color: var(--brand-blue); text-transform: uppercase; margin-top: 9px; }
 .cert-uni-sub { font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; color: #6a5a1e; margin-top: 2px; }
-.cert-college { font-size: 1.1rem; font-weight: 700; color: var(--brand-orange); margin-top: 7px; text-transform: uppercase; letter-spacing: .04em; }
+.cert-college { font-size: 1.08rem; font-weight: 700; color: var(--brand-orange); margin-top: 6px; text-transform: uppercase; letter-spacing: .04em; }
 .cert-college-sub { font-size: .66rem; letter-spacing: .18em; text-transform: uppercase; color: #5a6b88; margin-top: 2px; }
 
-/* ornamental divider: gradient rule with a centre diamond */
-.cert-rule { display: flex; align-items: center; width: 76%; margin: 10px 0 6px; gap: 8px; }
+/* ornamental divider */
+.cert-rule { display: flex; align-items: center; width: 78%; margin: 9px 0 5px; gap: 8px; }
 .cert-rule i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, var(--brand-gold)); }
 .cert-rule i:last-child { background: linear-gradient(90deg, var(--brand-gold), transparent); }
 .cert-rule b { flex: 0 0 auto; width: 8px; height: 8px; background: var(--brand-gold); transform: rotate(45deg); }
 
-.cert-title { font-size: 2.1rem; font-weight: 700; letter-spacing: .22em; text-indent: .22em; text-transform: uppercase; color: var(--brand-blue); margin: 2px 0; }
-.cert-subtitle { font-size: .78rem; color: #8a7a3a; letter-spacing: .34em; text-transform: uppercase; }
-.cert-lead { font-size: .9rem; color: #33415c; letter-spacing: .04em; margin-top: 10px; }
-.cert-name { font-size: 2.15rem; font-weight: 700; color: #12203a; line-height: 1.15; padding: 0 10px; }
-.cert-flourish { display: flex; align-items: center; width: min(430px, 74%); gap: 8px; margin: 3px 0 7px; }
+/* gold-foil title */
+.cert-title { font-size: 2.05rem; font-weight: 700; letter-spacing: .22em; text-indent: .22em; text-transform: uppercase; margin: 2px 0;
+  background: linear-gradient(180deg, #d9b23f 0%, #f7e8ab 42%, #c9a227 68%, #8f6f12 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(90,70,10,.3)); }
+.cert-subtitle { font-size: .76rem; color: #8a7a3a; letter-spacing: .34em; text-transform: uppercase; }
+.cert-lead { font-size: .88rem; color: #33415c; letter-spacing: .04em; margin-top: 8px; }
+.cert-name { font-family: "Great Vibes", "Segoe Script", cursive; font-size: 3rem; font-weight: 400;
+  color: #10203c; line-height: 1.02; padding: 0 12px; }
+.cert-flourish { display: flex; align-items: center; width: min(470px, 74%); gap: 8px; margin: 1px 0 5px; }
 .cert-flourish i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, var(--brand-gold)); }
 .cert-flourish i:last-child { background: linear-gradient(90deg, var(--brand-gold), transparent); }
 .cert-flourish b { flex: 0 0 auto; width: 7px; height: 7px; background: var(--brand-gold); transform: rotate(45deg); }
-.cert-usn { font-size: .76rem; color: #5a6b88; letter-spacing: .18em; text-transform: uppercase; }
-.cert-body { font-size: .95rem; color: #33415c; max-width: 700px; line-height: 1.65; margin-top: 8px; }
+.cert-usn { font-size: .74rem; color: #5a6b88; letter-spacing: .18em; text-transform: uppercase; }
+.cert-body { font-size: .94rem; color: #33415c; max-width: 700px; line-height: 1.6; margin-top: 7px; }
 
-.cert-foot { margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; padding: 18px 6px 0; }
+.cert-foot { margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; padding: 14px 6px 0; }
 .sig { text-align: center; width: 200px; }
-.sig .sig-photo { width: 132px; height: 58px; margin: 0 auto 6px; display: grid; place-items: center; overflow: hidden; }
+.sig .sig-photo { width: 132px; height: 52px; margin: 0 auto 6px; display: grid; place-items: center; overflow: hidden; }
 .sig .sig-photo img { width: 100%; height: 100%; object-fit: contain; }
 .sig .sig-line { border-top: 1.5px solid #12203a; padding-top: 5px; font-size: .8rem; font-weight: 700; color: #12203a; }
 .sig .sig-desig { font-size: .68rem; color: #5a6b88; }
 
 /* gold foil ribbon carrying the event name */
-.cert-ribbon { margin-top: 14px; width: 100%; padding: 8px 28px; text-align: center;
+.cert-ribbon { margin-top: 11px; width: 100%; padding: 7px 28px; text-align: center;
   background: linear-gradient(90deg, #b8901c, #e7c65a 18%, #fff3c4 50%, #e7c65a 82%, #b8901c);
   clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 50%, 100% 100%, 0 100%, 16px 50%);
   color: #3a2c05; font-size: .62rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(255,255,255,.45); }
-.cert-id { position: absolute; bottom: 9px; left: 0; right: 0; text-align: center; z-index: 7;
+.cert-id { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; z-index: 7;
   font-size: .58rem; color: #8a7a3a; letter-spacing: .12em; text-transform: uppercase; }
+
 
 /* ---------- Utility ---------- */
 .muted { color: var(--text-muted); }

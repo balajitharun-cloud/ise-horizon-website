@@ -195,10 +195,14 @@
   async function exportPng() {
     var p = window.__certCurrent; if (!p) return;
     var e = DB.event || {};
-    var W = 2000, H = 1414, PAD = 60;
+    var W = 2000, H = 1414, PAD = 56, BORD = 28;
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var x = c.getContext("2d");
     var cx = W / 2;
+    var CY = BORD + PAD;                 // top of the content box
+
+    // make sure the script face is ready before we draw the recipient name
+    try { if (document.fonts && document.fonts.load) await document.fonts.load('400 96px "Great Vibes"'); } catch (_) {}
 
     function ls(v) { try { x.letterSpacing = v; } catch (_) {} }
     function txt(t, y, f, color, spacing) {
@@ -209,63 +213,104 @@
       x.beginPath(); x.moveTo(dx, dy - r); x.lineTo(dx + r, dy);
       x.lineTo(dx, dy + r); x.lineTo(dx - r, dy); x.closePath(); x.fill();
     }
-    function goldRule(y, halfW, r) {
-      var g = x.createLinearGradient(cx - halfW, 0, cx + halfW, 0);
-      g.addColorStop(0, "rgba(201,162,39,0)"); g.addColorStop(.5, "#c9a227"); g.addColorStop(1, "rgba(201,162,39,0)");
-      x.fillStyle = g; x.fillRect(cx - halfW, y, halfW * 2, 4);
-      x.fillStyle = "#c9a227"; diamond(cx, y + 2, r);
-    }
 
-    // background
+    // ---------- background ----------
     x.fillStyle = "#fffdf7"; x.fillRect(0, 0, W, H);
 
-    // faint emblem watermark behind everything
+    // engraved guilloche rosette
+    x.save();
+    x.strokeStyle = "#c9a227"; x.lineWidth = 1.4; x.globalAlpha = .07;
+    for (var k = 0; k < 48; k++) {
+      x.save(); x.translate(cx, H / 2); x.rotate(k * Math.PI / 48);
+      x.beginPath(); x.ellipse(0, 0, 880, 376, 0, 0, Math.PI * 2); x.stroke();
+      x.restore();
+    }
+    x.restore();
+
+    // emblem watermark
     var wm = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo-t.png");
     if (wm) {
-      var wh = 1000, ww = wh * (wm.width / wm.height);
+      var wh = 960, ww = wh * (wm.width / wm.height);
       x.save();
-      try { x.globalAlpha = .055; if ("filter" in x) x.filter = "grayscale(1)"; } catch (_) {}
+      try { x.globalAlpha = .05; if ("filter" in x) x.filter = "grayscale(1)"; } catch (_) {}
       x.drawImage(wm, cx - ww / 2, (H - wh) / 2, ww, wh);
       try { x.filter = "none"; } catch (_) {}
       x.restore();
     }
 
-    // borders: navy outer, gold band, thin gold inner
+    // ---------- frame ----------
     x.strokeStyle = "#0b2a5b"; x.lineWidth = 28; x.strokeRect(14, 14, W - 28, H - 28);
-    x.strokeStyle = "#c9a227"; x.lineWidth = 6;  x.strokeRect(40, 40, W - 80, H - 80);
+    x.strokeStyle = "#c9a227"; x.lineWidth = 6;  x.strokeRect(38, 38, W - 76, H - 76);
     x.globalAlpha = .55; x.lineWidth = 2; x.strokeRect(58, 58, W - 116, H - 116); x.globalAlpha = 1;
 
-    // corner diamonds
-    x.fillStyle = "#c9a227";
-    [[79, 79], [W - 79, 79], [79, H - 79], [W - 79, H - 79]].forEach(function (pt) { diamond(pt[0], pt[1], 15); });
+    // filigree corner ornaments
+    function corner(ox, oy, ang) {
+      var sc = 232 / 120;
+      x.save(); x.translate(ox, oy); x.rotate(ang); x.scale(sc, sc);
+      x.strokeStyle = "#c9a227"; x.lineCap = "round"; x.lineWidth = 1.7;
+      x.beginPath(); x.arc(116, 116, 112, Math.PI, 1.5 * Math.PI); x.stroke();
+      x.beginPath(); x.arc(116, 116, 96, Math.PI, 1.5 * Math.PI); x.stroke();
+      x.beginPath(); x.moveTo(116, 20);
+      x.bezierCurveTo(88, 20, 68, 30, 62, 50);
+      x.bezierCurveTo(58, 64, 68, 74, 80, 70);
+      x.stroke();
+      x.fillStyle = "#c9a227";
+      x.beginPath(); x.moveTo(4, 110); x.lineTo(9, 116); x.lineTo(4, 122); x.lineTo(-1, 116); x.closePath(); x.fill();
+      x.beginPath(); x.moveTo(116, 4); x.lineTo(122, 9); x.lineTo(116, 14); x.lineTo(110, 9); x.closePath(); x.fill();
+      x.restore();
+    }
+    var px0 = BORD, py0 = BORD, px1 = W - BORD, py1 = H - BORD;
+    corner(px0, py0, 0); corner(px1, py0, Math.PI / 2);
+    corner(px1, py1, Math.PI); corner(px0, py1, 1.5 * Math.PI);
 
-    // header logos: university seal | club emblem | college logo
+    // ---------- header ----------
     var seal = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.seal) || "assets/images/vtu-seal.jpeg");
     var college = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.logo) || "assets/images/college-logo.jpeg");
     var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
-    if (seal) x.drawImage(seal, PAD, PAD, 120, 120);
-    if (college) x.drawImage(college, W - PAD - 120, PAD, 120, 120);
-    if (club) x.drawImage(club, cx - 54, PAD + 2, 108, 120);
+    if (seal) x.drawImage(seal, PAD, CY + 19, 112, 112);
+    if (college) x.drawImage(college, W - PAD - 112, CY + 19, 112, 112);
 
-    // headings
-    txt("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 236, "700 42px Georgia, serif", "#0b2a5b", "2px");
-    txt("KARNATAKA, INDIA", 266, "22px Arial, sans-serif", "#6a5a1e", "6px");
-    txt("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 312, "700 36px Georgia, serif", "#f26522", "1px");
-    txt("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 340, "20px Arial, sans-serif", "#5a6b88", "3px");
+    // gold medallion crest
+    var crestY = CY + 76;
+    x.beginPath(); x.arc(cx, crestY, 88, 0, Math.PI * 2);
+    x.lineWidth = 2; x.strokeStyle = "#c9a227"; x.globalAlpha = .5; x.stroke(); x.globalAlpha = 1;
+    var cg = x.createRadialGradient(cx, crestY - 30, 8, cx, crestY, 76);
+    cg.addColorStop(0, "#fffaea"); cg.addColorStop(.7, "#f0e2b6"); cg.addColorStop(1, "#e2cf94");
+    x.beginPath(); x.arc(cx, crestY, 76, 0, Math.PI * 2); x.fillStyle = cg; x.fill();
+    x.lineWidth = 4; x.strokeStyle = "#c9a227"; x.stroke();
+    x.beginPath(); x.arc(cx, crestY, 62, 0, Math.PI * 2);
+    x.lineWidth = 1.5; x.globalAlpha = .7; x.stroke(); x.globalAlpha = 1;
+    if (club) x.drawImage(club, cx - 50, crestY - 58, 100, 116);
+    x.fillStyle = "#c9a227"; diamond(cx, crestY - 108, 11); diamond(cx, crestY + 104, 8);
+
+    // ---------- headings ----------
+    txt("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 304, "700 41px Georgia, serif", "#0b2a5b", "2px");
+    txt("KARNATAKA, INDIA", 338, "22px Arial, sans-serif", "#6a5a1e", "6px");
+    txt("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 396, "700 35px Georgia, serif", "#f26522", "1px");
+    txt("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 444, "20px Arial, sans-serif", "#5a6b88", "3px");
 
     // ornamental divider
-    goldRule(372, 420, 11);
+    (function () {
+      var halfW = 420, y = 486;
+      var g = x.createLinearGradient(cx - halfW, 0, cx + halfW, 0);
+      g.addColorStop(0, "rgba(201,162,39,0)"); g.addColorStop(.5, "#c9a227"); g.addColorStop(1, "rgba(201,162,39,0)");
+      x.fillStyle = g; x.fillRect(cx - halfW, y, halfW * 2, 4);
+      x.fillStyle = "#c9a227"; diamond(cx, y + 2, 11);
+    })();
 
-    // title
-    txt("CERTIFICATE", 456, "700 64px Georgia, serif", "#0b2a5b", "14px");
-    txt((e.subtitle || "of Participation").toUpperCase(), 488, "22px Arial, sans-serif", "#8a7a3a", "8px");
+    // gold-foil title
+    var tg = x.createLinearGradient(0, 540, 0, 590);
+    tg.addColorStop(0, "#d9b23f"); tg.addColorStop(.42, "#f7e8ab");
+    tg.addColorStop(.68, "#c9a227"); tg.addColorStop(1, "#8f6f12");
+    txt("CERTIFICATE", 566, "700 66px Georgia, serif", tg, "14px");
+    txt((e.subtitle || "of Participation").toUpperCase(), 634, "22px Arial, sans-serif", "#8a7a3a", "8px");
 
-    // recipient
-    txt("This is to certify that", 538, "26px Georgia, serif", "#33415c", "1px");
-    txt(p.name, 604, "700 64px Georgia, serif", "#12203a", "0px");
-    x.font = "700 64px Georgia, serif";
-    var nw = Math.max(520, Math.min(880, x.measureText(p.name).width + 180));
-    var fy = 622, half = nw / 2;
+    // ---------- recipient ----------
+    txt("This is to certify that", 690, "26px Georgia, serif", "#33415c", "1px");
+    txt(p.name, 792, '400 96px "Great Vibes", cursive', "#10203c", "0px");
+    x.font = '400 96px "Great Vibes", cursive';
+    var nw = Math.max(560, Math.min(900, x.measureText(p.name).width + 180));
+    var fy = 818, half = nw / 2;
     var gl = x.createLinearGradient(cx - half, 0, cx, 0);
     gl.addColorStop(0, "rgba(201,162,39,0)"); gl.addColorStop(1, "#c9a227");
     x.fillStyle = gl; x.fillRect(cx - half, fy, half - 10, 3);
@@ -273,31 +318,31 @@
     gr.addColorStop(0, "#c9a227"); gr.addColorStop(1, "rgba(201,162,39,0)");
     x.fillStyle = gr; x.fillRect(cx + 10, fy, half - 10, 3);
     x.fillStyle = "#c9a227"; diamond(cx, fy + 1, 9);
-    txt("USN: " + normUsn(p.usn), 662, "22px Arial, sans-serif", "#5a6b88", "5px");
+    txt("USN: " + normUsn(p.usn), 852, "22px Arial, sans-serif", "#5a6b88", "5px");
 
-    // body
+    // ---------- body ----------
     var body = e.body || "has actively participated in the event and is hereby awarded this certificate of participation.";
     x.font = "26px Georgia, serif"; x.fillStyle = "#33415c"; x.textAlign = "center";
     var lines = wrapText(x, body, 1400);
-    lines.forEach(function (l, i) { x.fillText(l, cx, 716 + i * 40); });
+    lines.forEach(function (l, i) { x.fillText(l, cx, 922 + i * 48); });
 
-    // signatures
+    // ---------- signatures ----------
     var signs = (DB.signatories || []).slice(0, 3);
     var cxs = signs.length === 1 ? [1000] : signs.length === 2 ? [560, 1440] : [420, 1000, 1580];
-    var boxW = 264, boxH = 116, boxY = 1080;
+    var boxW = 264, boxH = 104, boxY = 1002;
     for (var i = 0; i < signs.length; i++) {
       var s = signs[i], scx = cxs[i];
       var ph = await loadImg(s.photo);
-      if (ph) x.drawImage(ph, scx - boxW / 2 + 4, boxY + 4, boxW - 8, boxH - 8);
-      x.strokeStyle = "#12203a"; x.lineWidth = 2; x.beginPath(); x.moveTo(scx - 150, 1210); x.lineTo(scx + 150, 1210); x.stroke();
-      x.font = "700 22px Georgia, serif"; ls("0px"); x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1242);
-      x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1268);
+      if (ph) x.drawImage(ph, scx - boxW / 2, boxY, boxW, boxH);
+      x.strokeStyle = "#12203a"; x.lineWidth = 2; x.beginPath(); x.moveTo(scx - 150, 1118); x.lineTo(scx + 150, 1118); x.stroke();
+      x.font = "700 22px Georgia, serif"; ls("0px"); x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1154);
+      x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1190);
     }
 
-    // gold foil ribbon with the event name + date
+    // ---------- gold foil ribbon ----------
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";
     var evText = ((e.title || "AVYAKT") + (dateStr ? " · " + dateStr : "")).toUpperCase();
-    var ry = 1298, rh = 56;
+    var ry = 1252, rh = 60;
     var rg = x.createLinearGradient(PAD, 0, W - PAD, 0);
     rg.addColorStop(0, "#b8901c"); rg.addColorStop(.18, "#e7c65a"); rg.addColorStop(.5, "#fff3c4");
     rg.addColorStop(.82, "#e7c65a"); rg.addColorStop(1, "#b8901c");
@@ -308,11 +353,11 @@
     x.lineTo(PAD, ry + rh); x.lineTo(PAD + 32, ry + rh / 2);
     x.closePath(); x.fill();
     x.font = "700 22px Arial, sans-serif"; ls("6px"); x.fillStyle = "#3a2c05"; x.textAlign = "center";
-    x.fillText(evText, cx, ry + 36); ls("0px");
+    x.fillText(evText, cx, ry + 38); ls("0px");
 
-    // certificate id, centred under the ribbon
+    // ---------- certificate id ----------
     x.font = "18px Arial, sans-serif"; ls("2px"); x.fillStyle = "#8a7a3a"; x.textAlign = "center";
-    x.fillText("CERTIFICATE ID: HZ-" + normUsn(p.usn), cx, 1372); ls("0px");
+    x.fillText("CERTIFICATE ID: HZ-" + normUsn(p.usn), cx, 1366); ls("0px");
 
     var url = c.toDataURL("image/png");
     var a = document.createElement("a");
