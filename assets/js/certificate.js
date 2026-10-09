@@ -293,7 +293,7 @@
     }
     $("#m-unlock").addEventListener("click", function () {
       var note = $("#mGateNote");
-      if ($("#m-pass").value === DEFAULT_PASSCODE) {
+      if (String($("#m-pass").value || "").trim().toLowerCase() === DEFAULT_PASSCODE.toLowerCase()) {
         try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
         unlock();
       } else { note.className = "notice err show"; note.textContent = "Incorrect passcode. Try again."; }

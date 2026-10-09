@@ -1,5 +1,5 @@
 /* AVYAKT — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v12";
+var CACHE = "horizon-v13";
 var ASSETS = [
   "./",
   "index.html",
@@ -40,14 +40,34 @@ self.addEventListener("activate", function (e) {
 
 self.addEventListener("fetch", function (e) {
   var req = e.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
+  if (req.method !== "GET") return;
+  var url;
+  try { url = new URL(req.url); } catch (err) { return; }
+  if (url.origin !== location.origin) return;
+  var dest = req.destination;
+
+  // Documents, scripts and styles: network-first, so updates always arrive.
+  if (req.mode === "navigate" || dest === "script" || dest === "style" || dest === "document") {
+    e.respondWith(
+      fetch(req).then(function (res) {
+        var copy = res.clone();
+        caches.open(CACHE).then(function (c) { c.put(req, copy); });
+        return res;
+      }).catch(function () {
+        return caches.match(req).then(function (m) { return m || caches.match("index.html"); });
+      })
+    );
+    return;
+  }
+
+  // Everything else (images, fonts): cache-first.
   e.respondWith(
     caches.match(req).then(function (cached) {
       return cached || fetch(req).then(function (res) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copy); });
         return res;
-      }).catch(function () { return caches.match("index.html"); });
+      });
     })
   );
 });

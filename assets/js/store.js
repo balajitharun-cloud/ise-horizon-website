@@ -108,7 +108,7 @@
     },
 
     unlock: function (pass) {
-      if (String(pass) === PASSCODE) {
+      if (String(pass == null ? "" : pass).trim().toLowerCase() === PASSCODE.toLowerCase()) {
         try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
         return true;
       }
