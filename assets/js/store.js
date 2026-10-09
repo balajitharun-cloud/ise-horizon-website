@@ -64,6 +64,7 @@
     var d = defaults();
     o = o || {};
     o.settings = Object.assign(d.settings, o.settings || {});
+    o.settings.passcode = PASSCODE;   // passcode always comes from the code, never from stored data
     o.hackathon = Object.assign(d.hackathon, o.hackathon || {});
     ["events", "pastEvents", "news", "projects", "gallery", "members", "history", "achievements"].forEach(function (k) {
       o[k] = Array.isArray(o[k]) ? o[k] : d[k];
@@ -107,7 +108,7 @@
     },
 
     unlock: function (pass) {
-      if (String(pass) === (data.settings.passcode || PASSCODE)) {
+      if (String(pass) === PASSCODE) {
         try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
         return true;
       }

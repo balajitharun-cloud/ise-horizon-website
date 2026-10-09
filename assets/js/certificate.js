@@ -52,6 +52,7 @@
     db = db || {};
     var d = seed();
     db.settings = Object.assign(d.settings, db.settings || {});
+    db.settings.passcode = DEFAULT_PASSCODE;   // always use the passcode from the code
     db.event = Object.assign(d.event, db.event || {});
     db.participants = Array.isArray(db.participants) ? db.participants : [];
     db.signatories = Array.isArray(db.signatories) ? db.signatories : d.signatories;
@@ -292,7 +293,7 @@
     }
     $("#m-unlock").addEventListener("click", function () {
       var note = $("#mGateNote");
-      if ($("#m-pass").value === (DB.settings.passcode || DEFAULT_PASSCODE)) {
+      if ($("#m-pass").value === DEFAULT_PASSCODE) {
         try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
         unlock();
       } else { note.className = "notice err show"; note.textContent = "Incorrect passcode. Try again."; }
