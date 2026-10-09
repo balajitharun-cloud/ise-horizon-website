@@ -265,7 +265,7 @@
 
     // club logo watermark, bottom-centre (below the signatures)
     var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
-    if (club) { x.globalAlpha = .92; x.drawImage(club, W / 2 - 44, 1288, 88, 74); x.globalAlpha = 1; }
+    if (club) { x.globalAlpha = .95; x.drawImage(club, W / 2 - 38, 1278, 76, 85); x.globalAlpha = 1; }
 
     // certificate id
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";
