@@ -36,7 +36,7 @@
       ],
       signatories: [
         { name: "Ankush S", designation: "President, AVYAKT", photo: "" },
-        { name: "Haritha", designation: "Vice President, AVYAKT", photo: "" },
+        { name: "Haritha G.S", designation: "Vice President, AVYAKT", photo: "" },
         { name: "The Principal", designation: "Kalpataru Institute of Technology", photo: "" }
       ]
     };

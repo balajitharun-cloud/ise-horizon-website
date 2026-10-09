@@ -28,17 +28,17 @@ window.HORIZON = {
   /* ---------- Leadership / core committee ---------- */
   team: [
     { name: "Ankush S", role: "President", initials: "AS" },
-    { name: "Haritha", role: "Vice President", initials: "H" },
+    { name: "Haritha G.S", role: "Vice President", initials: "HG" },
     { name: "Akash", role: "Secretary", initials: "A" },
-    { name: "Likitha", role: "Speaker", initials: "L" },
+    { name: "Likhita H.R", role: "Speaker", initials: "LH" },
     { name: "Vinup N", role: "Treasurer", initials: "VN" },
     { name: "Deepak K B", role: "Treasurer", initials: "DK" },
-    { name: "Prakruti", role: "Treasurer", initials: "P" },
-    { name: "Chitra", role: "Cultural", initials: "C" },
-    { name: "B.B Fareeha", role: "Cultural", initials: "BF" },
+    { name: "Prakruti N", role: "Treasurer", initials: "PN" },
+    { name: "Chitra D", role: "Cultural", initials: "CD" },
+    { name: "Bi Bi Fareeha", role: "Cultural", initials: "BF" },
     { name: "Saraswati", role: "Cultural", initials: "S" },
     { name: "Balaji Tharun", role: "Technical Team", initials: "BT" },
     { name: "Shubhadeep B P", role: "Technical Team", initials: "SB" },
-    { name: "Shreyas", role: "Technical Team", initials: "S" }
+    { name: "Shreyas K.S", role: "Technical Team", initials: "SK" }
   ]
 };
