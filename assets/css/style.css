@@ -199,8 +199,8 @@ p { margin: 0 0 1rem; }
 .hero-logos { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
 .hero-logos img { width: 56px; height: 56px; border-radius: 50%; background: #fff; padding: 3px; object-fit: cover; }
 .hero-logos img.logo-badge {
-  width: 56px; height: 56px; border-radius: 14px; background: #000; padding: 3px; object-fit: contain;
-  box-shadow: 0 0 0 1px rgba(90,140,255,.5), 0 6px 18px rgba(0,0,0,.45);
+  width: 76px; height: 76px; border-radius: 18px; background: #000; padding: 4px; object-fit: contain;
+  box-shadow: 0 0 0 1px rgba(90,140,255,.5), 0 10px 30px rgba(0,0,0,.45);
 }
 .hero-logos .divider { width: 1px; height: 40px; background: rgba(255,255,255,.3); }
 .hero .tagline { color: rgba(255,255,255,.85); font-size: clamp(1rem, 2.6vw, 1.2rem); max-width: 46ch; }

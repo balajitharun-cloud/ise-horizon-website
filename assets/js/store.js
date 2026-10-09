@@ -7,7 +7,7 @@
 (function () {
   "use strict";
   var KEY = "horizon-content-v1";
-  var PASSCODE = "123@2007";           // elite-member passcode
+  var PASSCODE = "ise@2007";           // elite-member passcode
   var SESSION = "horizon-member";      // sessionStorage unlock flag
 
   function today() { return new Date().toISOString().slice(0, 10); }
@@ -31,6 +31,10 @@
           excerpt: "Our new club portal is live.", body: "Events, projects and updates are published here by the core committee." }
       ],
       projects: [],      // student projects (managed) — each may carry a GitHub URL
+      history: [
+        { id: "h1", year: "2026", text: "AVYAKT was founded by students of the Department of Information Science & Engineering at Kalpataru Institute of Technology." }
+      ],
+      achievements: [],  // Hall of Fame (managed by the committee)
       gallery: [
         { id: "g1", caption: "HORIZON Hackathon — final demo round", emoji: "🚀", wide: true },
         { id: "g2", caption: "Workshop in the computer lab", emoji: "🤖" },
@@ -61,7 +65,7 @@
     o = o || {};
     o.settings = Object.assign(d.settings, o.settings || {});
     o.hackathon = Object.assign(d.hackathon, o.hackathon || {});
-    ["events", "pastEvents", "news", "projects", "gallery", "members"].forEach(function (k) {
+    ["events", "pastEvents", "news", "projects", "gallery", "members", "history", "achievements"].forEach(function (k) {
       o[k] = Array.isArray(o[k]) ? o[k] : d[k];
     });
     return o;

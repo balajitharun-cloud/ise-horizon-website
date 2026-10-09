@@ -8,7 +8,7 @@
   "use strict";
   var KEY = "horizon-cert-db";
   var SESSION = "horizon-member-unlocked";
-  var DEFAULT_PASSCODE = "123@2007";
+  var DEFAULT_PASSCODE = "ise@2007";
 
   var $ = window.HorizonApp.$;
   var $$ = window.HorizonApp.$$;
@@ -35,8 +35,8 @@
         { name: "Priya Deshpande", usn: "1KT23IS008" }
       ],
       signatories: [
-        { name: "Dr. Sunitha R.", designation: "Faculty Coordinator, AVYAKT", photo: "" },
-        { name: "Aarav Kulkarni", designation: "President, AVYAKT", photo: "" },
+        { name: "Ankush S", designation: "President, AVYAKT", photo: "" },
+        { name: "Haritha", designation: "Vice President, AVYAKT", photo: "" },
         { name: "The Principal", designation: "Kalpataru Institute of Technology", photo: "" }
       ]
     };

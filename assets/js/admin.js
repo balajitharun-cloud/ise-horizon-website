@@ -78,10 +78,29 @@
       ],
       title: function (it) { return it.name + (it.usn ? " · " + it.usn : ""); },
       sub: function (it) { return (it.role || "") + (it.year ? " · " + it.year : ""); }
+    },
+    history: {
+      label: "History", icon: "🕓", addLabel: "Add history entry",
+      fields: [
+        { k: "year", l: "Year", t: "text", req: true, ph: "2026" },
+        { k: "text", l: "What happened", t: "textarea" }
+      ],
+      title: function (it) { return it.year; },
+      sub: function (it) { return it.text || ""; }
+    },
+    achievements: {
+      label: "Hall of Fame", icon: "🏆", addLabel: "Add achievement",
+      fields: [
+        { k: "year", l: "Year", t: "text", ph: "2026" },
+        { k: "title", l: "Achievement / winner", t: "text", req: true },
+        { k: "detail", l: "Details (event, position)", t: "textarea" }
+      ],
+      title: function (it) { return it.title; },
+      sub: function (it) { return (it.year || "") + (it.detail ? " · " + it.detail : ""); }
     }
   };
 
-  var TABS = ["events", "news", "projects", "gallery", "members", "hackathon", "stats", "data"];
+  var TABS = ["events", "news", "projects", "gallery", "members", "history", "achievements", "hackathon", "stats", "data"];
   var current = "events";
   var editingId = null;
 
@@ -243,7 +262,10 @@
     $$("[data-archive]").forEach(function (b) {
       b.addEventListener("click", function () {
         var id = this.getAttribute("data-archive"), it = S.find("events", id); if (!it) return;
-        S.add("pastEvents", it); S.remove("events", id); renderBody();
+        S.add("pastEvents", it); S.remove("events", id);
+        // an event was completed -> bump the Events-hosted counter
+        var st = S.get().settings; st.eventsHosted = (parseInt(st.eventsHosted, 10) || 0) + 1; S.save();
+        renderBody();
       });
     });
   }

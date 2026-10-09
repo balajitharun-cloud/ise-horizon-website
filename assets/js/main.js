@@ -102,10 +102,9 @@
             '<div class="socials">' + social + "</div>" +
           "</div>" +
           '<div class="footer-col"><h4>Explore</h4><ul>' + nav + "</ul></div>" +
-          '<div class="footer-col"><h4>Contact</h4><ul>' +
-            "<li>✉️ <a href=\"mailto:" + esc(club.email) + "\">" + esc(club.email) + "</a></li>" +
-            "<li>📞 " + esc(club.phone) + "</li>" +
+          '<div class="footer-col"><h4>Find us</h4><ul>' +
             "<li>📍 " + esc(club.address) + "</li>" +
+            '<li><a href="contact.html">Contact page</a></li>' +
           "</ul></div>" +
         "</div>" +
         '<div class="footer-bottom">' +
@@ -327,18 +326,17 @@
       var d = S.get();
       var tl = $("#aboutTimeline");
       if (tl) {
-        var history = [
-          { year: "2021", text: "AVYAKT founded with 24 students and a single weekly coding circle." },
-          { year: "2023", text: "Crossed 200 members; hosted the first inter-college hackathon." },
-          { year: "2025", text: "Launched the Learning Hub and the Projects Showcase; 40+ events hosted." },
-          { year: "2026", text: "Named Best Student Club at KIT Tech Day; 600+ active members." }
-        ];
-        tl.innerHTML = history.map(function (h) { return '<div class="item"><div class="year">' + h.year + '</div><div>' + esc(h.text) + "</div></div>"; }).join("");
+        var hist = (d.history || []).slice().sort(function (a, b) { return String(a.year || "") < String(b.year || "") ? -1 : 1; });
+        tl.innerHTML = hist.length
+          ? hist.map(function (h) { return '<div class="item"><div class="year">' + esc(h.year) + '</div><div>' + esc(h.text) + "</div></div>"; }).join("")
+          : emptyState("🕓", "No history yet", "The club history is added here by the committee.");
       }
       var ach = $("#aboutAchievements");
-      if (ach) ach.innerHTML = (H.achievements || []).map(function (a) {
-        return '<article class="card"><div class="card-body"><span class="chip chip--orange mb-2">' + esc(a.year) + "</span><h3>" + esc(a.title) + '</h3><p class="muted small">' + esc(a.detail) + "</p></div></article>";
-      }).join("");
+      if (ach) ach.innerHTML = (d.achievements || []).length
+        ? (d.achievements || []).map(function (a) {
+            return '<article class="card"><div class="card-body"><span class="chip chip--orange mb-2">' + esc(a.year || "") + "</span><h3>" + esc(a.title) + '</h3><p class="muted small">' + esc(a.detail || "") + "</p></div></article>";
+          }).join("")
+        : emptyState("🏆", "No achievements yet", "Event winners and awards are added here by the committee.");
       var news = $("#aboutNews");
       if (news) news.innerHTML = (d.news || []).length
         ? (d.news || []).map(function (a) {

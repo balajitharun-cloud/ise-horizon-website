@@ -1,5 +1,5 @@
 /* AVYAKT — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v10";
+var CACHE = "horizon-v11";
 var ASSETS = [
   "./",
   "index.html",

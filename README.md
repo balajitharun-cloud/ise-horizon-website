@@ -29,7 +29,7 @@ worker** for offline use.
 
 ---
 
-## Member Panel (`admin.html`) — passcode `123@2007`
+## Member Panel (`admin.html`) — passcode `ise@2007`
 
 Elite members manage everything from here:
 
@@ -61,7 +61,7 @@ between devices, or connect a backend later for a shared, multi-user list.
 - **Member mode:** same passcode — set the event name/date/wording, upload the
   participant list (paste `Name, USN` lines or a `.csv`/`.txt`), and manage signatories.
 
-> Passcode: **`123@2007`**. Change it in `assets/js/store.js` (`PASSCODE`) before going
+> Passcode: **`ise@2007`**. Change it in `assets/js/store.js` (`PASSCODE`) before going
 > live if you wish.
 
 ---
