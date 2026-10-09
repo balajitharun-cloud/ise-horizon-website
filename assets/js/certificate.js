@@ -211,38 +211,41 @@
     var logoSrc = (window.HORIZON_IMG && window.HORIZON_IMG.logo) || "assets/images/college-logo.jpeg";
     var seal = await loadImg(sealSrc);
     var logo = await loadImg(logoSrc);
-    if (seal) x.drawImage(seal, 560, 92, 150, 150);
-    if (logo) x.drawImage(logo, 1290, 92, 150, 150);
+    // header row: university seal | club logo | college logo
+    if (seal) x.drawImage(seal, 80, 78, 130, 130);
+    if (logo) x.drawImage(logo, W - 210, 78, 130, 130);
+    var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
+    if (club) x.drawImage(club, W / 2 - 55, 82, 110, 124);
 
-    // headings
-    center("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 165, "700 40px Georgia, serif", "#0b2a5b");
-    center("KARNATAKA, INDIA", 200, "18px Arial, sans-serif", "#6a5a1e");
-    center("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 258, "700 34px Georgia, serif", "#f26522");
-    center("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 292, "18px Arial, sans-serif", "#5a6b88");
+    // headings, on the lines below the logos
+    center("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 262, "700 40px Georgia, serif", "#0b2a5b");
+    center("KARNATAKA, INDIA", 298, "18px Arial, sans-serif", "#6a5a1e");
+    center("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 352, "700 34px Georgia, serif", "#f26522");
+    center("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 388, "18px Arial, sans-serif", "#5a6b88");
 
     // gold rule
     var grd = x.createLinearGradient(600, 0, 1400, 0);
     grd.addColorStop(0, "rgba(201,162,39,0)"); grd.addColorStop(.5, "#c9a227"); grd.addColorStop(1, "rgba(201,162,39,0)");
-    x.fillStyle = grd; x.fillRect(600, 322, 800, 3);
+    x.fillStyle = grd; x.fillRect(600, 414, 800, 3);
 
     // title
-    center("CERTIFICATE", 412, "400 66px Georgia, serif", "#0b2a5b");
-    center((e.subtitle || "of Participation").toUpperCase(), 452, "24px Arial, sans-serif", "#5a6b88");
+    center("CERTIFICATE", 492, "400 66px Georgia, serif", "#0b2a5b");
+    center((e.subtitle || "of Participation").toUpperCase(), 532, "24px Arial, sans-serif", "#5a6b88");
 
     // recipient
-    center("This is to certify that", 512, "24px Georgia, serif", "#33415c");
+    center("This is to certify that", 588, "24px Georgia, serif", "#33415c");
     x.textAlign = "center";
     x.font = "700 56px Georgia, serif"; x.fillStyle = "#12203a";
-    x.fillText(p.name, cx, 590);
+    x.fillText(p.name, cx, 660);
     var nw = Math.max(500, x.measureText(p.name).width + 120);
-    x.fillStyle = "#c9a227"; x.fillRect(cx - nw / 2, 606, nw, 3);
-    center("USN: " + normUsn(p.usn), 645, "20px Arial, sans-serif", "#5a6b88");
+    x.fillStyle = "#c9a227"; x.fillRect(cx - nw / 2, 676, nw, 3);
+    center("USN: " + normUsn(p.usn), 714, "20px Arial, sans-serif", "#5a6b88");
 
     // body
     var body = e.body || "has actively participated in the event and is hereby awarded this certificate of participation.";
     x.font = "24px Georgia, serif"; x.fillStyle = "#33415c"; x.textAlign = "center";
     var lines = wrapText(x, body, 1500);
-    lines.forEach(function (l, i) { x.fillText(l, cx, 710 + i * 38); });
+    lines.forEach(function (l, i) { x.fillText(l, cx, 776 + i * 38); });
 
     // signature row sits above the club-logo watermark
     var signs = (DB.signatories || []).slice(0, 3);
@@ -261,10 +264,6 @@
       x.font = "700 22px Georgia, serif"; x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1214);
       x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1240);
     }
-
-    // club logo watermark, bottom-centre (below the signatures)
-    var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
-    if (club) { x.globalAlpha = .95; x.drawImage(club, W / 2 - 38, 1278, 76, 85); x.globalAlpha = 1; }
 
     // certificate id
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";

@@ -342,7 +342,7 @@ p { margin: 0 0 1rem; }
 .cert-scaler { width: 100%; display: flex; justify-content: center; }
 .certificate {
   width: 1000px; aspect-ratio: 1.414 / 1; background: #fffdf7; color: #12203a;
-  margin: 0 auto; position: relative; padding: 30px;
+  margin: 0 auto; position: relative; padding: 26px;
   border: 14px solid var(--brand-blue); box-shadow: var(--shadow-lg);
   font-family: "Georgia", "Times New Roman", serif;
   display: flex; flex-direction: column; align-items: center; text-align: center;
@@ -354,19 +354,20 @@ p { margin: 0 0 1rem; }
   content: ""; position: absolute; inset: 14px; border: 1px solid var(--brand-gold); opacity: .5; pointer-events: none;
 }
 .cert-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; }
-.cert-top { display: flex; align-items: center; gap: 16px; width: 100%; justify-content: center; }
-.cert-top img { width: 78px; height: 78px; object-fit: contain; }
-.cert-uni { font-size: 1.35rem; font-weight: 700; letter-spacing: .04em; color: var(--brand-blue); font-family: "Georgia", serif; text-transform: uppercase; }
+.cert-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.cert-top img { width: 58px; height: 58px; object-fit: contain; }
+.cert-top img#certClubLogo { width: 52px; height: 58px; }
+.cert-uni { font-size: 1.35rem; font-weight: 700; letter-spacing: .04em; color: var(--brand-blue); font-family: "Georgia", serif; text-transform: uppercase; margin-top: 6px; }
 .cert-uni-sub { font-size: .8rem; letter-spacing: .22em; text-transform: uppercase; color: #6a5a1e; }
 .cert-college { font-size: 1.15rem; font-weight: 700; color: var(--brand-orange); margin-top: 4px; text-transform: uppercase; letter-spacing: .03em; }
 .cert-college-sub { font-size: .74rem; letter-spacing: .16em; text-transform: uppercase; color: #5a6b88; }
-.cert-rule { width: 70%; height: 2px; background: linear-gradient(90deg, transparent, var(--brand-gold), transparent); margin: 12px 0; }
+.cert-rule { width: 70%; height: 2px; background: linear-gradient(90deg, transparent, var(--brand-gold), transparent); margin: 8px 0; }
 .cert-title { font-size: 2.1rem; letter-spacing: .12em; text-transform: uppercase; color: var(--brand-blue); margin: 4px 0 2px; font-family: "Georgia", serif; }
 .cert-subtitle { font-size: .92rem; color: #5a6b88; letter-spacing: .06em; }
-.cert-name { font-size: 2rem; font-weight: 700; color: #12203a; font-family: "Georgia", serif; border-bottom: 2px solid var(--brand-gold); display: inline-block; padding: 0 22px 4px; margin: 14px 0 6px; min-width: 40%; }
+.cert-name { font-size: 2rem; font-weight: 700; color: #12203a; font-family: "Georgia", serif; border-bottom: 2px solid var(--brand-gold); display: inline-block; padding: 0 22px 4px; margin: 6px 0 4px; min-width: 40%; }
 .cert-body { font-size: .98rem; color: #33415c; max-width: 720px; line-height: 1.7; }
 .cert-usn { font-size: .82rem; color: #5a6b88; letter-spacing: .1em; margin-top: 4px; }
-.cert-foot { margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding: 0 10px 62px; }
+.cert-foot { margin-top: auto; width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; padding: 0 10px 22px; }
 .sig { text-align: center; width: 190px; }
 .sig .sig-photo { width: 130px; height: 62px; margin: 0 auto 6px; border: 1px dashed #b9a45a; border-radius: 6px; display: grid; place-items: center; color: #b9a45a; font-size: .62rem; background: #fffef9; overflow: hidden; }
 .sig .sig-photo img { width: 100%; height: 100%; object-fit: contain; }
