@@ -252,5 +252,25 @@
 <script src="assets/js/assets-data.js?v=21"></script>
 <script src="assets/js/main.js?v=21"></script>
 <script src="assets/js/certificate.js?v=21"></script>
+<script>
+window.addEventListener("load",function(){setTimeout(function(){
+  document.getElementById("s-name").value="Aarav Kulkarni";
+  document.getElementById("s-usn").value="1KT23IS001";
+  document.getElementById("certLookupForm").dispatchEvent(new Event("submit",{cancelable:true,bubbles:true}));
+  setTimeout(function(){
+    var cert=document.getElementById("certificate"), inner=document.querySelector(".cert-inner");
+    var rb=document.querySelector(".cert-ribbon").getBoundingClientRect();
+    var ft=document.querySelector(".cert-foot").getBoundingClientRect();
+    var id=document.getElementById("certId").getBoundingClientRect();
+    var msg="cert="+Math.round(cert.getBoundingClientRect().width)+"x"+Math.round(cert.getBoundingClientRect().height)
+      +" innerScroll="+inner.scrollHeight+" innerClient="+inner.clientHeight
+      +" footBottom="+Math.round(ft.bottom)+" ribbonTop="+Math.round(rb.top)
+      +" ribbonBottom="+Math.round(rb.bottom)+" idTop="+Math.round(id.top);
+    // isolate the certificate for a clean screenshot
+    var c=document.getElementById("certificate"); c.style.zoom="1";
+    document.body.innerHTML=""; document.body.style.margin="0"; document.body.appendChild(c);
+    document.title=msg;
+  },800);
+},400);});</script>
 </body>
 </html>

@@ -105,7 +105,9 @@
     var body = e.body || "has actively participated in the event and is hereby awarded this certificate of participation.";
     $("#certBody").textContent = body;
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";
-    $("#certId").textContent = "Certificate ID: HZ-" + normUsn(p.usn) + (dateStr ? " · " + dateStr : "");
+    $("#certId").textContent = "Certificate ID: HZ-" + normUsn(p.usn);
+    var evLine = $("#certEventLine");
+    if (evLine) evLine.textContent = (e.title || "AVYAKT") + (dateStr ? " · " + dateStr : "");
     renderSignatories();
     $("#certStageWrap").classList.remove("hidden");
     window.__certCurrent = p;
@@ -114,7 +116,7 @@
   }
 
   function sigBlock(s, idx) {
-    var photo = s && s.photo ? '<img src="' + esc(s.photo) + '" alt="">' : "photo";
+    var photo = s && s.photo ? '<img src="' + esc(s.photo) + '" alt="">' : "";
     var name = s && s.name ? esc(s.name) : "";
     var desig = s && s.designation ? esc(s.designation) : "";
     return '<div class="sig-photo">' + photo + '</div><div class="sig-line">' + name + '</div><div class="sig-desig">' + desig + "</div>";
@@ -192,84 +194,125 @@
   }
   async function exportPng() {
     var p = window.__certCurrent; if (!p) return;
-    var e = DB.event;
-    var W = 2000, H = 1414;
+    var e = DB.event || {};
+    var W = 2000, H = 1414, PAD = 60;
     var c = document.createElement("canvas"); c.width = W; c.height = H;
     var x = c.getContext("2d");
-
-    // background + borders
-    x.fillStyle = "#fffdf7"; x.fillRect(0, 0, W, H);
-    x.strokeStyle = "#0b2a5b"; x.lineWidth = 28; x.strokeRect(14, 14, W - 28, H - 28);
-    x.strokeStyle = "#c9a227"; x.lineWidth = 5; x.strokeRect(52, 52, W - 104, H - 104);
-    x.globalAlpha = .5; x.lineWidth = 2; x.strokeRect(68, 68, W - 136, H - 136); x.globalAlpha = 1;
-
     var cx = W / 2;
-    function center(text, y, font, color) { x.font = font; x.fillStyle = color; x.textAlign = "center"; x.fillText(text, cx, y); }
 
-    // logos (use embedded data URIs when available so the canvas is never
-    // tainted — this keeps PNG export working even from a file:// URL)
-    var sealSrc = (window.HORIZON_IMG && window.HORIZON_IMG.seal) || "assets/images/vtu-seal.jpeg";
-    var logoSrc = (window.HORIZON_IMG && window.HORIZON_IMG.logo) || "assets/images/college-logo.jpeg";
-    var seal = await loadImg(sealSrc);
-    var logo = await loadImg(logoSrc);
-    // header row: university seal | club logo | college logo
-    if (seal) x.drawImage(seal, 80, 78, 130, 130);
-    if (logo) x.drawImage(logo, W - 210, 78, 130, 130);
+    function ls(v) { try { x.letterSpacing = v; } catch (_) {} }
+    function txt(t, y, f, color, spacing) {
+      x.font = f; ls(spacing || "0px"); x.fillStyle = color; x.textAlign = "center";
+      x.fillText(t, cx, y); ls("0px");
+    }
+    function diamond(dx, dy, r) {
+      x.beginPath(); x.moveTo(dx, dy - r); x.lineTo(dx + r, dy);
+      x.lineTo(dx, dy + r); x.lineTo(dx - r, dy); x.closePath(); x.fill();
+    }
+    function goldRule(y, halfW, r) {
+      var g = x.createLinearGradient(cx - halfW, 0, cx + halfW, 0);
+      g.addColorStop(0, "rgba(201,162,39,0)"); g.addColorStop(.5, "#c9a227"); g.addColorStop(1, "rgba(201,162,39,0)");
+      x.fillStyle = g; x.fillRect(cx - halfW, y, halfW * 2, 4);
+      x.fillStyle = "#c9a227"; diamond(cx, y + 2, r);
+    }
+
+    // background
+    x.fillStyle = "#fffdf7"; x.fillRect(0, 0, W, H);
+
+    // faint emblem watermark behind everything
+    var wm = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo-t.png");
+    if (wm) {
+      var wh = 1000, ww = wh * (wm.width / wm.height);
+      x.save();
+      try { x.globalAlpha = .055; if ("filter" in x) x.filter = "grayscale(1)"; } catch (_) {}
+      x.drawImage(wm, cx - ww / 2, (H - wh) / 2, ww, wh);
+      try { x.filter = "none"; } catch (_) {}
+      x.restore();
+    }
+
+    // borders: navy outer, gold band, thin gold inner
+    x.strokeStyle = "#0b2a5b"; x.lineWidth = 28; x.strokeRect(14, 14, W - 28, H - 28);
+    x.strokeStyle = "#c9a227"; x.lineWidth = 6;  x.strokeRect(40, 40, W - 80, H - 80);
+    x.globalAlpha = .55; x.lineWidth = 2; x.strokeRect(58, 58, W - 116, H - 116); x.globalAlpha = 1;
+
+    // corner diamonds
+    x.fillStyle = "#c9a227";
+    [[79, 79], [W - 79, 79], [79, H - 79], [W - 79, H - 79]].forEach(function (pt) { diamond(pt[0], pt[1], 15); });
+
+    // header logos: university seal | club emblem | college logo
+    var seal = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.seal) || "assets/images/vtu-seal.jpeg");
+    var college = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.logo) || "assets/images/college-logo.jpeg");
     var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
-    if (club) x.drawImage(club, W / 2 - 55, 82, 110, 124);
+    if (seal) x.drawImage(seal, PAD, PAD, 120, 120);
+    if (college) x.drawImage(college, W - PAD - 120, PAD, 120, 120);
+    if (club) x.drawImage(club, cx - 54, PAD + 2, 108, 120);
 
-    // headings, on the lines below the logos
-    center("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 262, "700 40px Georgia, serif", "#0b2a5b");
-    center("KARNATAKA, INDIA", 298, "18px Arial, sans-serif", "#6a5a1e");
-    center("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 352, "700 34px Georgia, serif", "#f26522");
-    center("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 388, "18px Arial, sans-serif", "#5a6b88");
+    // headings
+    txt("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 236, "700 42px Georgia, serif", "#0b2a5b", "2px");
+    txt("KARNATAKA, INDIA", 266, "22px Arial, sans-serif", "#6a5a1e", "6px");
+    txt("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 312, "700 36px Georgia, serif", "#f26522", "1px");
+    txt("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 340, "20px Arial, sans-serif", "#5a6b88", "3px");
 
-    // gold rule
-    var grd = x.createLinearGradient(600, 0, 1400, 0);
-    grd.addColorStop(0, "rgba(201,162,39,0)"); grd.addColorStop(.5, "#c9a227"); grd.addColorStop(1, "rgba(201,162,39,0)");
-    x.fillStyle = grd; x.fillRect(600, 414, 800, 3);
+    // ornamental divider
+    goldRule(372, 420, 11);
 
     // title
-    center("CERTIFICATE", 492, "400 66px Georgia, serif", "#0b2a5b");
-    center((e.subtitle || "of Participation").toUpperCase(), 532, "24px Arial, sans-serif", "#5a6b88");
+    txt("CERTIFICATE", 456, "700 64px Georgia, serif", "#0b2a5b", "14px");
+    txt((e.subtitle || "of Participation").toUpperCase(), 488, "22px Arial, sans-serif", "#8a7a3a", "8px");
 
     // recipient
-    center("This is to certify that", 588, "24px Georgia, serif", "#33415c");
-    x.textAlign = "center";
-    x.font = "700 56px Georgia, serif"; x.fillStyle = "#12203a";
-    x.fillText(p.name, cx, 660);
-    var nw = Math.max(500, x.measureText(p.name).width + 120);
-    x.fillStyle = "#c9a227"; x.fillRect(cx - nw / 2, 676, nw, 3);
-    center("USN: " + normUsn(p.usn), 714, "20px Arial, sans-serif", "#5a6b88");
+    txt("This is to certify that", 538, "26px Georgia, serif", "#33415c", "1px");
+    txt(p.name, 604, "700 64px Georgia, serif", "#12203a", "0px");
+    x.font = "700 64px Georgia, serif";
+    var nw = Math.max(520, Math.min(880, x.measureText(p.name).width + 180));
+    var fy = 622, half = nw / 2;
+    var gl = x.createLinearGradient(cx - half, 0, cx, 0);
+    gl.addColorStop(0, "rgba(201,162,39,0)"); gl.addColorStop(1, "#c9a227");
+    x.fillStyle = gl; x.fillRect(cx - half, fy, half - 10, 3);
+    var gr = x.createLinearGradient(cx, 0, cx + half, 0);
+    gr.addColorStop(0, "#c9a227"); gr.addColorStop(1, "rgba(201,162,39,0)");
+    x.fillStyle = gr; x.fillRect(cx + 10, fy, half - 10, 3);
+    x.fillStyle = "#c9a227"; diamond(cx, fy + 1, 9);
+    txt("USN: " + normUsn(p.usn), 662, "22px Arial, sans-serif", "#5a6b88", "5px");
 
     // body
     var body = e.body || "has actively participated in the event and is hereby awarded this certificate of participation.";
-    x.font = "24px Georgia, serif"; x.fillStyle = "#33415c"; x.textAlign = "center";
-    var lines = wrapText(x, body, 1500);
-    lines.forEach(function (l, i) { x.fillText(l, cx, 776 + i * 38); });
+    x.font = "26px Georgia, serif"; x.fillStyle = "#33415c"; x.textAlign = "center";
+    var lines = wrapText(x, body, 1400);
+    lines.forEach(function (l, i) { x.fillText(l, cx, 716 + i * 40); });
 
-    // signature row sits above the club-logo watermark
+    // signatures
     var signs = (DB.signatories || []).slice(0, 3);
     var cxs = signs.length === 1 ? [1000] : signs.length === 2 ? [560, 1440] : [420, 1000, 1580];
+    var boxW = 264, boxH = 116, boxY = 1080;
     for (var i = 0; i < signs.length; i++) {
       var s = signs[i], scx = cxs[i];
-      var boxW = 300, boxH = 112, boxY = 1030;
-      // photo box
-      x.strokeStyle = "#b9a45a"; x.lineWidth = 2; x.setLineDash([8, 6]);
-      x.strokeRect(scx - boxW / 2, boxY, boxW, boxH); x.setLineDash([]);
       var ph = await loadImg(s.photo);
       if (ph) x.drawImage(ph, scx - boxW / 2 + 4, boxY + 4, boxW - 8, boxH - 8);
-      else { x.font = "16px Arial, sans-serif"; x.fillStyle = "#c9a227"; x.textAlign = "center"; x.fillText("signature / photo", scx, boxY + boxH / 2 + 6); }
-      // line + name + designation
-      x.strokeStyle = "#12203a"; x.lineWidth = 2; x.beginPath(); x.moveTo(scx - 150, 1180); x.lineTo(scx + 150, 1180); x.stroke();
-      x.font = "700 22px Georgia, serif"; x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1214);
-      x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1240);
+      x.strokeStyle = "#12203a"; x.lineWidth = 2; x.beginPath(); x.moveTo(scx - 150, 1210); x.lineTo(scx + 150, 1210); x.stroke();
+      x.font = "700 22px Georgia, serif"; ls("0px"); x.fillStyle = "#12203a"; x.textAlign = "center"; x.fillText(s.name || "", scx, 1242);
+      x.font = "17px Arial, sans-serif"; x.fillStyle = "#5a6b88"; x.fillText(s.designation || "", scx, 1268);
     }
 
-    // certificate id
+    // gold foil ribbon with the event name + date
     var dateStr = e.date ? new Date(e.date).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }) : "";
-    x.font = "16px Arial, sans-serif"; x.fillStyle = "#8a7a3a"; x.textAlign = "right";
-    x.fillText("Certificate ID: HZ-" + normUsn(p.usn) + (dateStr ? " · " + dateStr : ""), W - 70, 78);
+    var evText = ((e.title || "AVYAKT") + (dateStr ? " · " + dateStr : "")).toUpperCase();
+    var ry = 1298, rh = 56;
+    var rg = x.createLinearGradient(PAD, 0, W - PAD, 0);
+    rg.addColorStop(0, "#b8901c"); rg.addColorStop(.18, "#e7c65a"); rg.addColorStop(.5, "#fff3c4");
+    rg.addColorStop(.82, "#e7c65a"); rg.addColorStop(1, "#b8901c");
+    x.fillStyle = rg;
+    x.beginPath();
+    x.moveTo(PAD, ry); x.lineTo(W - PAD, ry);
+    x.lineTo(W - PAD - 32, ry + rh / 2); x.lineTo(W - PAD, ry + rh);
+    x.lineTo(PAD, ry + rh); x.lineTo(PAD + 32, ry + rh / 2);
+    x.closePath(); x.fill();
+    x.font = "700 22px Arial, sans-serif"; ls("6px"); x.fillStyle = "#3a2c05"; x.textAlign = "center";
+    x.fillText(evText, cx, ry + 36); ls("0px");
+
+    // certificate id, centred under the ribbon
+    x.font = "18px Arial, sans-serif"; ls("2px"); x.fillStyle = "#8a7a3a"; x.textAlign = "center";
+    x.fillText("CERTIFICATE ID: HZ-" + normUsn(p.usn), cx, 1372); ls("0px");
 
     var url = c.toDataURL("image/png");
     var a = document.createElement("a");
