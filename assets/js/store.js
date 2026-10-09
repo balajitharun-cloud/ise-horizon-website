@@ -6,7 +6,7 @@
    ===================================================================== */
 (function () {
   "use strict";
-  var KEY = "horizon-content-v1";
+  var KEY = "horizon-content-v2";
   var PASSCODE = "ise@2007";           // elite-member passcode
   var SESSION = "horizon-member";      // sessionStorage unlock flag
 
@@ -15,7 +15,7 @@
 
   function defaults() {
     return {
-      settings: { passcode: PASSCODE, activeMembers: 8, eventsHosted: 40 },
+      settings: { passcode: PASSCODE, activeMembers: 0, eventsHosted: 0 },
       hackathon: {
         title: "HORIZON Hackathon",
         date: "",
@@ -41,16 +41,7 @@
         { id: "g3", caption: "Weekly coding circle", emoji: "🧩" },
         { id: "g4", caption: "Tech talk — packed auditorium", emoji: "🎙️" }
       ],
-      members: [
-        { id: "m1", name: "Dr. Sunitha R.", role: "Active member", year: "", branch: "ISE" },
-        { id: "m2", name: "Aarav Kulkarni", role: "Event host", year: "4th Year", branch: "ISE" },
-        { id: "m3", name: "Meghana Shetty", role: "Event host", year: "3rd Year", branch: "ISE" },
-        { id: "m4", name: "Rahul Naik", role: "Active member", year: "3rd Year", branch: "ISE" },
-        { id: "m5", name: "Sneha Patil", role: "Event host", year: "3rd Year", branch: "ISE" },
-        { id: "m6", name: "Kiran Kumar", role: "Active member", year: "2nd Year", branch: "ISE" },
-        { id: "m7", name: "Divya Rao", role: "Active member", year: "2nd Year", branch: "ISE" },
-        { id: "m8", name: "Arjun Hegde", role: "Active member", year: "3rd Year", branch: "ISE" }
-      ]
+      members: []        // club members — added by the elite member (starts empty)
     };
   }
 
