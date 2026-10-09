@@ -1,5 +1,5 @@
 /* =====================================================================
-   ISE HORIZON — member panel (admin.js)
+   AVYAKT — member panel (admin.js)
    Elite members add/edit/remove events, news, projects, gallery items and
    members. Everything is stored via HorizonStore (localStorage).
    ===================================================================== */

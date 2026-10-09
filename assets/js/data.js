@@ -1,5 +1,5 @@
 /* =====================================================================
-   ISE HORIZON — static site content (club info, team, stats, achievements)
+   AVYAKT — static site content (club info, team, stats, achievements)
    Events, news, projects, gallery and members are managed by elite members
    in the member panel and live in assets/js/store.js.
    ===================================================================== */
@@ -7,7 +7,7 @@
 window.HORIZON = {
 
   club: {
-    name: "ISE HORIZON",
+    name: "AVYAKT",
     tagline: "The Information Science & Engineering club of KIT Tiptur — building, competing and creating.",
     college: "Kalpataru Institute of Technology, Tiptur",
     university: "Visvesvaraya Technological University, Belagavi",

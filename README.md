@@ -1,6 +1,6 @@
-# ISE HORIZON — Club Website + Certificate Portal
+# AVYAKT — Club Website + Certificate Portal
 
-Official website for **ISE HORIZON**, the Information Science & Engineering student
+Official website for **AVYAKT**, the Information Science & Engineering student
 club of **Kalpataru Institute of Technology, Tiptur** (affiliated to **Visvesvaraya
 Technological University, Belagavi**).
 
@@ -88,5 +88,5 @@ python3 -m http.server 8000   # open http://localhost:8000
 
 ## Credits
 
-Built by ISE HORIZON · Department of Information Science & Engineering,
+Built by AVYAKT · Department of Information Science & Engineering,
 Kalpataru Institute of Technology, Tiptur.

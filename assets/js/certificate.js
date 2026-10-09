@@ -1,5 +1,5 @@
 /* =====================================================================
-   ISE HORIZON — Certificate Portal
+   AVYAKT — Certificate Portal
    Members upload the participant list (name + USN); participants enter
    their name + USN and the certificate is generated automatically.
    Data is kept in this browser's localStorage (no server needed).
@@ -22,7 +22,7 @@
         title: "HORIZON Hackathon 2026",
         date: "2026-11-15",
         subtitle: "of Participation",
-        body: "for actively participating in HORIZON Hackathon 2026, a 24-hour build sprint organised by ISE HORIZON, Department of Information Science & Engineering."
+        body: "for actively participating in HORIZON Hackathon 2026, a 24-hour build sprint organised by AVYAKT, Department of Information Science & Engineering."
       },
       participants: [
         { name: "Aarav Kulkarni", usn: "1KT23IS001" },
@@ -35,8 +35,8 @@
         { name: "Priya Deshpande", usn: "1KT23IS008" }
       ],
       signatories: [
-        { name: "Dr. Sunitha R.", designation: "Faculty Coordinator, ISE HORIZON", photo: "" },
-        { name: "Aarav Kulkarni", designation: "President, ISE HORIZON", photo: "" },
+        { name: "Dr. Sunitha R.", designation: "Faculty Coordinator, AVYAKT", photo: "" },
+        { name: "Aarav Kulkarni", designation: "President, AVYAKT", photo: "" },
         { name: "The Principal", designation: "Kalpataru Institute of Technology", photo: "" }
       ]
     };
@@ -219,7 +219,7 @@
     center("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 165, "700 40px Georgia, serif", "#0b2a5b");
     center("KARNATAKA, INDIA", 200, "18px Arial, sans-serif", "#6a5a1e");
     center("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 258, "700 34px Georgia, serif", "#f26522");
-    center("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · ISE HORIZON", 292, "18px Arial, sans-serif", "#5a6b88");
+    center("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 292, "18px Arial, sans-serif", "#5a6b88");
 
     // gold rule
     var grd = x.createLinearGradient(600, 0, 1400, 0);

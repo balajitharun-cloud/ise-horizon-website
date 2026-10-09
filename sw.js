@@ -1,5 +1,5 @@
-/* ISE HORIZON — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v7";
+/* AVYAKT — service worker (offline-first for the app shell) */
+var CACHE = "horizon-v8";
 var ASSETS = [
   "./",
   "index.html",

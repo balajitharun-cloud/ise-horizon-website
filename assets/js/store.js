@@ -1,5 +1,5 @@
 /* =====================================================================
-   ISE HORIZON — content store
+   AVYAKT — content store
    Elite members add/cancel events, news, projects, gallery items and
    members from the member panel (admin.html). Public pages read from here.
    Data lives in this browser's localStorage; use Export/Import to move it.
@@ -27,7 +27,7 @@
       events: [],        // upcoming events (managed)
       pastEvents: [],    // archived events (read-only)
       news: [
-        { id: "n1", title: "Welcome to the new ISE HORIZON website", date: today(), tag: "Update",
+        { id: "n1", title: "Welcome to the new AVYAKT website", date: today(), tag: "Update",
           excerpt: "Our new club portal is live.", body: "Events, projects and updates are published here by the core committee." }
       ],
       projects: [],      // student projects (managed) — each may carry a GitHub URL

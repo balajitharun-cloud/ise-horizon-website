@@ -1,5 +1,5 @@
 /* =====================================================================
-   ISE HORIZON — shared site engine
+   AVYAKT — shared site engine
    Header/footer, theme, search, countdown and page renderers.
    Dynamic content (events, news, projects, gallery) comes from
    HorizonStore so elite members can manage it from the member panel.
@@ -94,9 +94,9 @@
         '<div class="footer-grid">' +
           "<div>" +
             '<div class="footer-brand">' +
-              '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="ISE HORIZON logo">' +
+              '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="AVYAKT logo">' +
               '<img class="logo-round" src="assets/images/college-logo.jpeg" alt="Kalpataru Institute of Technology logo">' +
-              '<div><strong>ISE HORIZON</strong><br><span class="small">Kalpataru Institute of Technology, Tiptur</span></div>' +
+              '<div><strong>AVYAKT</strong><br><span class="small">Kalpataru Institute of Technology, Tiptur</span></div>' +
             "</div>" +
             '<p class="small">' + esc(club.tagline) + "</p>" +
             '<div class="socials">' + social + "</div>" +
@@ -109,7 +109,7 @@
           "</ul></div>" +
         "</div>" +
         '<div class="footer-bottom">' +
-          "<span>© " + new Date().getFullYear() + " ISE HORIZON · Dept. of Information Science & Engineering</span>" +
+          "<span>© " + new Date().getFullYear() + " AVYAKT · Dept. of Information Science & Engineering</span>" +
           "<span>Affiliated to VTU Belagavi</span>" +
         "</div>" +
       "</div>";
@@ -276,7 +276,7 @@
             '<a class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">See all events</a></div>';
           startCountdown($("#heroCountdown"), nx.date);
         } else {
-          heroCard.innerHTML = '<span class="label">Welcome</span><h3>ISE HORIZON</h3>' +
+          heroCard.innerHTML = '<span class="label">Welcome</span><h3>AVYAKT</h3>' +
             '<p>Events, competitions, cultural and sports meets — announced here by the club. No events are scheduled right now.</p>' +
             '<div class="hero-cta" style="margin-top:14px"><a class="btn btn-light btn-sm" href="join.html">Join the club</a>' +
             '<a class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">Events</a></div>';
@@ -328,7 +328,7 @@
       var tl = $("#aboutTimeline");
       if (tl) {
         var history = [
-          { year: "2021", text: "ISE HORIZON founded with 24 students and a single weekly coding circle." },
+          { year: "2021", text: "AVYAKT founded with 24 students and a single weekly coding circle." },
           { year: "2023", text: "Crossed 200 members; hosted the first inter-college hackathon." },
           { year: "2025", text: "Launched the Learning Hub and the Projects Showcase; 40+ events hosted." },
           { year: "2026", text: "Named Best Student Club at KIT Tech Day; 600+ active members." }

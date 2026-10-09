@@ -1,7 +1,7 @@
 {
-  "name": "ISE HORIZON",
-  "short_name": "ISE HORIZON",
-  "description": "ISE HORIZON — Information Science & Engineering student club of Kalpataru Institute of Technology, Tiptur. Events, projects, resources and certificates.",
+  "name": "AVYAKT",
+  "short_name": "AVYAKT",
+  "description": "AVYAKT — Information Science & Engineering student club of Kalpataru Institute of Technology, Tiptur. Events, projects, resources and certificates.",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
