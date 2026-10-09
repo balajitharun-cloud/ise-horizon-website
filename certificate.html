@@ -12,34 +12,53 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=19">
+<link rel="stylesheet" href="assets/css/style.css?v=20">
 <script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body data-page="certificate">
 <header class="site-header" id="siteHeader"></header>
 
 <main>
-  <section class="page-hero">
-    <div class="container">
-      <div class="breadcrumb"><a href="index.html">Home</a> / Certificate Portal</div>
-      <h1>Certificate Portal</h1>
-      <p>Participants: enter your name and USN to instantly generate your participation certificate. Club members: upload the participant list from the member panel.</p>
+  <!-- ===================== HERO ===================== -->
+  <section class="certp-hero">
+    <div class="container certp-hero-inner">
+      <div class="certp-hero-copy">
+        <span class="certp-eyebrow">AVYAKT · Certificate Portal</span>
+        <h1>Your certificate, <span class="certp-grad">in seconds</span>.</h1>
+        <p class="certp-lead">Enter your name and USN. If you're on the event list, your certificate is generated instantly — branded, signed and ready to download.</p>
+        <div class="certp-chips">
+          <span class="certp-chip">⚡ Instant</span>
+          <span class="certp-chip">✅ Verified</span>
+          <span class="certp-chip">⬇️ PNG &amp; PDF</span>
+        </div>
+      </div>
+      <div class="certp-hero-art" aria-hidden="true">
+        <span class="certp-glow"></span>
+        <img src="assets/images/ise-horizon-logo-t.png" alt="">
+      </div>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section certp-body">
     <div class="container">
-      <div class="tabs" id="certModeTabs">
-        <button class="tab active" data-mode="student">🎓 I'm a participant</button>
-        <button class="tab" data-mode="member">🛠️ Club member panel</button>
+
+      <!-- ===================== MODE SWITCH ===================== -->
+      <div class="certp-seg" id="certModeTabs" role="tablist" aria-label="Certificate portal mode">
+        <button class="tab active" data-mode="student" role="tab">🎓 I'm a participant</button>
+        <button class="tab" data-mode="member" role="tab">🛠️ Club member panel</button>
       </div>
 
-      <!-- ================= STUDENT ================= -->
+      <!-- ===================== STUDENT ===================== -->
       <div id="modeStudent">
-        <div class="two-col">
-          <div class="form-card">
-            <h2 style="margin-top:0">Get your certificate</h2>
-            <p class="muted small">Enter the same name and USN that the club recorded for you at the event.</p>
+        <div class="certp-grid">
+          <div class="certp-card">
+            <div class="certp-card-head">
+              <span class="certp-step">1</span>
+              <div>
+                <h2>Get your certificate</h2>
+                <p class="muted small">Use the same name and USN the club recorded for you.</p>
+              </div>
+            </div>
             <form id="certLookupForm" novalidate>
               <div class="field">
                 <label for="s-name">Full name <span class="req">*</span></label>
@@ -54,32 +73,44 @@
                 <label for="s-event">Event</label>
                 <select id="s-event" name="event"></select>
               </div>
-              <button class="btn btn-primary btn-block" type="submit">Generate my certificate</button>
+              <button class="btn btn-primary btn-block certp-generate" type="submit">✨ Generate my certificate</button>
               <div class="notice" id="certNote" role="status"></div>
             </form>
-            <div class="divider-line"></div>
-            <p class="small muted">Not on the list? Contact the club at <a href="contact.html">our contact page</a> — a member needs to add your name and USN first.</p>
+            <div class="certp-foot-note">
+              <span class="chip chip--blue" id="certCountChip">Loading…</span>
+              <p class="small muted">Not on the list? <a href="contact.html">Contact the club</a> — a member needs to add your name and USN first.</p>
+            </div>
           </div>
 
-          <div class="card">
-            <div class="card-body">
-              <h3>How it works</h3>
-              <ol class="muted small" style="padding-left:18px">
-                <li>The club member uploads the participant list (name + USN) for the event.</li>
-                <li>You enter your name and USN here.</li>
-                <li>The portal verifies your entry and generates your certificate.</li>
-                <li>Download it as a PNG or print/save as PDF.</li>
-              </ol>
-              <div class="chip chip--blue" id="certCountChip">Loading…</div>
+          <div class="certp-card certp-side">
+            <h3 class="mt-0">How it works</h3>
+            <ol class="certp-steps">
+              <li><span class="dot">1</span><div><strong>The club adds the list</strong><br><span class="small muted">The committee uploads participants (name + USN) for the event.</span></div></li>
+              <li><span class="dot">2</span><div><strong>You enter your details</strong><br><span class="small muted">Name and USN, exactly as submitted.</span></div></li>
+              <li><span class="dot">3</span><div><strong>We verify &amp; generate</strong><br><span class="small muted">Matched against the list, then your certificate appears.</span></div></li>
+              <li><span class="dot">4</span><div><strong>Download it</strong><br><span class="small muted">Save as a PNG or print to PDF.</span></div></li>
+            </ol>
+            <div class="certp-preview">
+              <div class="certp-preview-card">
+                <span class="certp-preview-uni">VTU · Belagavi</span>
+                <span class="certp-preview-title">CERTIFICATE</span>
+                <span class="certp-preview-name">Your Name</span>
+                <span class="certp-preview-sub">of Participation</span>
+              </div>
+              <p class="small muted center mt-1">Preview only — your real certificate appears below.</p>
             </div>
           </div>
         </div>
 
-        <div id="certStageWrap" class="hidden mt-3">
-          <div class="cert-actions no-print">
-            <button class="btn btn-primary" id="certPrint">🖨️ Print / Save as PDF</button>
-            <button class="btn btn-blue" id="certPng">⬇️ Download PNG</button>
-            <button class="btn btn-ghost" id="certReset">Clear</button>
+        <!-- ===================== STAGE ===================== -->
+        <div id="certStageWrap" class="hidden certp-stage-wrap">
+          <div class="certp-toolbar no-print">
+            <span class="certp-ready"><span class="certp-tick">✓</span> Your certificate is ready</span>
+            <div class="certp-toolbar-actions">
+              <button class="btn btn-primary btn-sm" id="certPrint">🖨️ Print / Save as PDF</button>
+              <button class="btn btn-blue btn-sm" id="certPng">⬇️ Download PNG</button>
+              <button class="btn btn-ghost btn-sm" id="certReset">Clear</button>
+            </div>
           </div>
           <div class="cert-stage">
             <div class="cert-scaler" id="certScaler">
@@ -114,14 +145,16 @@
         </div>
       </div>
 
-      <!-- ================= MEMBER ================= -->
+      <!-- ===================== MEMBER ===================== -->
       <div id="modeMember" class="hidden">
-        <div id="memberGate" class="form-card" style="max-width:460px;margin:0 auto">
-          <h2 style="margin-top:0">Member access</h2>
-          <p class="muted small">This panel lets club members manage the participant list and certificate details. Enter the club passcode to continue.</p>
+
+        <div id="memberGate" class="certp-gate">
+          <div class="certp-gate-icon">🔐</div>
+          <h2 class="mt-0">Member access</h2>
+          <p class="muted small">Manage the participant list and certificate details for your event.</p>
           <div class="field">
             <label for="m-pass">Passcode</label>
-            <input id="m-pass" type="password" placeholder="Enter passcode">
+            <input id="m-pass" type="password" placeholder="Enter passcode" autocomplete="current-password">
             <div class="hint">Ask a core committee member for the club passcode.</div>
           </div>
           <button class="btn btn-blue btn-block" id="m-unlock">Unlock panel</button>
@@ -129,9 +162,12 @@
         </div>
 
         <div id="memberPanel" class="hidden">
-          <div class="two-col">
-            <div class="form-card">
-              <h2 style="margin-top:0">1. Event details</h2>
+          <div class="certp-grid">
+            <div class="certp-card">
+              <div class="certp-card-head">
+                <span class="certp-step">1</span>
+                <div><h2>Event details</h2><p class="muted small">Shown on every certificate you generate.</p></div>
+              </div>
               <div class="field">
                 <label for="m-event-title">Event name</label>
                 <input id="m-event-title" type="text" placeholder="e.g. HORIZON Hackathon 2026">
@@ -151,9 +187,12 @@
                 <textarea id="m-cert-body" rows="3"></textarea>
               </div>
 
-              <div class="divider-line"></div>
-              <h2>2. Participants</h2>
-              <p class="muted small">Paste one participant per line as <code>Name, USN</code>, or upload a <code>.csv</code> / <code>.txt</code> file.</p>
+              <div class="certp-divider"></div>
+
+              <div class="certp-card-head">
+                <span class="certp-step">2</span>
+                <div><h2>Participants</h2><p class="muted small">Paste one per line as <code>Name, USN</code>, or upload a <code>.csv</code> / <code>.txt</code>.</p></div>
+              </div>
               <div class="field">
                 <label for="m-bulk">Add participants</label>
                 <textarea id="m-bulk" rows="4" placeholder="Aarav Kulkarni, 1KT23IS001&#10;Meghana Shetty, 1KT23IS002"></textarea>
@@ -165,19 +204,23 @@
                 <button class="btn btn-ghost btn-sm" id="m-clear">Clear all</button>
               </div>
               <div class="chip chip--green" id="m-count">0 participants</div>
-              <div id="m-list" class="mt-2" style="max-height:260px;overflow:auto"></div>
+              <div id="m-list" class="mt-2 certp-list"></div>
             </div>
 
             <div>
-              <div class="form-card mb-2">
-                <h2 style="margin-top:0">3. Signatories</h2>
-                <p class="muted small">Add up to three signatures. Leave the photo blank to keep an empty placeholder box.</p>
+              <div class="certp-card mb-2">
+                <div class="certp-card-head">
+                  <span class="certp-step">3</span>
+                  <div><h2>Signatories</h2><p class="muted small">Up to three signatures. Leave the photo blank for a placeholder box.</p></div>
+                </div>
                 <div id="m-signs"></div>
                 <button class="btn btn-ghost btn-sm mt-1" id="m-add-sign">+ Add signatory</button>
               </div>
-              <div class="form-card">
-                <h2 style="margin-top:0">4. Save &amp; share</h2>
-                <p class="muted small">Data is stored in this browser (localStorage). Export a JSON backup, or import one to restore.</p>
+              <div class="certp-card">
+                <div class="certp-card-head">
+                  <span class="certp-step">4</span>
+                  <div><h2>Save &amp; share</h2><p class="muted small">Stored in this browser — export a JSON backup to move it.</p></div>
+                </div>
                 <div class="pill-row">
                   <button class="btn btn-primary btn-sm" id="m-save">💾 Save</button>
                   <button class="btn btn-blue btn-sm" id="m-export">⬆️ Export JSON</button>
@@ -190,15 +233,16 @@
           </div>
         </div>
       </div>
+
     </div>
   </section>
 </main>
 
 <footer class="site-footer" id="siteFooter"></footer>
-<script src="assets/js/data.js?v=19"></script>
-<script src="assets/js/assets-data.js?v=19"></script>
-<script src="assets/js/store.js?v=19"></script>
-<script src="assets/js/main.js?v=19"></script>
-<script src="assets/js/certificate.js?v=19"></script>
+<script src="assets/js/data.js?v=20"></script>
+<script src="assets/js/store.js?v=20"></script>
+<script src="assets/js/assets-data.js?v=20"></script>
+<script src="assets/js/main.js?v=20"></script>
+<script src="assets/js/certificate.js?v=20"></script>
 </body>
 </html>

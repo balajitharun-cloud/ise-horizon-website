@@ -131,7 +131,8 @@
     var stage = document.querySelector(".cert-stage");
     var cert = document.getElementById("certificate");
     if (!stage || !cert) return;
-    var avail = stage.clientWidth - 28;      // minus the stage's 14px padding each side
+    function cs(el, p) { return getComputedStyle(el)[p] || "0"; }
+    var avail = stage.clientWidth - (parseFloat(cs(stage, "paddingLeft")) + parseFloat(cs(stage, "paddingRight")));
     if (avail <= 0) return;                  // stage hidden — will fit again when shown
     var scale = Math.min(1, avail / 1000);
     cert.style.zoom = scale;                 // real layout scale, so it stays centred
