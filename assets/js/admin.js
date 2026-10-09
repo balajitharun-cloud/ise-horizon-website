@@ -296,7 +296,7 @@
   function wireData() {
     $("#d-export").addEventListener("click", function () {
       var blob = new Blob([S.export()], { type: "application/json" });
-      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "ise-horizon-content.json";
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "avyakt-content.json";
       document.body.appendChild(a); a.click(); a.remove();
     });
     $("#d-import").addEventListener("change", function (e) {

@@ -275,7 +275,7 @@
     var url = c.toDataURL("image/png");
     var a = document.createElement("a");
     a.href = url;
-    a.download = "ISE-HORIZON-Certificate-" + normUsn(p.usn) + ".png";
+    a.download = "AVYAKT-Certificate-" + normUsn(p.usn) + ".png";
     document.body.appendChild(a); a.click(); a.remove();
   }
 
