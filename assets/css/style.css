@@ -355,7 +355,7 @@ p { margin: 0 0 1rem; }
   --cm: #8a6a2a;   /* muted gold text */
 
   width: 1000px; aspect-ratio: 1.414 / 1; background: var(--cp); color: var(--ci);
-  margin: 0 auto; position: relative; padding: 26px;
+  margin: 0 auto; position: relative; padding: 24px;
   border: 14px solid var(--cf); box-shadow: var(--shadow-lg);
   font-family: "Georgia", "Times New Roman", serif;
   display: flex; flex-direction: column; align-items: center; text-align: center;
@@ -391,12 +391,12 @@ p { margin: 0 0 1rem; }
 .cert-logo { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; height: 64px; }
 .cert-logo img { height: 64px; width: auto; max-width: 100%; object-fit: contain; display: block; }
 
-.cert-uni { font-size: 1.24rem; font-weight: 700; letter-spacing: .05em; color: var(--cf); text-transform: uppercase; margin-top: 10px; }
+.cert-uni { font-size: 1.24rem; font-weight: 700; letter-spacing: .05em; color: var(--cf); text-transform: uppercase; margin-top: 15px; }
 .cert-uni-sub { font-size: .7rem; letter-spacing: .3em; text-transform: uppercase; color: var(--cm); margin-top: 2px; }
 .cert-college { font-size: 1.06rem; font-weight: 700; color: var(--cf2); margin-top: 6px; text-transform: uppercase; letter-spacing: .04em; }
 .cert-college-sub { font-size: .64rem; letter-spacing: .18em; text-transform: uppercase; color: var(--cis); margin-top: 2px; }
 
-.cert-rule { display: flex; align-items: center; width: 78%; margin: 8px 0 4px; gap: 8px; }
+.cert-rule { display: flex; align-items: center; width: 78%; margin: 7px 0 4px; gap: 8px; }
 .cert-rule i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, var(--cg)); }
 .cert-rule i:last-child { background: linear-gradient(90deg, var(--cg), transparent); }
 .cert-rule b { flex: 0 0 auto; width: 8px; height: 8px; background: var(--cg); transform: rotate(45deg); }
@@ -407,17 +407,17 @@ p { margin: 0 0 1rem; }
   filter: drop-shadow(0 1px 0 rgba(90,70,10,.3)); }
 .cert-subtitle { font-size: .74rem; color: var(--cm); letter-spacing: .34em; text-transform: uppercase; }
 .cert-lead { font-size: .86rem; color: var(--cis); letter-spacing: .04em; margin-top: 7px; }
-.cert-name { font-family: "Great Vibes", "Segoe Script", cursive; font-size: 2.75rem; font-weight: 400;
+.cert-name { font-family: "Great Vibes", "Segoe Script", cursive; font-size: 2.6rem; font-weight: 400;
   color: var(--cf); line-height: 1.02; padding: 0 12px; }
 .cert-flourish { display: flex; align-items: center; width: min(470px, 74%); gap: 8px; margin: 0 0 4px; }
 .cert-flourish i { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, var(--cg)); }
 .cert-flourish i:last-child { background: linear-gradient(90deg, var(--cg), transparent); }
 .cert-flourish b { flex: 0 0 auto; width: 7px; height: 7px; background: var(--cg); transform: rotate(45deg); }
 .cert-usn { font-size: .72rem; color: var(--cis); letter-spacing: .18em; text-transform: uppercase; }
-.cert-body { font-size: .92rem; color: var(--ci); max-width: 700px; line-height: 1.5; margin-top: 6px; }
+.cert-body { font-size: .92rem; color: var(--ci); max-width: 700px; line-height: 1.45; margin-top: 6px; }
 
 /* gold seal medallion, sitting above the signatures */
-.cert-seal { width: 58px; height: 58px; border-radius: 50%; margin: auto auto 6px; position: relative;
+.cert-seal { width: 52px; height: 52px; border-radius: 50%; margin: 13px auto 9px; position: relative;
   display: grid; place-items: center;
   background: radial-gradient(circle at 50% 30%, #fdf3cf, #e7c65a 48%, #b8901c 100%);
   border: 2px solid var(--cgd); box-shadow: 0 2px 6px rgba(109,18,32,.25); }
@@ -425,7 +425,7 @@ p { margin: 0 0 1rem; }
 .cert-seal::after { content: ""; width: 26px; height: 26px; background: var(--cf);
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
 
-.cert-foot { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; padding: 12px 6px 0; }
+.cert-foot { width: 100%; display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; padding: 8px 6px 0; }
 .sig { text-align: center; width: 200px; }
 .sig .sig-photo { width: 132px; height: 46px; margin: 0 auto 6px; display: grid; place-items: center; overflow: hidden; }
 .sig .sig-photo img { width: 100%; height: 100%; object-fit: contain; }
@@ -433,7 +433,7 @@ p { margin: 0 0 1rem; }
 .sig .sig-desig { font-size: .66rem; color: var(--cis); }
 
 /* gold foil ribbon carrying the event name */
-.cert-ribbon { margin-top: 10px; width: 100%; padding: 7px 28px; text-align: center;
+.cert-ribbon { margin-top: 8px; width: 100%; padding: 7px 28px; text-align: center;
   background: linear-gradient(90deg, #b8901c, #e7c65a 18%, #fff3c4 50%, #e7c65a 82%, #b8901c);
   clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 50%, 100% 100%, 0 100%, 16px 50%);
   color: #4a1408; font-size: .6rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
