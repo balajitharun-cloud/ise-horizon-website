@@ -420,7 +420,13 @@
       note.textContent = "Sending\u2026";
       // the shared copy lives in the repo; this endpoint holds the token server-side
       fetch("/api/join", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(entry) })
-        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (r) {
+          // read the server's own message so the real reason is shown, not just "HTTP 500"
+          return r.json().catch(function () { return {}; }).then(function (b) {
+            if (!r.ok) throw new Error(b.error || ("HTTP " + r.status));
+            return b;
+          });
+        })
         .then(function (res) {
           note.className = "notice ok show";
           note.textContent = "Thanks, " + data.name + "! Your request is recorded for the whole club.";

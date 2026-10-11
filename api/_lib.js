@@ -13,8 +13,18 @@
 const OWNER  = process.env.GITHUB_OWNER  || "balajitharun-cloud";
 const REPO   = process.env.GITHUB_REPO   || "ise-horizon-website";
 const BRANCH = process.env.GITHUB_BRANCH || "main";
-const GH     = process.env.GITHUB_TOKEN;
-const BLOB   = process.env.BLOB_READ_WRITE_TOKEN;
+/* Read an env var under any of several names, and strip stray whitespace.
+   Pasted tokens very often carry a trailing newline or space, which makes
+   the Authorization header malformed and the write fail. */
+function env() {
+  for (let i = 0; i < arguments.length; i++) {
+    const v = process.env[arguments[i]];
+    if (v && String(v).trim()) return String(v).trim();
+  }
+  return "";
+}
+const GH   = env("GITHUB_TOKEN", "GH_TOKEN", "GITHUB_PAT", "GITHUB_ACCESS_TOKEN", "GITHUB_TOKEN_CLASSIC", "GITHUB_ACCESS_TOKEN_CLASSIC");
+const BLOB = env("BLOB_READ_WRITE_TOKEN");
 const KEY    = "avyakt/members.json";
 
 async function blobLib() {
@@ -97,7 +107,10 @@ async function saveMembersToRepo(loaded, members) {
 function configured() { return !!(BLOB || GH); }
 function activeBackend() { return BLOB ? "vercel-blob" : (GH ? "github-repo" : "none"); }
 function hint() {
-  return "Not configured. In Vercel: Storage -> create a Blob store and connect it to this project (nothing to copy), or add a GITHUB_TOKEN environment variable.";
+  return "No storage token is visible to this deployment. In Vercel, Project -> Settings -> Environment Variables, "
+       + "add GITHUB_TOKEN (value: a classic token with the repo scope) and tick Production, Preview AND Development, "
+       + "then Redeploy. Env vars only apply to a deployment created AFTER they are saved. "
+       + "Alternatively connect a Blob store (Storage -> Create) which needs no token.";
 }
 
 module.exports = { loadMembers, saveMembers, saveMembersToRepo, configured, activeBackend, hint, KEY };
