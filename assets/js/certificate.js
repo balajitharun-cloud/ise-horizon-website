@@ -66,13 +66,23 @@
   /* ---------- backend (the club's GitHub repo) ---------- */
   function pullFromBackend() {
     if (!B) return;
-    B.pull(B.paths.certificates).then(function (res) {
+    function apply(res) {
       if (res && res.data) {
         DB = normalize(res.data);
         save(DB);
         try { renderList(); renderSigns(); fillMemberForm(); refreshCount(); } catch (e) {}
       }
-    }).catch(function () {});
+    }
+    function viaGithub() { if (B.pull) B.pull(B.paths.certificates).then(apply).catch(function () {}); }
+    // Prefer this site's own endpoint: same-origin, so a participant whose
+    // network blocks api.github.com still receives the club's participant list.
+    if (B.content) {
+      B.content("certificates").then(function (res) {
+        if (res && res.data) apply(res); else viaGithub();
+      }).catch(viaGithub);
+      return;
+    }
+    viaGithub();
   }
   function setNote(el, text, ok) { if (!el) return; el.className = "notice " + (ok ? "ok" : "err") + " show"; el.textContent = text; }
 

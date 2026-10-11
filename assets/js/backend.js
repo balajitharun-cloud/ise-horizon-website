@@ -97,9 +97,10 @@
   /* ---------- the whole shared content file, same-origin ---------- */
   /* Served by the site's own /api/content, so a visitor's browser never has
      to reach api.github.com (which some networks and ad-blockers refuse). */
-  async function content() {
+  async function content(file) {
     try {
-      var r = await fetch("/api/content", { headers: { "Accept": "application/json" }, cache: "no-store" });
+      var url = "/api/content" + (file ? ("?file=" + encodeURIComponent(file)) : "");
+      var r = await fetch(url, { headers: { "Accept": "application/json" }, cache: "no-store" });
       if (r.ok) {
         var j = await r.json();
         if (j && j.ok && j.content) return { data: j.content, viaApi: true };
