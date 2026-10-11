@@ -441,6 +441,11 @@
     var page = document.body.getAttribute("data-page");
     if (page && RENDER[page]) { try { RENDER[page](); } catch (e) { console.error("render error", e); } }
     wireForms();
+    window.addEventListener("horizon:content", function (e) {
+      if (!e || !e.detail || e.detail.source !== "backend") return;
+      if (page && RENDER[page]) { try { RENDER[page](); } catch (err) { console.error("re-render error", err); } }
+      buildFooter();
+    });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeSearch();
       if (e.key === "/" && !/input|textarea|select/i.test(e.target.tagName || "")) { e.preventDefault(); openSearch(); }

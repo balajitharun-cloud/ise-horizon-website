@@ -1,0 +1,60 @@
+{
+  "_comment": "AVYAKT certificate data: event details, participant list and signatories. Edited from certificate.html (member mode).",
+  "event": {
+    "title": "HORIZON Hackathon 2026",
+    "date": "2026-11-15",
+    "subtitle": "of Participation",
+    "body": "for actively participating in HORIZON Hackathon 2026, a 24-hour build sprint organised by AVYAKT, Department of Information Science & Engineering."
+  },
+  "participants": [
+    {
+      "name": "Aarav Kulkarni",
+      "usn": "1KT23IS001"
+    },
+    {
+      "name": "Meghana Shetty",
+      "usn": "1KT23IS002"
+    },
+    {
+      "name": "Rahul Naik",
+      "usn": "1KT23IS003"
+    },
+    {
+      "name": "Sneha Patil",
+      "usn": "1KT23IS004"
+    },
+    {
+      "name": "Kiran Kumar",
+      "usn": "1KT23IS005"
+    },
+    {
+      "name": "Divya Rao",
+      "usn": "1KT23IS006"
+    },
+    {
+      "name": "Arjun Hegde",
+      "usn": "1KT23IS007"
+    },
+    {
+      "name": "Priya Deshpande",
+      "usn": "1KT23IS008"
+    }
+  ],
+  "signatories": [
+    {
+      "name": "Ankush S",
+      "designation": "President, AVYAKT",
+      "photo": ""
+    },
+    {
+      "name": "Haritha G.S",
+      "designation": "Vice President, AVYAKT",
+      "photo": ""
+    },
+    {
+      "name": "The Principal",
+      "designation": "Kalpataru Institute of Technology",
+      "photo": ""
+    }
+  ]
+}

@@ -100,7 +100,7 @@
     }
   };
 
-  var TABS = ["events", "news", "projects", "gallery", "members", "history", "achievements", "hackathon", "stats", "data"];
+  var TABS = ["events", "news", "projects", "gallery", "members", "history", "achievements", "hackathon", "stats", "backend", "data"];
   var current = "events";
   var editingId = null;
 
@@ -200,7 +200,7 @@
   function dataSection() {
     return '<div class="two-col">' +
       '<div class="form-card"><h2 style="margin-top:0">Backup &amp; restore</h2>' +
-        '<p class="muted small">Content is stored in this browser. Export a JSON backup to move it to another device, or import one to restore.</p>' +
+        '<p class="muted small">Content lives in the club repo (see the Backend tab). Export a JSON backup any time, or import one to restore.</p>' +
         '<div class="pill-row">' +
           '<button class="btn btn-primary btn-sm" id="d-export">⬆️ Export JSON</button>' +
           '<label class="btn btn-ghost btn-sm" style="cursor:pointer">⬇️ Import JSON<input type="file" id="d-import" accept=".json" hidden></label>' +
@@ -218,7 +218,7 @@
   /* ---------- render ---------- */
   function renderTabs() {
     $("#adminTabs").innerHTML = TABS.map(function (k) {
-      var l = k === "hackathon" ? "🏆 Hackathon" : k === "stats" ? "📊 Stats" : k === "data" ? "💾 Data" : SCHEMAS[k].icon + " " + SCHEMAS[k].label;
+      var l = k === "hackathon" ? "🏆 Hackathon" : k === "stats" ? "📊 Stats" : k === "backend" ? "🔗 Backend" : k === "data" ? "💾 Data" : SCHEMAS[k].icon + " " + SCHEMAS[k].label;
       return '<button class="tab' + (k === current ? " active" : "") + '" data-tab="' + k + '">' + l + "</button>";
     }).join("");
     $$("#adminTabs .tab").forEach(function (b) {
@@ -230,6 +230,7 @@
     var body = $("#adminBody");
     if (current === "hackathon") { body.innerHTML = hackathonSection(); wireHackathon(); return; }
     if (current === "stats") { body.innerHTML = statsSection(); wireStats(); return; }
+    if (current === "backend") { body.innerHTML = backendSection(); wireBackend(); return; }
     if (current === "data") { body.innerHTML = dataSection(); wireData(); return; }
     body.innerHTML = listSection(current);
     wireList(current);
@@ -308,14 +309,75 @@
     $("#d-lock").addEventListener("click", function () { S.lock(); location.reload(); });
   }
 
+  /* ---------- backend ---------- */
+  function backendSection() {
+    var B = window.AvyaktBackend;
+    if (!B) return '<p class="muted">Backend module did not load.</p>';
+    var c = B.cfg(), st = S.state(), connected = B.canWrite();
+    return '<div class="two-col">' +
+      '<div class="form-card"><h2 style="margin-top:0">Backend connection</h2>' +
+        '<p class="muted small">Site content is stored in the club&rsquo;s GitHub repo, so every visitor sees the same thing. Reading is public; <strong>publishing needs a GitHub token</strong>, which stays only in this browser.</p>' +
+        '<div class="field-row two">' +
+          '<div class="field"><label for="be-owner">Repo owner</label><input id="be-owner" value="' + esc(c.owner) + '"></div>' +
+          '<div class="field"><label for="be-repo">Repo name</label><input id="be-repo" value="' + esc(c.repo) + '"></div>' +
+        '</div>' +
+        '<div class="field"><label for="be-branch">Branch</label><input id="be-branch" value="' + esc(c.branch) + '"></div>' +
+        '<div class="field"><label for="be-token">GitHub token</label>' +
+          '<input id="be-token" type="password" autocomplete="off" placeholder="' + (connected ? "stored in this browser" : "github_pat_...") + '">' +
+          '<div class="hint">Use a <strong>fine-grained token</strong> with <em>Contents: Read and write</em> on this one repo. It is saved in this browser only and never committed.</div>' +
+        '</div>' +
+        '<div class="pill-row">' +
+          '<button class="btn btn-blue btn-sm" id="be-save">Save &amp; test</button>' +
+          '<button class="btn btn-ghost btn-sm" id="be-forget">Forget token</button>' +
+        '</div><div class="notice" id="be-note"></div>' +
+      '</div>' +
+      '<div class="form-card"><h3 style="margin-top:0">Sync</h3>' +
+        '<p class="muted small">' + (connected ? 'Connected. Publishing writes the content file to the repo; GitHub Pages then rebuilds (about a minute).' : 'Not connected yet &mdash; you can still edit locally and export a JSON backup.') + '</p>' +
+        '<div class="pill-row">' +
+          '<button class="btn btn-primary btn-sm" id="be-pull">&#11015;&#65039; Pull from backend</button>' +
+          '<button class="btn btn-primary btn-sm" id="be-push">&#11014;&#65039; Publish to backend</button>' +
+        '</div>' +
+        '<p class="muted small" style="margin-top:12px">' + (st.error ? 'Last error: ' + esc(st.error) : (st.synced ? 'In sync with the backend.' : 'Not synced yet.')) + '</p>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function wireBackend() {
+    var B = window.AvyaktBackend, note = $("#be-note");
+    function say(msg, ok) { note.className = "notice " + (ok ? "ok" : "err") + " show"; note.textContent = msg; }
+    $("#be-save").addEventListener("click", async function () {
+      B.setConfig({ owner: $("#be-owner").value, repo: $("#be-repo").value, branch: $("#be-branch").value });
+      var t = $("#be-token").value.trim(); if (t) B.setToken(t);
+      try {
+        var info = await B.verify();
+        say("Connected to " + info.fullName + (info.canPush ? " — you can publish." : " — but this token cannot write. Give it Contents: Read and write."), true);
+      } catch (e) { say("Could not reach the repo: " + e.message, false); }
+    });
+    $("#be-forget").addEventListener("click", function () { B.setToken(""); renderBody(); });
+    $("#be-pull").addEventListener("click", async function () {
+      say("Pulling…", true); await S.sync();
+      say("Pulled the latest content from the repo.", true);
+    });
+    $("#be-push").addEventListener("click", async function () {
+      if (!B.canWrite()) { say("Add a GitHub token first.", false); return; }
+      say("Publishing…", true);
+      try { await S.publish(); say("Published. GitHub Pages will rebuild in about a minute.", true); }
+      catch (e) { say("Publish failed: " + e.message, false); }
+    });
+  }
+
   /* ---------- gate ---------- */
-  function showPanel() { $("#adminGate").classList.add("hidden"); $("#adminPanel").classList.remove("hidden"); renderTabs(); renderBody(); }
+  function showPanel() {
+    $("#adminGate").classList.add("hidden"); $("#adminPanel").classList.remove("hidden");
+    renderTabs(); renderBody();
+    S.sync().then(function () { renderBody(); }).catch(function () {});
+  }
 
   function boot() {
     if (S.isUnlocked()) showPanel();
-    $("#adminUnlock").addEventListener("click", function () {
+    $("#adminUnlock").addEventListener("click", async function () {
       var n = $("#adminGateNote");
-      if (S.unlock($("#adminPass").value)) showPanel();
+      if (await S.unlock($("#adminPass").value)) showPanel();
       else { n.className = "notice err show"; n.textContent = "Incorrect passcode. Try again."; }
     });
     $("#adminPass").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#adminUnlock").click(); });

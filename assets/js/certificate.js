@@ -61,6 +61,29 @@
   function save(db) { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
 
   var DB = load();
+  var B = window.AvyaktBackend;
+
+  /* ---------- backend (the club's GitHub repo) ---------- */
+  function pullFromBackend() {
+    if (!B) return;
+    B.pull(B.paths.certificates).then(function (res) {
+      if (res && res.data) {
+        DB = normalize(res.data);
+        save(DB);
+        try { renderList(); renderSigns(); fillMemberForm(); refreshCount(); } catch (e) {}
+      }
+    }).catch(function () {});
+  }
+  function publishToBackend(note) {
+    if (!B) { if (note) { note.className = "notice err show"; note.textContent = "Backend module did not load."; } return; }
+    if (!B.canWrite()) { if (note) { note.className = "notice err show"; note.textContent = "Add a GitHub token first \u2014 open the member panel (admin.html) \u2192 Backend tab."; } return; }
+    if (note) { note.className = "notice show"; note.textContent = "Publishing\u2026"; }
+    B.push(B.paths.certificates, DB, "Update certificate data (member panel)").then(function () {
+      if (note) { note.className = "notice ok show"; note.textContent = "Published. GitHub Pages will rebuild in about a minute."; }
+    }).catch(function (e) {
+      if (note) { note.className = "notice err show"; note.textContent = "Publish failed: " + e.message; }
+    });
+  }
 
   /* ---------- matching helpers ---------- */
   function normName(s) { return String(s || "").trim().replace(/\s+/g, " ").toLowerCase(); }
@@ -392,12 +415,12 @@
       gate.classList.add("hidden"); panel.classList.remove("hidden");
       fillMemberForm();
     }
-    $("#m-unlock").addEventListener("click", function () {
-      var note = $("#mGateNote");
-      if (String($("#m-pass").value || "").trim().toLowerCase() === DEFAULT_PASSCODE.toLowerCase()) {
-        try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
-        unlock();
-      } else { note.className = "notice err show"; note.textContent = "Incorrect passcode. Try again."; }
+    $("#m-unlock").addEventListener("click", async function () {
+      var note = $("#mGateNote"), pass = $("#m-pass").value, ok = false;
+      if (window.HorizonStore && window.HorizonStore.unlock) { ok = await window.HorizonStore.unlock(pass); }
+      else { ok = String(pass || "").trim().toLowerCase() === DEFAULT_PASSCODE.toLowerCase(); }
+      if (ok) { try { sessionStorage.setItem(SESSION, "1"); } catch (e) {} unlock(); }
+      else { note.className = "notice err show"; note.textContent = "Incorrect passcode. Try again."; }
     });
     $("#m-pass").addEventListener("keydown", function (e) { if (e.key === "Enter") $("#m-unlock").click(); });
     try { if (sessionStorage.getItem(SESSION) === "1") unlock(); } catch (e) {}
@@ -419,6 +442,7 @@
     $("#m-clear").addEventListener("click", function () { if (confirm("Remove all participants?")) { DB.participants = []; renderList(); save(DB); } });
     $("#m-add-sign").addEventListener("click", function () { DB.signatories.push({ name: "", designation: "", photo: "" }); renderSigns(); });
     $("#m-save").addEventListener("click", saveAll);
+    $("#m-publish").addEventListener("click", function () { publishToBackend($("#mSaveNote")); });
     $("#m-export").addEventListener("click", exportJson);
     $("#m-import").addEventListener("change", importJson);
   }
@@ -518,6 +542,7 @@
     initMember();
     fitCertificate();
     window.addEventListener("resize", fitCertificate);
+    pullFromBackend();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

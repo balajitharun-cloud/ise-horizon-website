@@ -1,0 +1,118 @@
+/* =====================================================================
+   AVYAKT — backend client
+   The site's data lives in this GitHub repo (data/*.json), so every
+   visitor reads the same content. Public pages only READ. Writing needs a
+   GitHub token, which an elite member pastes into the member panel; it is
+   kept in that browser's localStorage and is NEVER committed to the repo.
+   ===================================================================== */
+(function () {
+  "use strict";
+
+  var TOKEN_KEY = "avyakt-gh-token";
+  var CFG_KEY = "avyakt-gh-config";
+  var DEFAULTS = { owner: "balajitharun-cloud", repo: "ise-horizon-website", branch: "main" };
+  var API = "https://api.github.com";
+
+  function cfg() {
+    var c = {};
+    try { c = JSON.parse(localStorage.getItem(CFG_KEY) || "{}"); } catch (e) {}
+    return {
+      owner: (c.owner || DEFAULTS.owner).trim(),
+      repo: (c.repo || DEFAULTS.repo).trim(),
+      branch: (c.branch || DEFAULTS.branch).trim()
+    };
+  }
+  function setConfig(c) {
+    var cur = cfg();
+    var next = { owner: (c && c.owner) || cur.owner, repo: (c && c.repo) || cur.repo, branch: (c && c.branch) || cur.branch };
+    try { localStorage.setItem(CFG_KEY, JSON.stringify(next)); } catch (e) {}
+    return next;
+  }
+  function token() { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return ""; } }
+  function setToken(t) {
+    try { t ? localStorage.setItem(TOKEN_KEY, String(t).trim()) : localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+  }
+  function canWrite() { return !!token(); }
+
+  /* ---------- utf-8 safe base64 ---------- */
+  function b64encode(str) {
+    var bytes = new TextEncoder().encode(str), bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function b64decode(b64) {
+    var bin = atob(String(b64).replace(/\s/g, ""));
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function contentsUrl(path) {
+    var c = cfg();
+    return API + "/repos/" + encodeURIComponent(c.owner) + "/" + encodeURIComponent(c.repo) +
+      "/contents/" + path.split("/").map(encodeURIComponent).join("/");
+  }
+  function headers(extra) {
+    var h = { "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
+    if (token()) h["Authorization"] = "Bearer " + token();
+    if (extra) for (var k in extra) h[k] = extra[k];
+    return h;
+  }
+  async function ghError(r) {
+    var msg = "";
+    try { msg = (await r.json()).message || ""; } catch (e) {}
+    return new Error("GitHub " + r.status + (msg ? " — " + msg : ""));
+  }
+
+  /* ---------- read ---------- */
+  async function pull(path) {
+    var r = await fetch(contentsUrl(path) + "?ref=" + encodeURIComponent(cfg().branch),
+      { headers: headers(), cache: "no-store" });
+    if (r.status === 404) return null;
+    if (!r.ok) throw await ghError(r);
+    var j = await r.json();
+    return { sha: j.sha, data: JSON.parse(b64decode(j.content)) };
+  }
+
+  /* ---------- write ---------- */
+  async function push(path, obj, message) {
+    if (!token()) throw new Error("No GitHub token set — connect the backend first.");
+    var sha = null;
+    try { var cur = await pull(path); if (cur) sha = cur.sha; } catch (e) {}
+    var body = {
+      message: message || ("Update " + path),
+      content: b64encode(JSON.stringify(obj, null, 2) + "\n"),
+      branch: cfg().branch
+    };
+    if (sha) body.sha = sha;
+    var r = await fetch(contentsUrl(path), {
+      method: "PUT",
+      headers: headers({ "Content-Type": "application/json" }),
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw await ghError(r);
+    return await r.json();
+  }
+
+  /* ---------- connection check ---------- */
+  async function verify() {
+    var c = cfg();
+    var r = await fetch(API + "/repos/" + encodeURIComponent(c.owner) + "/" + encodeURIComponent(c.repo),
+      { headers: headers(), cache: "no-store" });
+    if (!r.ok) throw await ghError(r);
+    var j = await r.json();
+    return {
+      fullName: j.full_name,
+      isPrivate: !!j.private,
+      defaultBranch: j.default_branch,
+      canPush: !!(j.permissions && j.permissions.push)
+    };
+  }
+
+  window.AvyaktBackend = {
+    cfg: cfg, setConfig: setConfig,
+    token: token, setToken: setToken, canWrite: canWrite,
+    pull: pull, push: push, verify: verify,
+    paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
+  };
+})();

@@ -1,5 +1,5 @@
 /* AVYAKT — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v24";
+var CACHE = "horizon-v25";
 var ASSETS = [
   "./",
   "index.html",
@@ -14,6 +14,7 @@ var ASSETS = [
   "admin.html",
   "assets/css/style.css",
   "assets/js/data.js",
+  "assets/js/backend.js",
   "assets/js/store.js",
   "assets/js/assets-data.js",
   "assets/js/main.js",
@@ -23,6 +24,9 @@ var ASSETS = [
   "assets/images/vtu-seal.jpeg",
   "assets/images/ise-horizon-logo.png",
   "assets/images/ise-horizon-badge.png",
+  "assets/images/cert-seal.png",
+  "assets/images/cert-club.png",
+  "assets/images/cert-college.png",
   "assets/images/icon-192.png",
   "assets/images/icon-512.png",
   "manifest.webmanifest"
@@ -44,6 +48,10 @@ self.addEventListener("fetch", function (e) {
   var url;
   try { url = new URL(req.url); } catch (err) { return; }
   if (url.origin !== location.origin) return;
+
+  // Backend data (data/*.json) must always come from the network, never a cache.
+  if (url.pathname.indexOf("/data/") !== -1) return;
+
   var dest = req.destination;
 
   // Documents, scripts and styles: network-first, so updates always arrive.

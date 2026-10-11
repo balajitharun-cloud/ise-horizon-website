@@ -1,0 +1,61 @@
+{
+  "_comment": "AVYAKT site content. Edited by elite members from admin.html. Public file.",
+  "settings": {
+    "activeMembers": 0,
+    "eventsHosted": 0,
+    "passcodeHash": "67b8973601cf3d4b208c7a4215988e1374d55dec4d3aebe0b0d2d1ec8349d9f9"
+  },
+  "hackathon": {
+    "title": "HORIZON Hackathon",
+    "date": "",
+    "venue": "",
+    "description": "Our flagship build sprint — open to every department. Dates and the registration link are posted here by the club.",
+    "link": "",
+    "active": true
+  },
+  "events": [],
+  "pastEvents": [],
+  "news": [
+    {
+      "id": "n1",
+      "title": "Welcome to the new AVYAKT website",
+      "date": "2026-10-11",
+      "tag": "Update",
+      "excerpt": "Our new club portal is live.",
+      "body": "Events, projects and updates are published here by the core committee."
+    }
+  ],
+  "projects": [],
+  "history": [
+    {
+      "id": "h1",
+      "year": "2026",
+      "text": "AVYAKT was founded by students of the Department of Information Science & Engineering at Kalpataru Institute of Technology."
+    }
+  ],
+  "achievements": [],
+  "gallery": [
+    {
+      "id": "g1",
+      "caption": "HORIZON Hackathon — final demo round",
+      "emoji": "🚀",
+      "wide": true
+    },
+    {
+      "id": "g2",
+      "caption": "Workshop in the computer lab",
+      "emoji": "🤖"
+    },
+    {
+      "id": "g3",
+      "caption": "Weekly coding circle",
+      "emoji": "🧩"
+    },
+    {
+      "id": "g4",
+      "caption": "Tech talk — packed auditorium",
+      "emoji": "🎙️"
+    }
+  ],
+  "members": []
+}

@@ -1,21 +1,33 @@
 /* =====================================================================
    AVYAKT — content store
-   Elite members add/cancel events, news, projects, gallery items and
-   members from the member panel (admin.html). Public pages read from here.
-   Data lives in this browser's localStorage; use Export/Import to move it.
+   Elite members manage events, news, projects, gallery, members, history
+   and the Hall of Fame from the member panel (admin.html).
+
+   Data is shared through the GitHub repo (data/content.json) via
+   assets/js/backend.js, so every visitor sees the same content.
+   The browser keeps a localStorage copy as an instant/offline cache; the
+   backend copy wins whenever it is reachable.
    ===================================================================== */
 (function () {
   "use strict";
   var KEY = "horizon-content-v2";
-  var PASSCODE = "ise@2007";           // elite-member passcode
+  var PASSCODE = "ise@2007";           // fallback passcode (used until a hash is published)
   var SESSION = "horizon-member";      // sessionStorage unlock flag
+  var B = window.AvyaktBackend;
 
   function today() { return new Date().toISOString().slice(0, 10); }
   function uid(p) { return (p || "id") + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
+  async function sha256hex(s) {
+    try {
+      var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(s)));
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+    } catch (e) { return null; }   // no WebCrypto (e.g. file://) — fall back to the code passcode
+  }
+
   function defaults() {
     return {
-      settings: { passcode: PASSCODE, activeMembers: 0, eventsHosted: 0 },
+      settings: { activeMembers: 0, eventsHosted: 0, passcodeHash: "" },
       hackathon: {
         title: "HORIZON Hackathon",
         date: "",
@@ -45,34 +57,40 @@
     };
   }
 
-  function load() {
+  function normalize(o) {
+    var d = defaults();
+    o = o || {};
+    o.settings = Object.assign(d.settings, o.settings || {});
+    o.hackathon = Object.assign(d.hackathon, o.hackathon || {});
+    ["events", "pastEvents", "news", "projects", "gallery", "members", "history", "achievements"].forEach(function (k) {
+      o[k] = Array.isArray(o[k]) ? o[k] : d[k];
+    });
+    delete o._comment;
+    return o;
+  }
+  function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+  function loadLocal() {
     var raw = null;
     try { raw = localStorage.getItem(KEY); } catch (e) {}
     if (!raw) { var d = defaults(); save(d); return d; }
     try { return normalize(JSON.parse(raw)); } catch (e) { var d2 = defaults(); save(d2); return d2; }
   }
-  function normalize(o) {
-    var d = defaults();
-    o = o || {};
-    o.settings = Object.assign(d.settings, o.settings || {});
-    o.settings.passcode = PASSCODE;   // passcode always comes from the code, never from stored data
-    o.hackathon = Object.assign(d.hackathon, o.hackathon || {});
-    ["events", "pastEvents", "news", "projects", "gallery", "members", "history", "achievements"].forEach(function (k) {
-      o[k] = Array.isArray(o[k]) ? o[k] : d[k];
-    });
-    return o;
-  }
-  function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
 
-  var data = load();
+  var data = loadLocal();
+  var state = { synced: false, syncing: false, error: "" };
+
+  function announce(what) {
+    try { window.dispatchEvent(new CustomEvent("horizon:content", { detail: { source: what } })); } catch (e) {}
+  }
 
   var Store = {
     PASSCODE: PASSCODE,
     KEY: KEY,
     get: function () { return data; },
-    reload: function () { data = load(); return data; },
+    reload: function () { data = loadLocal(); return data; },
     save: function () { save(data); return data; },
     reset: function () { data = defaults(); save(data); return data; },
+    state: function () { return state; },
 
     add: function (section, item) {
       if (!data[section]) data[section] = [];
@@ -98,16 +116,55 @@
       data = normalize(JSON.parse(text)); save(data); return data;
     },
 
-    unlock: function (pass) {
-      if (String(pass == null ? "" : pass).trim().toLowerCase() === PASSCODE.toLowerCase()) {
-        try { sessionStorage.setItem(SESSION, "1"); } catch (e) {}
-        return true;
+    /* ---------- backend sync ---------- */
+    sync: async function () {
+      if (!B) return data;
+      state.syncing = true;
+      try {
+        var res = await B.pull(B.paths.content);
+        if (res && res.data) {
+          data = normalize(res.data);
+          save(data);
+          state.synced = true; state.error = "";
+          announce("backend");
+        }
+      } catch (e) {
+        state.error = e.message || String(e);
+      } finally {
+        state.syncing = false;
       }
-      return false;
+      return data;
+    },
+    publish: async function (message) {
+      if (!B) throw new Error("Backend not loaded.");
+      save(data);
+      var out = await B.push(B.paths.content, data, message || "Update site content (member panel)");
+      state.synced = true; state.error = "";
+      return out;
+    },
+
+    /* ---------- member gate ---------- */
+    unlock: async function (pass) {
+      var given = String(pass == null ? "" : pass).trim();
+      var ok = false;
+      if (data.settings && data.settings.passcodeHash) {
+        var h = await sha256hex(given);
+        ok = !!h && h === data.settings.passcodeHash;
+      }
+      if (!ok) ok = given.toLowerCase() === PASSCODE.toLowerCase();   // fallback while no hash is published
+      if (ok) { try { sessionStorage.setItem(SESSION, "1"); } catch (e) {} }
+      return ok;
     },
     isUnlocked: function () { try { return sessionStorage.getItem(SESSION) === "1"; } catch (e) { return false; } },
     lock: function () { try { sessionStorage.removeItem(SESSION); } catch (e) {} }
   };
 
   window.HorizonStore = Store;
+
+  /* Public pages: show the cached copy instantly, then refresh from the
+     backend in the background. admin.js opts out so it can edit in peace. */
+  if (B && !document.body.hasAttribute("data-no-autosync")) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { Store.sync(); });
+    else Store.sync();
+  }
 })();
