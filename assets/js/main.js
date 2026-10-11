@@ -424,7 +424,7 @@
         .then(function (res) {
           note.className = "notice ok show";
           note.textContent = "Thanks, " + data.name + "! Your request is recorded for the whole club.";
-          return S.sync();                       // pull the new shared count
+          return S.syncStats();                  // pull the new shared count
         })
         .catch(function () {
           note.className = "notice ok show";
@@ -452,7 +452,7 @@
     if (page && RENDER[page]) { try { RENDER[page](); } catch (e) { console.error("render error", e); } }
     wireForms();
     window.addEventListener("horizon:content", function (e) {
-      if (!e || !e.detail || e.detail.source !== "backend") return;
+      if (!e || !e.detail) return;
       if (page && RENDER[page]) { try { RENDER[page](); } catch (err) { console.error("re-render error", err); } }
       buildFooter();
     });

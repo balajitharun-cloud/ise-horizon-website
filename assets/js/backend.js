@@ -109,10 +109,17 @@
     };
   }
 
+  /* ---------- shared registrations (Netlify Blobs via /api/stats) ---------- */
+  async function stats() {
+    var r = await fetch("/api/stats", { headers: { "Accept": "application/json" }, cache: "no-store" });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r.json();
+  }
+
   window.AvyaktBackend = {
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
-    pull: pull, push: push, verify: verify,
+    pull: pull, push: push, verify: verify, stats: stats,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

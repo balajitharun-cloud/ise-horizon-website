@@ -95,18 +95,24 @@ site automatically — you never upload anything by hand again.
 | **Netlify** | Netlify → Add new site → Import from Git | redeploys automatically |
 | **GitHub Pages** | already on (Settings → Pages → `main`) | rebuilds automatically, ~40s |
 
-### The Join Us endpoint
+### Shared member registrations (Join Us)
 
-The Join Us form posts to `/api/join` so new members land in the shared
-`data/content.json` (and the Active-members count updates for everyone). That
-endpoint is a serverless function and must be provided by the host:
+A public page cannot write to the GitHub repo — the token would be visible to anyone.
+So the form posts to a small serverless endpoint, which owns the write:
 
-- **Netlify** — `netlify/functions/join.mjs` (already included)
-- **Vercel** — `api/join.js` (already included)
-- **GitHub Pages** — no serverless functions, so the form falls back to saving the
-  request in the visitor's browser only.
+| Host | Endpoint | Storage | Setup needed |
+|---|---|---|---|
+| **Netlify** | `netlify/functions/join.mjs` + `stats.mjs` | **Netlify Blobs** | **none — just deploy** |
+| **Vercel** | `api/join.js` | the GitHub repo | add `GITHUB_TOKEN` (below) |
+| **GitHub Pages** | none (no serverless) | — | not supported |
 
-Either way it needs the repo token as an **environment variable** (never in the code):
+- `POST /api/join` records a registration and returns the new count.
+- `GET /api/stats` returns the shared member list, which the home page uses for the
+  **Active members** number and the member panel uses to show every registration.
+
+On Netlify there is nothing to configure: Blobs ships with the platform. On Vercel the
+function writes to `data/content.json` and needs the token as an environment variable
+(never in the code):
 
 ```
 GITHUB_TOKEN   = <fine-grained token with Contents: Read and write on this repo>
@@ -115,9 +121,10 @@ GITHUB_REPO    = ise-horizon-website    # optional
 GITHUB_BRANCH  = main                   # optional
 ```
 
-Set it in **Vercel → Project → Settings → Environment Variables** or
-**Netlify → Site configuration → Environment variables**. Without it, `/api/join`
-returns "Server not configured" and the form falls back to the local-only message.
+Set it in **Vercel → Project → Settings → Environment Variables**. Without it,
+`/api/join` returns "Server not configured" and the form falls back to a local-only
+message. The **Active members** number can never fall below the number of members
+recorded, and an elite member can always set it by hand in the panel's Stats tab.
 
 ---
 

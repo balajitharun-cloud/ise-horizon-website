@@ -144,8 +144,30 @@
       } finally {
         state.syncing = false;
       }
+      await Store.syncStats();
       return data;
     },
+    /* pull the shared member registrations recorded by /api/join */
+    syncStats: async function () {
+      if (!B || !B.stats) return data;
+      try {
+        var res = await B.stats();
+        if (res && Array.isArray(res.members)) {
+          var seen = {};
+          (data.members || []).forEach(function (m) { seen[String(m.usn || "").toLowerCase()] = 1; });
+          var added = 0;
+          res.members.forEach(function (m) {
+            var k = String(m.usn || "").toLowerCase();
+            if (!seen[k]) { data.members.unshift(m); seen[k] = 1; added++; }
+          });
+          data.settings = data.settings || {};
+          data.settings.activeMembers = Math.max(parseInt(data.settings.activeMembers, 10) || 0, res.members.length);
+          if (added || res.members.length) { save(data); announce("stats"); }
+        }
+      } catch (e) {}
+      return data;
+    },
+
     publish: async function (message) {
       if (!B) throw new Error("Backend not loaded.");
       save(data);

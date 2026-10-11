@@ -383,6 +383,7 @@
     $("#adminGate").classList.add("hidden"); $("#adminPanel").classList.remove("hidden");
     renderTabs(); renderBody();
     S.sync().then(function () { renderBody(); }).catch(function () {});
+    S.syncStats().then(function () { renderBody(); }).catch(function () {});
   }
 
   function boot() {
