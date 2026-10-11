@@ -12,20 +12,7 @@
     "link": "",
     "active": true
   },
-  "events": [
-    {
-      "title": "Club innogration ",
-      "date": "2026-10-14",
-      "time": "Eg: 10:00 to 2:00",
-      "venue": "Kit campus ",
-      "mode": "Offline",
-      "category": "",
-      "registration": "",
-      "poster": "",
-      "description": "Hello you are welcome 🤗😁",
-      "id": "events-mv3rgfg5c90r"
-    }
-  ],
+  "events": [],
   "pastEvents": [],
   "news": [
     {
