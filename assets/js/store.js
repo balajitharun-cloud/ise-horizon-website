@@ -66,6 +66,20 @@
       o[k] = Array.isArray(o[k]) ? o[k] : d[k];
     });
     delete o._comment;
+    // Collapse duplicate member records (same USN). The Join form keeps a local
+    // copy on every submit, so anyone who registered more than once used to be
+    // counted twice - and the local copy was never de-duplicated against the
+    // shared list. One USN = one member.
+    if (Array.isArray(o.members)) {
+      var seenUsn = {};
+      o.members = o.members.filter(function (m) {
+        var k = String((m && m.usn) || "").trim().toLowerCase();
+        if (!k) return true;                 // no USN: nothing to match on, keep it
+        if (seenUsn[k]) return false;
+        seenUsn[k] = 1;
+        return true;
+      });
+    }
     return o;
   }
   function save(o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
@@ -115,7 +129,13 @@
        lower than the number of members actually recorded. */
     stats: function () {
       var st = data.settings || {};
-      var listed = Array.isArray(data.members) ? data.members.length : 0;
+      // count distinct USNs, so a duplicate record can never inflate the number
+      var seen = {}, listed = 0;
+      (data.members || []).forEach(function (m) {
+        var k = String((m && m.usn) || "").trim().toLowerCase();
+        if (!k) { listed++; return; }
+        if (!seen[k]) { seen[k] = 1; listed++; }
+      });
       return {
         activeMembers: Math.max(parseInt(st.activeMembers, 10) || 0, listed),
         eventsHosted: parseInt(st.eventsHosted, 10) || 0
