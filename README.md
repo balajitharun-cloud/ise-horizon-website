@@ -100,31 +100,36 @@ site automatically — you never upload anything by hand again.
 A public page cannot write to the GitHub repo — the token would be visible to anyone.
 So the form posts to a small serverless endpoint, which owns the write:
 
-| Host | Endpoint | Storage | Setup needed |
+| Host | Endpoints | Storage | Setup needed |
 |---|---|---|---|
 | **Netlify** | `netlify/functions/join.mjs` + `stats.mjs` | **Netlify Blobs** | **none — just deploy** |
-| **Vercel** | `api/join.js` | the GitHub repo | add `GITHUB_TOKEN` (below) |
+| **Vercel** | `api/join.js` + `api/stats.js` | **Vercel Blob**, or the GitHub repo | create a Blob store (no copying), or add `GITHUB_TOKEN` |
 | **GitHub Pages** | none (no serverless) | — | not supported |
 
 - `POST /api/join` records a registration and returns the new count.
 - `GET /api/stats` returns the shared member list, which the home page uses for the
   **Active members** number and the member panel uses to show every registration.
+- A repeated USN is ignored, so a double-tap can't inflate the count.
 
-On Netlify there is nothing to configure: Blobs ships with the platform. On Vercel the
-function writes to `data/content.json` and needs the token as an environment variable
-(never in the code):
+**Netlify** needs nothing: Blobs ships with the platform.
 
-```
-GITHUB_TOKEN   = <fine-grained token with Contents: Read and write on this repo>
-GITHUB_OWNER   = balajitharun-cloud     # optional
-GITHUB_REPO    = ise-horizon-website    # optional
-GITHUB_BRANCH  = main                   # optional
-```
+**Vercel** picks a backing automatically (`api/_lib.js`):
 
-Set it in **Vercel → Project → Settings → Environment Variables**. Without it,
-`/api/join` returns "Server not configured" and the form falls back to a local-only
-message. The **Active members** number can never fall below the number of members
-recorded, and an elite member can always set it by hand in the panel's Stats tab.
+1. **Vercel Blob** — if `BLOB_READ_WRITE_TOKEN` is present. Just go to
+   **Vercel → Storage → Create → Blob** and connect it to the project; Vercel injects
+   the token for you, so there is no secret to copy.
+2. **The GitHub repo** — if `GITHUB_TOKEN` is present instead:
+
+   ```
+   GITHUB_TOKEN   = <fine-grained token with Contents: Read and write on this repo>
+   GITHUB_OWNER   = balajitharun-cloud     # optional
+   GITHUB_REPO    = ise-horizon-website    # optional
+   GITHUB_BRANCH  = main                   # optional
+   ```
+
+If neither is set, `/api/join` returns a message saying so and the form falls back to
+a local-only message. The **Active members** number can never fall below the number of
+members recorded, and an elite member can always set it by hand in the panel's Stats tab.
 
 ---
 
