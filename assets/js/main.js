@@ -463,6 +463,11 @@
       if (page && RENDER[page]) { try { RENDER[page](); } catch (err) { console.error("re-render error", err); } }
       buildFooter();
     });
+    // Pull the shared member count from this site's own backend on every load.
+    // Relying only on Store.sync() is not enough: that reads api.github.com,
+    // which some networks and ad-blockers refuse, and it never runs on a host
+    // without a serverless endpoint. This keeps the count live for visitors.
+    if (S && S.syncStats) { try { S.syncStats(); } catch (e) {} }
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeSearch();
       if (e.key === "/" && !/input|textarea|select/i.test(e.target.tagName || "")) { e.preventDefault(); openSearch(); }

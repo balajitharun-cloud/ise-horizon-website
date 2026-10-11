@@ -1,7 +1,7 @@
 {
   "_comment": "AVYAKT site content. Edited by elite members from admin.html. Public file.",
   "settings": {
-    "activeMembers": 1,
+    "activeMembers": 0,
     "eventsHosted": 0,
     "passcodeHash": "67b8973601cf3d4b208c7a4215988e1374d55dec4d3aebe0b0d2d1ec8349d9f9"
   },
@@ -57,20 +57,5 @@
       "emoji": "🎙️"
     }
   ],
-  "members": [
-    {
-      "id": "m-mv3pja4vqudz",
-      "name": "Tharun",
-      "usn": "1ki25is002",
-      "year": "2nd Year",
-      "branch": "Information Science & Engineering",
-      "interests": [
-        "Web Dev",
-        "AI/ML"
-      ],
-      "role": "Active member",
-      "why": "Hello",
-      "joined": "2026-10-11"
-    }
-  ]
+  "members": []
 }

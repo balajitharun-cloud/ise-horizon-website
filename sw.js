@@ -1,5 +1,5 @@
 /* AVYAKT — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v32";
+var CACHE = "horizon-v34";
 var ASSETS = [
   "./",
   "index.html",
@@ -49,8 +49,14 @@ self.addEventListener("fetch", function (e) {
   try { url = new URL(req.url); } catch (err) { return; }
   if (url.origin !== location.origin) return;
 
-  // Backend data (data/*.json) must always come from the network, never a cache.
+  // Backend data must always come from the network, never a cache.
+  //   /data/*.json  - the content files
+  //   /api/*        - the live stats + join endpoints
+  // Without the /api/ exclusion these responses get cached by the "everything
+  // else" branch below, so a visitor's count freezes at whatever it was the
+  // first time they loaded the site - including 0.
   if (url.pathname.indexOf("/data/") !== -1) return;
+  if (url.pathname.indexOf("/api/") !== -1) return;
 
   var dest = req.destination;
 
