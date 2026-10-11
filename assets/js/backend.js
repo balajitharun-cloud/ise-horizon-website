@@ -108,6 +108,42 @@
     return null;
   }
 
+  /* ---------- write the site content through the server ---------- */
+  /* The GitHub token lives in the host's environment, so the member never
+     pastes one into the browser. Authorised with the club passcode. */
+  async function saveContent(content, pass) {
+    var r = await fetch("/api/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pass: pass || "", content: content })
+    });
+    if (!r.ok) {
+      var msg = "";
+      try { var j = await r.json(); msg = j.error || ""; } catch (e) {}
+      var err = new Error(msg || ("HTTP " + r.status));
+      err.status = r.status;
+      throw err;
+    }
+    return await r.json();
+  }
+
+  /* ---------- upload a photo through the server ---------- */
+  async function uploadFile(path, base64, pass) {
+    var r = await fetch("/api/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: path, base64: base64, pass: pass || "" })
+    });
+    if (!r.ok) {
+      var msg = "";
+      try { var j = await r.json(); msg = j.error || ""; } catch (e) {}
+      var err = new Error(msg || ("HTTP " + r.status));
+      err.status = r.status;
+      throw err;
+    }
+    return await r.json();
+  }
+
   /* ---------- commit a binary file (a photo) ---------- */
   /* base64 with no "data:...;base64," prefix */
   async function pushBinary(path, base64, message) {
@@ -171,7 +207,8 @@
   window.AvyaktBackend = {
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
-    pull: pull, push: push, pushBinary: pushBinary, content: content, verify: verify, stats: stats, diagnose: diagnose,
+    pull: pull, push: push, pushBinary: pushBinary, content: content,
+    saveContent: saveContent, uploadFile: uploadFile, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

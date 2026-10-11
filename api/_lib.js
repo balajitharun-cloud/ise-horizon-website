@@ -118,6 +118,48 @@ async function saveMembersToRepo(loaded, members) {
   return true;
 }
 
+/* ---------- write the whole content file to the repo ---------- */
+async function saveContentToRepo(loaded, content, message) {
+  const body = {
+    message: message || "Update site content (member panel)",
+    content: Buffer.from(JSON.stringify(content, null, 2) + "\n").toString("base64"),
+    branch: BRANCH
+  };
+  if (loaded && loaded.sha) body.sha = loaded.sha;
+  const r = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/data/content.json", {
+    method: "PUT",
+    headers: Object.assign({ "Content-Type": "application/json" }, await ghHeaders()),
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error("GitHub write failed (" + r.status + ")");
+  const j = await r.json();
+  return (j.content && j.content.sha) || "";
+}
+
+/* ---------- commit a single file (a gallery photo) ---------- */
+async function saveFileToRepo(path, base64, message) {
+  let sha = null;
+  try {
+    const cur = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" +
+      path.split("/").map(encodeURIComponent).join("/") + "?ref=" + encodeURIComponent(BRANCH), { headers: await ghHeaders() });
+    if (cur.ok) sha = (await cur.json()).sha;
+  } catch (e) {}
+  const body = { message: message || ("Add " + path), content: base64, branch: BRANCH };
+  if (sha) body.sha = sha;
+  const r = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" +
+    path.split("/").map(encodeURIComponent).join("/"), {
+    method: "PUT",
+    headers: Object.assign({ "Content-Type": "application/json" }, await ghHeaders()),
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error("GitHub write failed (" + r.status + ")");
+  return true;
+}
+
+function sha256hex(str) {
+  return require("crypto").createHash("sha256").update(String(str), "utf8").digest("hex");
+}
+
 function configured() { return !!(BLOB || GH); }
 function activeBackend() { return BLOB ? "vercel-blob" : (GH ? "github-repo" : "none"); }
 function hint() {
@@ -127,4 +169,4 @@ function hint() {
        + "Alternatively connect a Blob store (Storage -> Create) which needs no token.";
 }
 
-module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, configured, activeBackend, hint, KEY };
+module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, sha256hex, configured, activeBackend, hint, KEY };

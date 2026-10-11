@@ -90,6 +90,7 @@
     try { return normalize(JSON.parse(raw)); } catch (e) { var d2 = defaults(); save(d2); return d2; }
   }
 
+  var PASS_KEY = "avyakt-pass";
   var data = loadLocal();
   var state = { synced: false, syncing: false, error: "" };
 
@@ -191,12 +192,29 @@
       return data;
     },
 
+    passcode: function () { try { return sessionStorage.getItem(PASS_KEY) || ""; } catch (e) { return ""; } },
+
+    /* Send the content to the shared store. Preferred route: this site's own
+       /api/save, where the GitHub token stays on the server. Fallback: the
+       in-browser token, for hosts without serverless functions. */
     publish: async function (message) {
       if (!B) throw new Error("Backend not loaded.");
       save(data);
-      var out = await B.push(B.paths.content, data, message || "Update site content (member panel)");
+      if (B.saveContent) {
+        try {
+          var out = await B.saveContent(data, Store.passcode());
+          state.synced = true; state.error = "";
+          return { via: "server", out: out };
+        } catch (e) {
+          // 404/405 means this host has no save endpoint - try the browser token.
+          // Any other status (401 wrong passcode, 502 write failed) is a real error.
+          if (e && e.status && e.status !== 404 && e.status !== 405) throw e;
+        }
+      }
+      if (!B.canWrite()) throw new Error("This site has no save endpoint and no GitHub token is set in this browser. Connect the backend in the Backend tab.");
+      var out2 = await B.push(B.paths.content, data, message || "Update site content (member panel)");
       state.synced = true; state.error = "";
-      return out;
+      return { via: "browser", out: out2 };
     },
 
     /* ---------- member gate ---------- */
@@ -208,11 +226,13 @@
         ok = !!h && h === data.settings.passcodeHash;
       }
       if (!ok) ok = given.toLowerCase() === PASSCODE.toLowerCase();   // fallback while no hash is published
-      if (ok) { try { sessionStorage.setItem(SESSION, "1"); } catch (e) {} }
+      if (ok) {
+        try { sessionStorage.setItem(SESSION, "1"); sessionStorage.setItem(PASS_KEY, given); } catch (e) {}
+      }
       return ok;
     },
     isUnlocked: function () { try { return sessionStorage.getItem(SESSION) === "1"; } catch (e) { return false; } },
-    lock: function () { try { sessionStorage.removeItem(SESSION); } catch (e) {} }
+    lock: function () { try { sessionStorage.removeItem(SESSION); sessionStorage.removeItem(PASS_KEY); } catch (e) {} }
   };
 
   window.HorizonStore = Store;

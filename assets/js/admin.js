@@ -304,19 +304,22 @@
      change, so the website and every visitor see it without anyone having to
      remember a separate Publish step. */
   var pubTimer = null;
-  function schedulePublish(note) {
-    if (!B || !B.canWrite || !B.canWrite()) {
-      if (note) note.textContent = "Saved on this device. Connect the backend (Backend tab) to share it with everyone.";
-      return;
-    }
-    if (note) note.textContent = "Saved. Publishing to the club database\u2026";
+  /* Look the note up by id each time: the section re-renders after a change,
+     so holding a reference to the old element would show nothing at all. */
+  function setNote(id, text, ok) {
+    var el = id ? document.getElementById(id) : null;
+    if (el) { el.className = "notice " + (ok ? "ok" : "err") + " show"; el.textContent = text; }
+  }
+  function schedulePublish(noteId) {
+    if (!B) { setNote(noteId, "Saved on this device.", false); return; }
+    setNote(noteId, "Saved. Publishing to the club database\u2026", true);
     clearTimeout(pubTimer);
     pubTimer = setTimeout(async function () {
       try {
         await S.publish();
-        if (note && note.isConnected) note.textContent = "Saved and published \u2014 visitors see it within a minute.";
+        setNote(noteId, "Saved and published \u2014 visitors see it within a minute.", true);
       } catch (e) {
-        if (note && note.isConnected) note.textContent = "Saved locally, but publishing failed: " + ((e && e.message) || e);
+        setNote(noteId, "Saved on this device, but publishing failed: " + ((e && e.message) || e), false);
       }
     }, 1200);
   }
@@ -328,14 +331,23 @@
         if (!file) return;
         var id = this.getAttribute("data-for");
         var hidden = $("#" + id), prev = $("#" + id + "-prev"), note = $("#" + id + "-note");
-        if (!B || !B.pushBinary) { note.textContent = "Backend not loaded."; return; }
-        if (!B.canWrite || !B.canWrite()) { note.textContent = "Connect the backend (Backend tab) first \u2014 uploading needs the GitHub token."; return; }
+        if (!B) { note.textContent = "Backend not loaded."; return; }
         note.textContent = "Preparing\u2026";
         try {
           var out = await compressToJpeg(file);
           note.textContent = "Uploading " + Math.round(out.bytes / 1024) + " KB\u2026";
           var path = "assets/images/gallery/" + slugName(file.name) + "-" + Date.now().toString(36) + ".jpg";
-          await B.pushBinary(path, out.base64, "Add gallery photo: " + file.name);
+          var sent = false;
+          // preferred: the site's own endpoint (token stays on the server)
+          if (B.uploadFile) {
+            try { await B.uploadFile(path, out.base64, S.passcode()); sent = true; }
+            catch (e) { if (e && e.status && e.status !== 404 && e.status !== 405) throw e; }
+          }
+          // fallback: the in-browser token
+          if (!sent) {
+            if (!B.canWrite || !B.canWrite()) throw new Error("no save endpoint on this host and no GitHub token in this browser \u2014 connect the backend in the Backend tab");
+            await B.pushBinary(path, out.base64, "Add gallery photo: " + file.name);
+          }
           hidden.value = path;
           prev.innerHTML = '<img src="' + path + '" alt="">';
           note.textContent = "Uploaded (" + out.width + "\u00d7" + out.height + "). Press Add/Save, then Publish.";
@@ -370,8 +382,8 @@
       if (editingId) { S.update(key, editingId, data); note.className = "notice ok show"; note.textContent = "Updated."; }
       else { S.add(key, data); note.className = "notice ok show"; note.textContent = "Added."; }
       editingId = null;
-      schedulePublish(note);
       renderBody();
+      schedulePublish("af-note");
     });
     $("#af-cancel").addEventListener("click", function () { editingId = null; renderBody(); });
     $$("[data-edit]").forEach(function (b) {
@@ -385,7 +397,7 @@
       });
     });
     $$("[data-del]").forEach(function (b) {
-      b.addEventListener("click", function () { if (confirm("Delete this item?")) { S.remove(key, this.getAttribute("data-del")); schedulePublish(null); renderBody(); } });
+      b.addEventListener("click", function () { if (confirm("Delete this item?")) { S.remove(key, this.getAttribute("data-del")); renderBody(); schedulePublish("af-note"); } });
     });
     $$("[data-archive]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -393,8 +405,8 @@
         S.add("pastEvents", it); S.remove("events", id);
         // an event was completed -> bump the Events-hosted counter
         var st = S.get().settings; st.eventsHosted = (parseInt(st.eventsHosted, 10) || 0) + 1; S.save();
-        schedulePublish(null);
         renderBody();
+        schedulePublish("af-note");
       });
     });
   }
@@ -406,8 +418,7 @@
       h.title = form.elements.title.value; h.date = form.elements.date.value; h.venue = form.elements.venue.value;
       h.description = form.elements.description.value; h.link = form.elements.link.value; h.active = form.elements.active.checked;
       S.save();
-      var n = $("#hf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
-      schedulePublish(n);
+      schedulePublish("hf-note");
     });
   }
 
@@ -419,8 +430,7 @@
       var m = parseInt(f.elements.activeMembers.value, 10); if (isNaN(m) || m < 0) m = 0;
       var v = parseInt(f.elements.eventsHosted.value, 10); if (isNaN(v) || v < 0) v = 0;
       var st = S.get().settings; st.activeMembers = m; st.eventsHosted = v; S.save();
-      var n = $("#sf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
-      schedulePublish(n);
+      schedulePublish("sf-note");
     });
   }
 
