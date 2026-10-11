@@ -467,7 +467,18 @@
     // Relying only on Store.sync() is not enough: that reads api.github.com,
     // which some networks and ad-blockers refuse, and it never runs on a host
     // without a serverless endpoint. This keeps the count live for visitors.
-    if (S && S.syncStats) { try { S.syncStats(); } catch (e) {} }
+    if (S && S.syncStats) {
+      try { S.syncStats(); } catch (e) {}
+      // Keep the shared numbers live while the page stays open: refresh once a
+      // minute, and again the moment the visitor returns to the tab. Only runs
+      // when the tab is actually visible, so a background tab costs nothing.
+      setInterval(function () {
+        if (document.visibilityState === "visible") { try { S.syncStats(); } catch (e) {} }
+      }, 60000);
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") { try { S.syncStats(); } catch (e) {} }
+      });
+    }
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeSearch();
       if (e.key === "/" && !/input|textarea|select/i.test(e.target.tagName || "")) { e.preventDefault(); openSearch(); }
