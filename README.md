@@ -77,12 +77,47 @@ between devices, or connect a backend later for a shared, multi-user list.
 
 ## Hosting
 
-Any static host works — GitHub Pages, Netlify, Vercel, Cloudflare Pages, or a college
-server. To test locally:
+The site is a static site, so any host works — GitHub Pages, Netlify, Vercel,
+Cloudflare Pages, or a college server. To test locally:
 
 ```bash
 python3 -m http.server 8000   # open http://localhost:8000
 ```
+
+### Auto-deploy from GitHub
+
+Once a host is **connected to this GitHub repo**, every push to `main` redeploys the
+site automatically — you never upload anything by hand again.
+
+| Host | Connect it | What happens on a push to `main` |
+|---|---|---|
+| **Vercel** | vercel.com/new → import this repo | redeploys automatically |
+| **Netlify** | Netlify → Add new site → Import from Git | redeploys automatically |
+| **GitHub Pages** | already on (Settings → Pages → `main`) | rebuilds automatically, ~40s |
+
+### The Join Us endpoint
+
+The Join Us form posts to `/api/join` so new members land in the shared
+`data/content.json` (and the Active-members count updates for everyone). That
+endpoint is a serverless function and must be provided by the host:
+
+- **Netlify** — `netlify/functions/join.mjs` (already included)
+- **Vercel** — `api/join.js` (already included)
+- **GitHub Pages** — no serverless functions, so the form falls back to saving the
+  request in the visitor's browser only.
+
+Either way it needs the repo token as an **environment variable** (never in the code):
+
+```
+GITHUB_TOKEN   = <fine-grained token with Contents: Read and write on this repo>
+GITHUB_OWNER   = balajitharun-cloud     # optional
+GITHUB_REPO    = ise-horizon-website    # optional
+GITHUB_BRANCH  = main                   # optional
+```
+
+Set it in **Vercel → Project → Settings → Environment Variables** or
+**Netlify → Site configuration → Environment variables**. Without it, `/api/join`
+returns "Server not configured" and the form falls back to the local-only message.
 
 ---
 
