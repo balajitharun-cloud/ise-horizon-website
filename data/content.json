@@ -1,5 +1,4 @@
 {
-  "_comment": "AVYAKT site content. Edited by elite members from admin.html. Public file.",
   "settings": {
     "activeMembers": 2,
     "eventsHosted": 0,
@@ -35,6 +34,13 @@
   ],
   "achievements": [],
   "gallery": [
+    {
+      "caption": "Hello",
+      "img": "assets/images/gallery/1000063854-mv3re4s1.jpg",
+      "emoji": "",
+      "wide": false,
+      "id": "gallery-mv3refp31xrg"
+    },
     {
       "id": "g1",
       "caption": "HORIZON Hackathon — final demo round",
