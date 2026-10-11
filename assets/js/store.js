@@ -111,6 +111,17 @@
       return (data[section] || []).filter(function (x) { return x.id === id; })[0] || null;
     },
 
+    /* the numbers shown on the home page. Active members can never be
+       lower than the number of members actually recorded. */
+    stats: function () {
+      var st = data.settings || {};
+      var listed = Array.isArray(data.members) ? data.members.length : 0;
+      return {
+        activeMembers: Math.max(parseInt(st.activeMembers, 10) || 0, listed),
+        eventsHosted: parseInt(st.eventsHosted, 10) || 0
+      };
+    },
+
     export: function () { return JSON.stringify(data, null, 2); },
     importJson: function (text) {
       data = normalize(JSON.parse(text)); save(data); return data;

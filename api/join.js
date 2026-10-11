@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
   const name  = String(body.name  || "").trim();
   const email = String(body.email || "").trim();
   const usn   = String(body.usn   || "").trim();
-  if (!name || !email || !usn) { res.status(400).json({ ok: false, error: "name, email and usn are required" }); return; }
+  if (!name || !usn) { res.status(400).json({ ok: false, error: "name and usn are required" }); return; }
 
   const getUrl = API + "/repos/" + OWNER + "/" + REPO + "/contents/" + PATH + "?ref=" + encodeURIComponent(BRANCH);
   const r = await fetch(getUrl, { headers: ghHeaders() });
@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
   content.settings = content.settings || {};
   content.members.unshift({
     id: "m-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    name: name, usn: usn, email: email,
+    name: name, usn: usn,
     phone: String(body.phone || "").trim(),
     year: String(body.year || "").trim(),
     branch: String(body.branch || "").trim(),

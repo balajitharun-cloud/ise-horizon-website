@@ -43,7 +43,7 @@ export default async (req) => {
   const name  = String(body.name  || "").trim();
   const email = String(body.email || "").trim();
   const usn   = String(body.usn   || "").trim();
-  if (!name || !email || !usn) return reply(400, { ok: false, error: "name, email and usn are required" });
+  if (!name || !usn) return reply(400, { ok: false, error: "name and usn are required" });
 
   // 1. read the current content file
   const getUrl = API + "/repos/" + OWNER + "/" + REPO + "/contents/" + PATH + "?ref=" + encodeURIComponent(BRANCH);
@@ -59,7 +59,7 @@ export default async (req) => {
 
   content.members.unshift({
     id: "m-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    name: name, usn: usn, email: email,
+    name: name, usn: usn,
     phone: String(body.phone || "").trim(),
     year: String(body.year || "").trim(),
     branch: String(body.branch || "").trim(),

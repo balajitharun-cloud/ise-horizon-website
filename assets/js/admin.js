@@ -71,13 +71,22 @@
         { k: "usn", l: "USN", t: "text" },
         { k: "year", l: "Year", t: "select", o: ["", "1st Year", "2nd Year", "3rd Year", "4th Year"] },
         { k: "branch", l: "Branch", t: "text" },
-        { k: "email", l: "Email", t: "text" },
-        { k: "phone", l: "Phone", t: "text" },
         { k: "role", l: "Role", t: "select", o: ["Active member", "Event host"] },
-        { k: "interests", l: "Interests (comma separated)", t: "list" }
+        { k: "interests", l: "Interests (comma separated)", t: "list" },
+        { k: "why", l: "Why they want to join", t: "textarea" },
+        { k: "joined", l: "Joined", t: "date" }
       ],
       title: function (it) { return it.name + (it.usn ? " · " + it.usn : ""); },
-      sub: function (it) { return (it.role || "") + (it.year ? " · " + it.year : ""); }
+      sub: function (it) {
+        return [it.role || "Active member", it.year || "", it.branch || ""].filter(Boolean).join(" · ");
+      },
+      detail: function (it) {
+        var bits = [];
+        if (it.interests && it.interests.length) bits.push("Interests: " + esc([].concat(it.interests).join(", ")));
+        if (it.why) bits.push("Why: " + esc(it.why));
+        if (it.joined) bits.push("Joined: " + esc(fmtDate(it.joined)));
+        return bits.join("<br>");
+      }
     },
     history: {
       label: "History", icon: "🕓", addLabel: "Add history entry",
@@ -132,8 +141,10 @@
   }
 
   function listRow(sch, it) {
-    return '<div class="pill-row" style="justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding:10px 0;gap:10px">' +
-      "<span style=\"min-width:0\"><strong>" + esc(sch.title(it)) + "</strong><br><span class=\"small muted\">" + esc(sch.sub(it)) + "</span></span>" +
+    return '<div class="pill-row" style="justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border);padding:10px 0;gap:10px">' +
+      "<span style=\"min-width:0\"><strong>" + esc(sch.title(it)) + "</strong><br><span class=\"small muted\">" + esc(sch.sub(it)) + "</span>" +
+      (sch.detail ? '<div class="small muted" style="margin-top:4px">' + sch.detail(it) + "</div>" : "") +
+      "</span>" +
       '<span class="pill-row" style="flex:none">' +
         (sch.extra ? sch.extra(it) : "") +
         '<button class="btn btn-ghost btn-sm" data-edit="' + it.id + '">Edit</button>' +
@@ -179,16 +190,17 @@
   }
 
   function statsSection() {
-    var d = S.get();
-    var members = (d.settings && d.settings.activeMembers) || 0;
-    var hosted = (d.settings && d.settings.eventsHosted) || 0;
+    var st = S.stats();
+    var members = st.activeMembers;
+    var hosted = st.eventsHosted;
+    var listed = (S.get().members || []).length;
     return '<div class="form-card" style="max-width:620px;margin:0 auto">' +
       '<h2 style="margin-top:0">Home-page stats</h2>' +
       '<p class="muted small">These two numbers are shown on the home page. You can change them any time.</p>' +
       '<form id="sf">' +
         '<div class="field"><label for="f-activeMembers">Active members</label>' +
         '<input id="f-activeMembers" name="activeMembers" type="number" min="0" value="' + esc(members) + '">' +
-        '<div class="hint">Also grows automatically by 1 each time a new member joins through the Join Us form.</div></div>' +
+        '<div class="hint">Never shows less than the number of members recorded below (' + listed + '). New Join Us requests add to that list.</div></div>' +
         '<div class="field"><label for="f-eventsHosted">Events hosted</label>' +
         '<input id="f-eventsHosted" name="eventsHosted" type="number" min="0" value="' + esc(hosted) + '">' +
         '<div class="hint">Set by an elite member.</div></div>' +

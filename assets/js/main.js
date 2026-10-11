@@ -283,8 +283,8 @@
       }
       var stats = $("#homeStats");
       if (stats) {
-        var members = (d.settings && d.settings.activeMembers) || 0;
-        var hosted = (d.settings && d.settings.eventsHosted) || 0;
+        var st = S.stats();
+        var members = st.activeMembers, hosted = st.eventsHosted;
         stats.innerHTML =
           '<div class="stat"><div class="num">' + esc(members) + '</div><div class="lbl">Active members</div></div>' +
           '<div class="stat"><div class="num">' + esc(hosted) + '</div><div class="lbl">Events hosted</div></div>';
@@ -411,9 +411,9 @@
       e.preventDefault();
       var note = $("#joinNote");
       var data = Object.fromEntries(new FormData(jf).entries());
-      if (!data.name || !data.email || !data.usn) { note.className = "notice err show"; note.textContent = "Please fill in your name, email and USN."; return; }
+      if (!data.name || !data.usn) { note.className = "notice err show"; note.textContent = "Please fill in your name and USN."; return; }
       var interests = $$('input[name="interests"]:checked', jf).map(function (c) { return c.value; });
-      var entry = { name: data.name, usn: data.usn, year: data.year || "", branch: data.branch || "", email: data.email, phone: data.phone || "", interests: interests, role: "Active member", why: data.why || "", joined: new Date().toISOString().slice(0, 10) };
+      var entry = { name: data.name, usn: data.usn, year: data.year || "", branch: data.branch || "", interests: interests, role: "Active member", why: data.why || "", joined: new Date().toISOString().slice(0, 10) };
       // keep a local copy so nothing is lost if the request cannot be sent
       S.add("members", entry);
       note.className = "notice show";
