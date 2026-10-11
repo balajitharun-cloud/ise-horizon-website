@@ -20,5 +20,5 @@ export default async (req) => {
     members = (await store.get("members", { type: "json" })) || [];
   } catch (e) { members = []; }
   if (!Array.isArray(members)) members = [];
-  return reply(200, { ok: true, activeMembers: members.length, members: members });
+  return reply(200, { ok: true, backend: "netlify-blobs", configured: true, activeMembers: members.length, members: members });
 };

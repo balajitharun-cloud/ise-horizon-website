@@ -116,10 +116,27 @@
     return await r.json();
   }
 
+  /* ask the site's own backend what it is and whether it works */
+  async function diagnose() {
+    try {
+      var r = await fetch("/api/stats", { headers: { "Accept": "application/json" }, cache: "no-store" });
+      if (!r.ok) {
+        var msg = "";
+        try { var j = await r.json(); msg = j.error || ""; } catch (e) {}
+        return { ok: false, status: r.status, error: msg || ("HTTP " + r.status) };
+      }
+      var d = await r.json();
+      return { ok: true, backend: d.backend || "unknown", configured: d.configured !== false,
+               activeMembers: d.activeMembers, hint: d.hint || "" };
+    } catch (e) {
+      return { ok: false, status: 0, error: (e && e.message) || "network error" };
+    }
+  }
+
   window.AvyaktBackend = {
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
-    pull: pull, push: push, verify: verify, stats: stats,
+    pull: pull, push: push, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

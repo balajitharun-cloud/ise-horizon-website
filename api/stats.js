@@ -9,5 +9,12 @@ module.exports = async (req, res) => {
     members = (loaded && loaded.fromRepo) ? loaded.members : (loaded || []);
   } catch (e) { members = []; }
   if (!Array.isArray(members)) members = [];
-  res.status(200).json({ ok: true, activeMembers: members.length, members: members });
+  res.status(200).json({
+    ok: true,
+    backend: lib.activeBackend(),
+    configured: lib.configured(),
+    hint: lib.configured() ? "" : lib.hint(),
+    activeMembers: members.length,
+    members: members
+  });
 };

@@ -95,8 +95,9 @@ async function saveMembersToRepo(loaded, members) {
 }
 
 function configured() { return !!(BLOB || GH); }
+function activeBackend() { return BLOB ? "vercel-blob" : (GH ? "github-repo" : "none"); }
 function hint() {
   return "Not configured. In Vercel: Storage -> create a Blob store and connect it to this project (nothing to copy), or add a GITHUB_TOKEN environment variable.";
 }
 
-module.exports = { loadMembers, saveMembers, saveMembersToRepo, configured, hint, KEY };
+module.exports = { loadMembers, saveMembers, saveMembersToRepo, configured, activeBackend, hint, KEY };

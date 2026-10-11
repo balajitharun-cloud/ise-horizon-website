@@ -426,9 +426,10 @@
           note.textContent = "Thanks, " + data.name + "! Your request is recorded for the whole club.";
           return S.syncStats();                  // pull the new shared count
         })
-        .catch(function () {
-          note.className = "notice ok show";
-          note.textContent = "Thanks, " + data.name + "! Your request is saved on this device \u2014 the club will confirm it shortly.";
+        .catch(function (err) {
+          note.className = "notice err show";
+          note.textContent = "Saved on this device only. The club's shared sign-up is not switched on for this site yet, so other phones won't see it."
+            + (err && err.message ? " (" + err.message + ")" : "");
         });
       jf.reset();
     });

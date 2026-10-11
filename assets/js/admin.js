@@ -351,6 +351,11 @@
         '</div>' +
         '<p class="muted small" style="margin-top:12px">' + (st.error ? 'Last error: ' + esc(st.error) : (st.synced ? 'In sync with the backend.' : 'Not synced yet.')) + '</p>' +
       '</div>' +
+      '<div class="form-card" style="grid-column:1/-1"><h3 style="margin-top:0">Shared sign-up (Join Us)</h3>' +
+        '<p class="muted small">When this works, a new member registered on any phone is stored centrally and the Active-members count updates for everyone.</p>' +
+        '<div class="pill-row"><button class="btn btn-blue btn-sm" id="be-diag">Check shared sign-up</button></div>' +
+        '<p class="muted small" id="be-diag-out" style="margin-top:12px">Not checked yet.</p>' +
+      '</div>' +
     '</div>';
   }
 
@@ -366,6 +371,19 @@
       } catch (e) { say("Could not reach the repo: " + e.message, false); }
     });
     $("#be-forget").addEventListener("click", function () { B.setToken(""); renderBody(); });
+    var diag = $("#be-diag");
+    if (diag) diag.addEventListener("click", async function () {
+      var out = $("#be-diag-out");
+      out.textContent = "Checking\u2026";
+      var d = await B.diagnose();
+      if (d.ok) {
+        out.innerHTML = "<strong>Working.</strong> Storage: " + esc(d.backend) +
+          " \u00b7 " + (d.activeMembers || 0) + " member(s) stored centrally.";
+      } else {
+        out.innerHTML = "<strong>Not working.</strong> " + esc(d.error || "unknown error") +
+          "<br>On Vercel, connect a Blob store (Storage \u2192 Create \u2192 Blob) or set GITHUB_TOKEN, then redeploy.";
+      }
+    });
     $("#be-pull").addEventListener("click", async function () {
       say("Pulling…", true); await S.sync();
       say("Pulled the latest content from the repo.", true);
