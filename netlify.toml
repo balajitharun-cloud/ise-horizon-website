@@ -2,7 +2,23 @@
   publish = "."
   command = ""
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# the Join Us form posts here; served by the function above
+[[redirects]]
+  from = "/api/join"
+  to = "/.netlify/functions/join"
+  status = 200
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# never let the browser or CDN cache the backend data files
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "no-store"

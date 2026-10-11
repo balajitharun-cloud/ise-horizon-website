@@ -413,13 +413,23 @@
       var data = Object.fromEntries(new FormData(jf).entries());
       if (!data.name || !data.email || !data.usn) { note.className = "notice err show"; note.textContent = "Please fill in your name, email and USN."; return; }
       var interests = $$('input[name="interests"]:checked', jf).map(function (c) { return c.value; });
-      S.add("members", { name: data.name, usn: data.usn, year: data.year || "", branch: data.branch || "", email: data.email, phone: data.phone || "", interests: interests, role: "Active member", why: data.why || "", joined: new Date().toISOString().slice(0, 10) });
-      // a new member joined -> bump the Active-members count
-      var st = S.get().settings;
-      st.activeMembers = (parseInt(st.activeMembers, 10) || 0) + 1;
-      S.save();
-      note.className = "notice ok show";
-      note.textContent = "Thanks, " + data.name + "! Your membership request has been recorded.";
+      var entry = { name: data.name, usn: data.usn, year: data.year || "", branch: data.branch || "", email: data.email, phone: data.phone || "", interests: interests, role: "Active member", why: data.why || "", joined: new Date().toISOString().slice(0, 10) };
+      // keep a local copy so nothing is lost if the request cannot be sent
+      S.add("members", entry);
+      note.className = "notice show";
+      note.textContent = "Sending\u2026";
+      // the shared copy lives in the repo; this endpoint holds the token server-side
+      fetch("/api/join", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(entry) })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (res) {
+          note.className = "notice ok show";
+          note.textContent = "Thanks, " + data.name + "! Your request is recorded for the whole club.";
+          return S.sync();                       // pull the new shared count
+        })
+        .catch(function () {
+          note.className = "notice ok show";
+          note.textContent = "Thanks, " + data.name + "! Your request is saved on this device \u2014 the club will confirm it shortly.";
+        });
       jf.reset();
     });
     var cf = $("#contactForm");
