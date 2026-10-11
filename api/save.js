@@ -15,17 +15,29 @@ module.exports = async (req, res) => {
   const content = body.content;
   if (!content || typeof content !== "object") { res.status(400).json({ ok: false, error: "content is required" }); return; }
 
+  // which data file: the site content, or the certificate data
+  const file = String(body.file || "content");
+  if (!Object.prototype.hasOwnProperty.call(lib.FILES, file)) {
+    res.status(400).json({ ok: false, error: "unknown file" }); return;
+  }
+
   try {
+    // the passcode always comes from the canonical content file
     const current = await lib.loadContent();
     const want = (current.data && current.data.settings && current.data.settings.passcodeHash) || "";
     const got = lib.sha256hex(String(body.pass || "").trim());
     if (!want || got !== want) { res.status(401).json({ ok: false, error: "Wrong passcode" }); return; }
 
-    // never let a stale browser copy revert the passcode hash
-    content.settings = content.settings || {};
-    content.settings.passcodeHash = want;
-
-    const sha = await lib.saveContentToRepo(current, content);
+    let sha;
+    if (file === "content") {
+      // never let a stale browser copy revert the passcode hash
+      content.settings = content.settings || {};
+      content.settings.passcodeHash = want;
+      sha = await lib.saveContentToRepo(current, content);
+    } else {
+      const target = await lib.loadJson(lib.filePath(file));
+      sha = await lib.saveJsonToRepo(target, lib.filePath(file), content, "Update certificate data (member panel)");
+    }
     res.status(200).json({ ok: true, sha: sha });
   } catch (e) {
     res.status(502).json({ ok: false, error: e.message });

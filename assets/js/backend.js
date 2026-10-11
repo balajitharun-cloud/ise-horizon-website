@@ -111,11 +111,11 @@
   /* ---------- write the site content through the server ---------- */
   /* The GitHub token lives in the host's environment, so the member never
      pastes one into the browser. Authorised with the club passcode. */
-  async function saveContent(content, pass) {
+  async function saveJson(file, content, pass) {
     var r = await fetch("/api/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pass: pass || "", content: content })
+      body: JSON.stringify({ file: file || "content", pass: pass || "", content: content })
     });
     if (!r.ok) {
       var msg = "";
@@ -126,6 +126,7 @@
     }
     return await r.json();
   }
+  async function saveContent(content, pass) { return saveJson("content", content, pass); }
 
   /* ---------- upload a photo through the server ---------- */
   async function uploadFile(path, base64, pass) {
@@ -208,7 +209,7 @@
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
     pull: pull, push: push, pushBinary: pushBinary, content: content,
-    saveContent: saveContent, uploadFile: uploadFile, verify: verify, stats: stats, diagnose: diagnose,
+    saveContent: saveContent, saveJson: saveJson, uploadFile: uploadFile, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

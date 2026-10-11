@@ -69,6 +69,37 @@ async function loadMembers() {
 /* ---------- read the whole site content file ---------- */
 /* Works with or without a token: the repo is public, so an anonymous read is
    enough, and a token just raises the rate limit. */
+const FILES = { content: "data/content.json", certificates: "data/certificates.json" };
+function filePath(name) { return FILES[name] || FILES.content; }
+
+async function loadJson(path) {
+  const headers = GH
+    ? await ghHeaders()
+    : { "Accept": "application/vnd.github+json", "User-Agent": "avyakt-site" };
+  const r = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO +
+    "/contents/" + path + "?ref=" + encodeURIComponent(BRANCH), { headers });
+  if (!r.ok) throw new Error("GitHub read failed (" + r.status + ")");
+  const meta = await r.json();
+  return { data: JSON.parse(Buffer.from(meta.content, "base64").toString("utf8")), sha: meta.sha };
+}
+
+async function saveJsonToRepo(loaded, path, content, message) {
+  const body = {
+    message: message || ("Update " + path),
+    content: Buffer.from(JSON.stringify(content, null, 2) + "\n").toString("base64"),
+    branch: BRANCH
+  };
+  if (loaded && loaded.sha) body.sha = loaded.sha;
+  const r = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + path, {
+    method: "PUT",
+    headers: Object.assign({ "Content-Type": "application/json" }, await ghHeaders()),
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error("GitHub write failed (" + r.status + ")");
+  const j = await r.json();
+  return (j.content && j.content.sha) || "";
+}
+
 async function loadContent() {
   const headers = GH
     ? await ghHeaders()
@@ -169,4 +200,4 @@ function hint() {
        + "Alternatively connect a Blob store (Storage -> Create) which needs no token.";
 }
 
-module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, sha256hex, configured, activeBackend, hint, KEY };
+module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, loadJson, saveJsonToRepo, filePath, FILES, sha256hex, configured, activeBackend, hint, KEY };

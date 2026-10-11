@@ -30,15 +30,24 @@ export default async (req) => {
     const want = (current.settings && current.settings.passcodeHash) || "";
     const got = createHash("sha256").update(String(body.pass || "").trim(), "utf8").digest("hex");
     if (!want || got !== want) return reply(401, { ok: false, error: "Wrong passcode" });
-    body.content.settings = body.content.settings || {};
-    body.content.settings.passcodeHash = want;
-    const put = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/data/content.json", {
+    const file = String(body.file || "content");
+    const target = file === "certificates" ? "data/certificates.json" : "data/content.json";
+    let targetSha = meta.sha;
+    if (file === "certificates") {
+      const tr = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + target + "?ref=" + encodeURIComponent(BRANCH), { headers: ghHeaders() });
+      if (tr.ok) targetSha = (await tr.json()).sha;
+      else return reply(502, { ok: false, error: "certificate data not found in the repo" });
+    } else {
+      body.content.settings = body.content.settings || {};
+      body.content.settings.passcodeHash = want;
+    }
+    const put = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO + "/contents/" + target, {
       method: "PUT",
       headers: Object.assign({ "Content-Type": "application/json" }, ghHeaders()),
       body: JSON.stringify({
-        message: "Update site content (member panel)",
+        message: file === "certificates" ? "Update certificate data (member panel)" : "Update site content (member panel)",
         content: Buffer.from(JSON.stringify(body.content, null, 2) + "\n").toString("base64"),
-        sha: meta.sha, branch: BRANCH
+        sha: targetSha, branch: BRANCH
       })
     });
     if (!put.ok) throw new Error("GitHub write failed (" + put.status + ")");

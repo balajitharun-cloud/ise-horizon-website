@@ -74,15 +74,39 @@
       }
     }).catch(function () {});
   }
+  function setNote(el, text, ok) { if (!el) return; el.className = "notice " + (ok ? "ok" : "err") + " show"; el.textContent = text; }
+
+  /* Publish the certificate data to the club database. Preferred route: the
+     site's own /api/save (token stays on the server). Fallback: the token kept
+     in this browser, for hosts without serverless functions. */
   function publishToBackend(note) {
-    if (!B) { if (note) { note.className = "notice err show"; note.textContent = "Backend module did not load."; } return; }
-    if (!B.canWrite()) { if (note) { note.className = "notice err show"; note.textContent = "Add a GitHub token first \u2014 open the member panel (admin.html) \u2192 Backend tab."; } return; }
-    if (note) { note.className = "notice show"; note.textContent = "Publishing\u2026"; }
-    B.push(B.paths.certificates, DB, "Update certificate data (member panel)").then(function () {
-      if (note) { note.className = "notice ok show"; note.textContent = "Published. GitHub Pages will rebuild in about a minute."; }
-    }).catch(function (e) {
-      if (note) { note.className = "notice err show"; note.textContent = "Publish failed: " + e.message; }
-    });
+    if (!B) { setNote(note, "Backend module did not load.", false); return; }
+    setNote(note, "Publishing\u2026", true);
+    var pass = (window.HorizonStore && window.HorizonStore.passcode) ? window.HorizonStore.passcode() : "";
+    var p;
+    if (B.saveJson) {
+      p = B.saveJson("certificates", DB, pass).catch(function (e) {
+        // 404/405 = this host has no save endpoint; fall back to the browser token
+        if (e && e.status && e.status !== 404 && e.status !== 405) throw e;
+        if (!B.canWrite()) throw new Error("this host has no save endpoint and no GitHub token is set in this browser");
+        return B.push(B.paths.certificates, DB, "Update certificate data (member panel)");
+      });
+    } else {
+      if (!B.canWrite()) { setNote(note, "Add a GitHub token first \u2014 open the member panel (admin.html) \u2192 Backend tab.", false); return; }
+      p = B.push(B.paths.certificates, DB, "Update certificate data (member panel)");
+    }
+    p.then(function () { setNote(note, "Published \u2014 visitors see it within a minute.", true); })
+     .catch(function (e) { setNote(note, "Publish failed: " + ((e && e.message) || e), false); });
+  }
+
+  /* Every change is pushed shortly after it is made, so the participant list
+     lives in the club database rather than in one browser. */
+  var pubTimer = null;
+  function schedulePublish() {
+    if (!B) return;
+    setNote($("#mSaveNote"), "Saved. Publishing to the club database\u2026", true);
+    clearTimeout(pubTimer);
+    pubTimer = setTimeout(function () { publishToBackend($("#mSaveNote")); }, 1200);
   }
 
   /* ---------- matching helpers ---------- */
@@ -438,9 +462,9 @@
       r.onload = function () { addBulk(r.result); };
       r.readAsText(f);
     });
-    $("#m-sample").addEventListener("click", function () { DB.participants = seed().participants.slice(); renderList(); save(DB); });
-    $("#m-clear").addEventListener("click", function () { if (confirm("Remove all participants?")) { DB.participants = []; renderList(); save(DB); } });
-    $("#m-add-sign").addEventListener("click", function () { DB.signatories.push({ name: "", designation: "", photo: "" }); renderSigns(); });
+    $("#m-sample").addEventListener("click", function () { DB.participants = seed().participants.slice(); renderList(); save(DB); schedulePublish(); });
+    $("#m-clear").addEventListener("click", function () { if (confirm("Remove all participants?")) { DB.participants = []; renderList(); save(DB); schedulePublish(); } });
+    $("#m-add-sign").addEventListener("click", function () { DB.signatories.push({ name: "", designation: "", photo: "" }); renderSigns(); schedulePublish(); });
     $("#m-save").addEventListener("click", saveAll);
     $("#m-publish").addEventListener("click", function () { publishToBackend($("#mSaveNote")); });
     $("#m-export").addEventListener("click", exportJson);
@@ -460,7 +484,7 @@
       DB.participants.push({ name: name, usn: usn }); added++;
     });
     renderList(); save(DB);
-    var note = $("#mSaveNote"); note.className = "notice ok show"; note.textContent = "Added " + added + " participant" + (added === 1 ? "" : "s") + ".";
+    schedulePublish();
   }
 
   function renderList() {
@@ -473,7 +497,7 @@
         '<button class="btn btn-ghost btn-sm" data-rm="' + i + '" aria-label="Remove">✕</button></div>';
     }).join("");
     $$("[data-rm]", mount).forEach(function (b) {
-      b.addEventListener("click", function () { DB.participants.splice(+this.getAttribute("data-rm"), 1); renderList(); save(DB); });
+      b.addEventListener("click", function () { DB.participants.splice(+this.getAttribute("data-rm"), 1); renderList(); save(DB); schedulePublish(); });
     });
     refreshCount();
   }
@@ -489,8 +513,8 @@
         '<div class="field" style="display:flex;align-items:flex-end"><button class="btn btn-ghost btn-sm" data-srm="' + i + '">Remove</button></div></div>' +
       "</div>";
     }).join("");
-    $$("[data-sn]", mount).forEach(function (inp) { inp.addEventListener("input", function () { DB.signatories[+this.dataset.sn].name = this.value; }); });
-    $$("[data-sd]", mount).forEach(function (inp) { inp.addEventListener("input", function () { DB.signatories[+this.dataset.sd].designation = this.value; }); });
+    $$("[data-sn]", mount).forEach(function (inp) { inp.addEventListener("input", function () { DB.signatories[+this.dataset.sn].name = this.value; save(DB); schedulePublish(); }); });
+    $$("[data-sd]", mount).forEach(function (inp) { inp.addEventListener("input", function () { DB.signatories[+this.dataset.sd].designation = this.value; save(DB); schedulePublish(); }); });
     $$("[data-sp]", mount).forEach(function (inp) {
       inp.addEventListener("change", function (e) {
         var f = e.target.files[0]; if (!f) return; var i = +this.dataset.sp;
@@ -499,7 +523,7 @@
       });
     });
     $$("[data-srm]", mount).forEach(function (b) {
-      b.addEventListener("click", function () { DB.signatories.splice(+this.dataset.srm, 1); renderSigns(); });
+      b.addEventListener("click", function () { DB.signatories.splice(+this.dataset.srm, 1); renderSigns(); save(DB); schedulePublish(); });
     });
   }
 
@@ -518,7 +542,7 @@
     DB.event.body = $("#m-cert-body").value;
     DB.settings.sample = false;
     save(DB); refreshCount();
-    var note = $("#mSaveNote"); note.className = "notice ok show"; note.textContent = "Saved! Participants can now generate certificates.";
+    schedulePublish();
   }
 
   function exportJson() {
@@ -530,7 +554,7 @@
   function importJson(e) {
     var f = e.target.files[0]; if (!f) return;
     var r = new FileReader();
-    r.onload = function () { try { DB = normalize(JSON.parse(r.result)); save(DB); fillMemberForm(); var note = $("#mSaveNote"); note.className = "notice ok show"; note.textContent = "Imported successfully."; } catch (err) { alert("Could not read that file."); } };
+    r.onload = function () { try { DB = normalize(JSON.parse(r.result)); save(DB); fillMemberForm(); schedulePublish(); } catch (err) { alert("Could not read that file."); } };
     r.readAsText(f);
   }
 
