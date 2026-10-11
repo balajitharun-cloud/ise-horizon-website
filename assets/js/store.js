@@ -152,7 +152,10 @@
       if (!B) return data;
       state.syncing = true;
       try {
-        var res = await B.pull(B.paths.content);
+        // Prefer the site's own endpoint: same-origin, no third-party request.
+        var res = null;
+        if (B.content) { try { var viaApi = await B.content(); if (viaApi && viaApi.data) res = viaApi; } catch (e) {} }
+        if (!res && B.pull) res = await B.pull(B.paths.content);
         if (res && res.data) {
           data = normalize(res.data);
           save(data);

@@ -66,6 +66,20 @@ async function loadMembers() {
   return null;
 }
 
+/* ---------- read the whole site content file ---------- */
+/* Works with or without a token: the repo is public, so an anonymous read is
+   enough, and a token just raises the rate limit. */
+async function loadContent() {
+  const headers = GH
+    ? await ghHeaders()
+    : { "Accept": "application/vnd.github+json", "User-Agent": "avyakt-site" };
+  const r = await fetch("https://api.github.com/repos/" + OWNER + "/" + REPO +
+    "/contents/data/content.json?ref=" + encodeURIComponent(BRANCH), { headers });
+  if (!r.ok) throw new Error("GitHub read failed (" + r.status + ")");
+  const meta = await r.json();
+  return { data: JSON.parse(Buffer.from(meta.content, "base64").toString("utf8")), sha: meta.sha };
+}
+
 /* ---------- write ---------- */
 async function saveMembers(members) {
   if (BLOB) {
@@ -113,4 +127,4 @@ function hint() {
        + "Alternatively connect a Blob store (Storage -> Create) which needs no token.";
 }
 
-module.exports = { loadMembers, saveMembers, saveMembersToRepo, configured, activeBackend, hint, KEY };
+module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, configured, activeBackend, hint, KEY };

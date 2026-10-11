@@ -299,6 +299,28 @@
     wireList(current);
   }
 
+  /* ---------- auto-publish ---------- */
+  /* Every add / edit / delete is pushed to the club repo shortly after the
+     change, so the website and every visitor see it without anyone having to
+     remember a separate Publish step. */
+  var pubTimer = null;
+  function schedulePublish(note) {
+    if (!B || !B.canWrite || !B.canWrite()) {
+      if (note) note.textContent = "Saved on this device. Connect the backend (Backend tab) to share it with everyone.";
+      return;
+    }
+    if (note) note.textContent = "Saved. Publishing to the club database\u2026";
+    clearTimeout(pubTimer);
+    pubTimer = setTimeout(async function () {
+      try {
+        await S.publish();
+        if (note && note.isConnected) note.textContent = "Saved and published \u2014 visitors see it within a minute.";
+      } catch (e) {
+        if (note && note.isConnected) note.textContent = "Saved locally, but publishing failed: " + ((e && e.message) || e);
+      }
+    }, 1200);
+  }
+
   function wireImageFields(form) {
     $$(".img-file", form).forEach(function (input) {
       input.addEventListener("change", async function () {
@@ -347,7 +369,9 @@
       var data = readForm(form, sch);
       if (editingId) { S.update(key, editingId, data); note.className = "notice ok show"; note.textContent = "Updated."; }
       else { S.add(key, data); note.className = "notice ok show"; note.textContent = "Added."; }
-      editingId = null; renderBody();
+      editingId = null;
+      schedulePublish(note);
+      renderBody();
     });
     $("#af-cancel").addEventListener("click", function () { editingId = null; renderBody(); });
     $$("[data-edit]").forEach(function (b) {
@@ -361,7 +385,7 @@
       });
     });
     $$("[data-del]").forEach(function (b) {
-      b.addEventListener("click", function () { if (confirm("Delete this item?")) { S.remove(key, this.getAttribute("data-del")); renderBody(); } });
+      b.addEventListener("click", function () { if (confirm("Delete this item?")) { S.remove(key, this.getAttribute("data-del")); schedulePublish(null); renderBody(); } });
     });
     $$("[data-archive]").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -369,6 +393,7 @@
         S.add("pastEvents", it); S.remove("events", id);
         // an event was completed -> bump the Events-hosted counter
         var st = S.get().settings; st.eventsHosted = (parseInt(st.eventsHosted, 10) || 0) + 1; S.save();
+        schedulePublish(null);
         renderBody();
       });
     });
@@ -382,6 +407,7 @@
       h.description = form.elements.description.value; h.link = form.elements.link.value; h.active = form.elements.active.checked;
       S.save();
       var n = $("#hf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
+      schedulePublish(n);
     });
   }
 
@@ -394,6 +420,7 @@
       var v = parseInt(f.elements.eventsHosted.value, 10); if (isNaN(v) || v < 0) v = 0;
       var st = S.get().settings; st.activeMembers = m; st.eventsHosted = v; S.save();
       var n = $("#sf-note"); n.className = "notice ok show"; n.textContent = "Saved.";
+      schedulePublish(n);
     });
   }
 

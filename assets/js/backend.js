@@ -94,6 +94,20 @@
     return await r.json();
   }
 
+  /* ---------- the whole shared content file, same-origin ---------- */
+  /* Served by the site's own /api/content, so a visitor's browser never has
+     to reach api.github.com (which some networks and ad-blockers refuse). */
+  async function content() {
+    try {
+      var r = await fetch("/api/content", { headers: { "Accept": "application/json" }, cache: "no-store" });
+      if (r.ok) {
+        var j = await r.json();
+        if (j && j.ok && j.content) return { data: j.content, viaApi: true };
+      }
+    } catch (e) {}
+    return null;
+  }
+
   /* ---------- commit a binary file (a photo) ---------- */
   /* base64 with no "data:...;base64," prefix */
   async function pushBinary(path, base64, message) {
@@ -157,7 +171,7 @@
   window.AvyaktBackend = {
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
-    pull: pull, push: push, pushBinary: pushBinary, verify: verify, stats: stats, diagnose: diagnose,
+    pull: pull, push: push, pushBinary: pushBinary, content: content, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

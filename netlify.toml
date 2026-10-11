@@ -17,6 +17,11 @@
   to = "/.netlify/functions/stats"
   status = 200
 
+[[redirects]]
+  from = "/api/content"
+  to = "/.netlify/functions/content"
+  status = 200
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
