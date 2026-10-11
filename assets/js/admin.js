@@ -8,6 +8,42 @@
   var S = window.HorizonStore;
   var A = window.HorizonApp;
   var $ = A.$, $$ = A.$$, esc = A.esc, fmtDate = A.fmtDate;
+  var B = window.AvyaktBackend;
+
+  /* ---------- photo upload ---------- */
+  /* Downscale and re-encode in the browser so a phone photo becomes a
+     few hundred KB before it is committed to the repo. */
+  function compressToJpeg(file, maxDim, quality) {
+    maxDim = maxDim || 1600;
+    quality = quality || 0.82;
+    return new Promise(function (resolve, reject) {
+      if (!/^image\//.test(file.type || "")) { reject(new Error("that file is not an image")); return; }
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+          var scale = Math.min(1, maxDim / Math.max(w, h));
+          var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+          var c = document.createElement("canvas");
+          c.width = cw; c.height = ch;
+          var ctx = c.getContext("2d");
+          ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, cw, ch);   // flatten transparency to white
+          ctx.drawImage(img, 0, 0, cw, ch);
+          URL.revokeObjectURL(url);
+          var dataUrl = c.toDataURL("image/jpeg", quality);
+          var b64 = dataUrl.split(",")[1] || "";
+          resolve({ base64: b64, width: cw, height: ch, bytes: Math.round(b64.length * 3 / 4) });
+        } catch (e) { URL.revokeObjectURL(url); reject(e); }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("could not read that image")); };
+      img.src = url;
+    });
+  }
+  function slugName(s) {
+    return String(s || "photo").toLowerCase().replace(/\.[a-z0-9]+$/, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "photo";
+  }
 
   /* ---------- field schemas ---------- */
   var SCHEMAS = {
@@ -58,11 +94,15 @@
       label: "Gallery", icon: "🖼️", addLabel: "Add photo",
       fields: [
         { k: "caption", l: "Caption", t: "text", req: true },
-        { k: "emoji", l: "Emoji / thumbnail", t: "text", ph: "🚀" },
+        { k: "img", l: "Photo (upload)", t: "image" },
+        { k: "emoji", l: "Emoji (used when there is no photo)", t: "text", ph: "🚀" },
         { k: "wide", l: "Wide tile", t: "check" }
       ],
       title: function (it) { return it.caption; },
-      sub: function (it) { return it.emoji || ""; }
+      sub: function (it) { return it.img ? "photo" : (it.emoji || ""); },
+      extra: function (it) {
+        return it.img ? '<img src="' + esc(it.img) + '" alt="" style="width:38px;height:38px;object-fit:cover;border-radius:6px">' : "";
+      }
     },
     members: {
       label: "Members", icon: "👥", addLabel: "Add member",
@@ -124,6 +164,17 @@
     else if (f.t === "select") h += '<select id="' + id + '" name="' + f.k + '">' + (f.o || []).map(function (o) { return '<option' + (o === val ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
     else if (f.t === "check") h += '<label style="display:inline-flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" id="' + id + '" name="' + f.k + '"' + (val ? " checked" : "") + "> Yes</label>";
     else if (f.t === "list") h += '<input id="' + id + '" name="' + f.k + '" type="text" value="' + esc(Array.isArray(val) ? val.join(", ") : val) + '" placeholder="a, b, c">';
+    else if (f.t === "image") {
+      h += '<input type="hidden" id="' + id + '" name="' + f.k + '" value="' + esc(val) + '">' +
+        '<input type="file" class="img-file" accept="image/*" data-for="' + id + '">' +
+        '<div class="img-prev" id="' + id + '-prev">' +
+          (val ? '<img src="' + esc(val) + '" alt="">' : '<span class="muted small">No photo yet</span>') +
+        "</div>" +
+        '<div class="pill-row" style="margin-top:8px;gap:10px;align-items:center">' +
+          '<span class="muted small" id="' + id + '-note"></span>' +
+          '<button class="btn btn-ghost btn-sm" type="button" id="' + id + '-clear"' + (val ? "" : ' style="display:none"') + ">Remove photo</button>" +
+        "</div>";
+    }
     else h += '<input id="' + id + '" name="' + f.k + '" type="' + (f.t === "url" ? "url" : f.t === "date" ? "date" : "text") + '" value="' + esc(val) + '"' + (f.ph ? ' placeholder="' + esc(f.ph) + '"' : "") + req + ">";
     return h + "</div>";
   }
@@ -248,8 +299,48 @@
     wireList(current);
   }
 
+  function wireImageFields(form) {
+    $$(".img-file", form).forEach(function (input) {
+      input.addEventListener("change", async function () {
+        var file = this.files && this.files[0];
+        if (!file) return;
+        var id = this.getAttribute("data-for");
+        var hidden = $("#" + id), prev = $("#" + id + "-prev"), note = $("#" + id + "-note");
+        if (!B || !B.pushBinary) { note.textContent = "Backend not loaded."; return; }
+        if (!B.canWrite || !B.canWrite()) { note.textContent = "Connect the backend (Backend tab) first \u2014 uploading needs the GitHub token."; return; }
+        note.textContent = "Preparing\u2026";
+        try {
+          var out = await compressToJpeg(file);
+          note.textContent = "Uploading " + Math.round(out.bytes / 1024) + " KB\u2026";
+          var path = "assets/images/gallery/" + slugName(file.name) + "-" + Date.now().toString(36) + ".jpg";
+          await B.pushBinary(path, out.base64, "Add gallery photo: " + file.name);
+          hidden.value = path;
+          prev.innerHTML = '<img src="' + path + '" alt="">';
+          note.textContent = "Uploaded (" + out.width + "\u00d7" + out.height + "). Press Add/Save, then Publish.";
+          var cl = $("#" + id + "-clear"); if (cl) cl.style.display = "";
+        } catch (e) {
+          note.textContent = "Upload failed: " + ((e && e.message) || e);
+        }
+        this.value = "";
+      });
+    });
+    $$("[id$='-clear']", form).forEach(function (b) {
+      b.addEventListener("click", function () {
+        var id = this.id.replace(/-clear$/, "");
+        var hidden = $("#" + id);
+        if (hidden) hidden.value = "";
+        var prev = $("#" + id + "-prev");
+        if (prev) prev.innerHTML = '<span class="muted small">No photo yet</span>';
+        var note = $("#" + id + "-note");
+        if (note) note.textContent = "";
+        this.style.display = "none";
+      });
+    });
+  }
+
   function wireList(key) {
     var sch = SCHEMAS[key], form = $("#af");
+    wireImageFields(form);
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var note = $("#af-note");

@@ -94,6 +94,27 @@
     return await r.json();
   }
 
+  /* ---------- commit a binary file (a photo) ---------- */
+  /* base64 with no "data:...;base64," prefix */
+  async function pushBinary(path, base64, message) {
+    if (!token()) throw new Error("No GitHub token set \u2014 connect the backend in the member panel first.");
+    var sha = null;
+    try {
+      var cur = await fetch(contentsUrl(path) + "?ref=" + encodeURIComponent(cfg().branch),
+        { headers: headers(), cache: "no-store" });
+      if (cur.ok) sha = (await cur.json()).sha;
+    } catch (e) {}
+    var body = { message: message || ("Add " + path), content: base64, branch: cfg().branch };
+    if (sha) body.sha = sha;
+    var r = await fetch(contentsUrl(path), {
+      method: "PUT",
+      headers: headers({ "Content-Type": "application/json" }),
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw await ghError(r);
+    return await r.json();
+  }
+
   /* ---------- connection check ---------- */
   async function verify() {
     var c = cfg();
@@ -136,7 +157,7 @@
   window.AvyaktBackend = {
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
-    pull: pull, push: push, verify: verify, stats: stats, diagnose: diagnose,
+    pull: pull, push: push, pushBinary: pushBinary, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

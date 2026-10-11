@@ -393,7 +393,9 @@
       mount.innerHTML = (d.gallery || []).length
         ? (d.gallery || []).map(function (g) {
             return '<div class="gitem' + (g.wide ? " wide" : "") + '" role="button" tabindex="0" aria-label="' + esc(g.caption) + '">' +
-              '<div class="avatar-ph" style="width:100%;height:100%;font-size:2.4rem">' + esc(g.emoji || "🖼️") + "</div>" +
+              (g.img
+                ? '<img src="' + esc(g.img) + '" alt="' + esc(g.caption) + '" loading="lazy">'
+                : '<div class="avatar-ph" style="width:100%;height:100%;font-size:2.4rem">' + esc(g.emoji || "🖼️") + "</div>") +
               '<span class="cap">' + esc(g.caption) + "</span></div>";
           }).join("")
         : emptyState("🖼️", "Gallery is empty", "Photos from events and activities are added here by the committee after each event.");
