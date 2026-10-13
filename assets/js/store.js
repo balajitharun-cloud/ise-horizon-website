@@ -54,7 +54,8 @@
         { id: "g4", caption: "Tech talk — packed auditorium", emoji: "🎙️" }
       ],
       members: [],       // club members — added by the elite member (starts empty)
-      faculty: []        // department faculty — name + designation, managed in the panel
+      faculty: [],       // department faculty — name + designation, managed in the panel
+      videos: []         // event videos — stored on the media host, listed here
     };
   }
 
@@ -63,7 +64,7 @@
     o = o || {};
     o.settings = Object.assign(d.settings, o.settings || {});
     o.hackathon = Object.assign(d.hackathon, o.hackathon || {});
-    ["events", "pastEvents", "news", "projects", "gallery", "members", "faculty", "history", "achievements"].forEach(function (k) {
+    ["events", "pastEvents", "news", "projects", "gallery", "members", "faculty", "videos", "history", "achievements"].forEach(function (k) {
       o[k] = Array.isArray(o[k]) ? o[k] : d[k];
     });
     delete o._comment;

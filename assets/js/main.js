@@ -34,6 +34,7 @@
     { file: "projects.html", label: "Projects" },
     { file: "team.html", label: "Team" },
     { file: "faculty.html", label: "Faculty" },
+    { file: "media.html", label: "Media" },
     { file: "gallery.html", label: "Gallery" },
     { file: "join.html", label: "Join Us" },
     { file: "contact.html", label: "Contact" },
@@ -124,6 +125,7 @@
     (d.news || []).forEach(function (a) { idx.push({ kind: "News", title: a.title, url: "about.html#news", extra: fmtDate(a.date) }); });
     (d.gallery || []).forEach(function (g) { idx.push({ kind: "Gallery", title: g.caption, url: "gallery.html", extra: g.emoji || "" }); });
     (d.faculty || []).forEach(function (f) { idx.push({ kind: "Faculty", title: f.name, url: "faculty.html", extra: f.designation || "" }); });
+    (d.videos || []).forEach(function (v) { idx.push({ kind: "Video", title: v.title, url: "media.html", extra: v.date || "" }); });
     (H.team || []).forEach(function (t) { idx.push({ kind: "Team", title: t.name, url: "team.html", extra: t.role }); });
     (H.achievements || []).forEach(function (a) { idx.push({ kind: "Achievement", title: a.title, url: "about.html#achievements", extra: a.year }); });
     PAGES.forEach(function (p) { idx.push({ kind: "Page", title: p.label, url: p.file, extra: "Go to page" }); });
@@ -200,6 +202,29 @@
           (p.github ? '<a class="btn btn-ghost btn-sm" href="' + esc(p.github) + '" target="_blank" rel="noopener">GitHub ↗</a>' : "") +
           (p.demo ? '<a class="btn btn-blue btn-sm" href="' + esc(p.demo) + '">Live demo</a>' : "") +
         "</div>" +
+      "</div></article>";
+  }
+  function youTubeId(u) {
+    var m = String(u || "").match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+    return m ? m[1] : "";
+  }
+  function videoCard(v) {
+    var frame = "";
+    if (v.url) {
+      frame = '<video controls preload="metadata" playsinline src="' + esc(v.url) + '"' +
+        (v.poster ? ' poster="' + esc(v.poster) + '"' : "") + "></video>";
+    } else if (v.link) {
+      var yt = youTubeId(v.link);
+      frame = yt
+        ? '<iframe src="https://www.youtube.com/embed/' + esc(yt) + '" title="' + esc(v.title) +
+          '" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+        : '<a class="btn btn-ghost btn-sm" href="' + esc(v.link) + '" target="_blank" rel="noopener">Watch the video</a>';
+    }
+    return '<article class="card video-card"><div class="card-body">' +
+      '<div class="video-frame">' + (frame || '<span class="video-none">No video attached</span>') + "</div>" +
+      '<h3 style="margin:.7em 0 .1em">' + esc(v.title) + "</h3>" +
+      (v.date ? '<div class="small muted">' + esc(fmtDate(v.date)) + "</div>" : "") +
+      (v.desc ? '<p class="bio">' + esc(v.desc) + "</p>" : "") +
       "</div></article>";
   }
   function facultyCard(f) {
@@ -413,6 +438,13 @@
     },
 
     team: function () { var m = $("#teamGrid"); if (m) m.innerHTML = (H.team || []).map(personCard).join(""); },
+    media: function () {
+      var m = $("#mediaGrid");
+      if (!m) return;
+      var v = S.get().videos || [];
+      m.innerHTML = v.length ? v.map(videoCard).join("")
+        : emptyState("🎬", "No videos yet", "Event videos are added here by the club committee.");
+    },
     faculty: function () {
       var m = $("#facultyGrid");
       if (!m) return;

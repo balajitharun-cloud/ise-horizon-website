@@ -1,0 +1,40 @@
+/* POST /api/media-sign - signed Supabase upload URL (Netlify). */
+import { createHash } from "node:crypto";
+const OWNER = process.env.GITHUB_OWNER || "balajitharun-cloud";
+const REPO  = process.env.GITHUB_REPO  || "ise-horizon-website";
+const BRANCH= process.env.GITHUB_BRANCH|| "main";
+const GH    = process.env.GITHUB_TOKEN;
+const SB_URL = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
+const SB_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const SB_BUCKET = process.env.SUPABASE_BUCKET || "media";
+const reply = (s,o) => new Response(JSON.stringify(o), { status:s, headers:{"Content-Type":"application/json","Cache-Control":"no-store"} });
+const enc = p => p.split("/").map(encodeURIComponent).join("/");
+
+export default async (req) => {
+  if (req.method !== "POST") return reply(405, { ok:false, error:"Method not allowed" });
+  if (!GH) return reply(500, { ok:false, error:"Set GITHUB_TOKEN in Netlify first." });
+  if (!SB_URL || !SB_KEY) return reply(501, { ok:false, error:"Media storage is not set up. Set SUPABASE_URL, SUPABASE_SERVICE_KEY and SUPABASE_BUCKET in Netlify." });
+  let b; try { b = await req.json(); } catch(e){ return reply(400,{ok:false,error:"Bad JSON"}); }
+  const path = String(b.path||"").trim();
+  if (!path || path.indexOf("..")!==-1 || path.charAt(0)==="/") return reply(400,{ok:false,error:"invalid path"});
+  try {
+    const cur = await fetch("https://api.github.com/repos/"+OWNER+"/"+REPO+"/contents/data/content.json?ref="+encodeURIComponent(BRANCH),
+      { headers: { "Accept":"application/vnd.github+json","User-Agent":"avyakt-site", ...(GH?{"Authorization":"Bearer "+GH}:{}) } });
+    if (!cur.ok) throw new Error("GitHub read failed ("+cur.status+")");
+    const meta = await cur.json();
+    const content = JSON.parse(Buffer.from(meta.content,"base64").toString("utf8"));
+    const want = (content.settings && content.settings.passcodeHash) || "";
+    if (!want || createHash("sha256").update(String(b.pass||"").trim(),"utf8").digest("hex") !== want)
+      return reply(401,{ok:false,error:"Wrong passcode"});
+    const clean = path.replace(/[^A-Za-z0-9._/-]/g,"-");
+    const signUrl = SB_URL+"/storage/v1/object/upload/sign/"+encodeURIComponent(SB_BUCKET)+"/"+enc("videos/"+clean);
+    const r = await fetch(signUrl, { method:"POST", headers:{ "Authorization":"Bearer "+SB_KEY, "apikey":SB_KEY, "x-upsert":"true" } });
+    if (!r.ok) throw new Error("Supabase sign failed ("+r.status+")");
+    const j = await r.json();
+    let token = j.token || "";
+    if (!token && j.url) { try { token = new URL(j.url, SB_URL).searchParams.get("token") || ""; } catch(e){} }
+    if (!token) throw new Error("Supabase returned no upload token");
+    return reply(200, { ok:true, uploadUrl: signUrl+"?token="+encodeURIComponent(token), token: token,
+      publicUrl: SB_URL+"/storage/v1/object/public/"+encodeURIComponent(SB_BUCKET)+"/"+enc("videos/"+clean) });
+  } catch(e){ return reply(502,{ok:false,error:e.message}); }
+};

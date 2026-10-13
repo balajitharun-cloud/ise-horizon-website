@@ -32,6 +32,11 @@
   to = "/.netlify/functions/upload"
   status = 200
 
+[[redirects]]
+  from = "/api/media-sign"
+  to = "/.netlify/functions/media-sign"
+  status = 200
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

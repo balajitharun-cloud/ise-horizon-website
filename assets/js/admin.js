@@ -115,6 +115,18 @@
       title: function (it) { return it.name; },
       sub: function (it) { return [it.designation || "", it.dept || ""].filter(Boolean).join(" \u00b7 "); }
     },
+    videos: {
+      label: "Media", icon: "🎬", addLabel: "Add video",
+      fields: [
+        { k: "title", l: "Title", t: "text", req: true, ph: "HORIZON Hackathon — highlights" },
+        { k: "date", l: "Date", t: "date" },
+        { k: "desc", l: "Description", t: "textarea" },
+        { k: "url", l: "Video file (upload)", t: "video" },
+        { k: "link", l: "\u2026or paste a YouTube / video link instead", t: "url" }
+      ],
+      title: function (it) { return it.title; },
+      sub: function (it) { return [it.date ? fmtDate(it.date) : "", it.url ? "uploaded" : (it.link ? "link" : "no video")].filter(Boolean).join(" \u00b7 "); }
+    },
     members: {
       label: "Members", icon: "👥", addLabel: "Add member",
       fields: [
@@ -160,7 +172,7 @@
     }
   };
 
-  var TABS = ["events", "news", "projects", "gallery", "faculty", "members", "history", "achievements", "hackathon", "stats", "backend", "data"];
+  var TABS = ["events", "news", "projects", "gallery", "videos", "faculty", "members", "history", "achievements", "hackathon", "stats", "backend", "data"];
   var current = "events";
   var editingId = null;
 
@@ -175,6 +187,17 @@
     else if (f.t === "select") h += '<select id="' + id + '" name="' + f.k + '">' + (f.o || []).map(function (o) { return '<option' + (o === val ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select>";
     else if (f.t === "check") h += '<label style="display:inline-flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" id="' + id + '" name="' + f.k + '"' + (val ? " checked" : "") + "> Yes</label>";
     else if (f.t === "list") h += '<input id="' + id + '" name="' + f.k + '" type="text" value="' + esc(Array.isArray(val) ? val.join(", ") : val) + '" placeholder="a, b, c">';
+    else if (f.t === "video") {
+      h += '<input type="hidden" id="' + id + '" name="' + f.k + '" value="' + esc(val) + '">' +
+        '<input type="file" class="vid-file" accept="video/*" data-for="' + id + '">' +
+        '<div class="vid-prev" id="' + id + '-prev">' +
+          (val ? '<video controls preload="metadata" src="' + esc(val) + '"></video>' : '<span class="muted small">No video uploaded yet</span>') +
+        "</div>" +
+        '<div class="pill-row" style="margin-top:8px;gap:10px;align-items:center">' +
+          '<span class="muted small" id="' + id + '-note"></span>' +
+          '<button class="btn btn-ghost btn-sm" type="button" id="' + id + '-clear"' + (val ? "" : ' style="display:none"') + ">Remove video</button>" +
+        "</div>";
+    }
     else if (f.t === "image") {
       h += '<input type="hidden" id="' + id + '" name="' + f.k + '" value="' + esc(val) + '">' +
         '<input type="file" class="img-file" accept="image/*" data-for="' + id + '">' +
@@ -335,6 +358,54 @@
     }, 1200);
   }
 
+  /* Upload a video: ask the server for a signed URL, then PUT the file straight
+     to storage from the browser, so a large file never hits the function. */
+  function extOf(name, type) {
+    var m = String(name || "").match(/\.([A-Za-z0-9]{2,5})$/);
+    if (m) return "." + m[1].toLowerCase();
+    if (/webm/.test(type || "")) return ".webm";
+    if (/quicktime/.test(type || "")) return ".mov";
+    return ".mp4";
+  }
+  function wireVideoFields(form) {
+    $$(".vid-file", form).forEach(function (input) {
+      input.addEventListener("change", async function () {
+        var file = this.files && this.files[0];
+        if (!file) return;
+        var id = this.getAttribute("data-for");
+        var hidden = $("#" + id), prev = $("#" + id + "-prev"), note = $("#" + id + "-note");
+        this.value = "";
+        if (!B || !B.signMedia) { note.textContent = "Backend not loaded."; return; }
+        if (file.size > 50 * 1024 * 1024) {
+          note.textContent = "That file is " + Math.round(file.size / 1048576) + " MB \u2014 the free storage plan allows 50 MB per file. Trim or compress it first.";
+          return;
+        }
+        try {
+          note.textContent = "Requesting upload link\u2026";
+          var path = slugName(file.name) + "-" + Date.now().toString(36) + extOf(file.name, file.type);
+          var signed = await B.signMedia(path, S.passcode());
+          note.textContent = "Uploading " + Math.round(file.size / 1048576 * 10) / 10 + " MB\u2026 (keep this tab open)";
+          var r = await fetch(signed.uploadUrl, {
+            method: "PUT",
+            headers: { "x-upsert": "true", "content-type": file.type || "video/mp4", "cache-control": "max-age=3600" },
+            body: file
+          });
+          if (!r.ok) throw new Error("upload failed (" + r.status + ")");
+          hidden.value = signed.publicUrl;
+          prev.innerHTML = '<video controls preload="metadata" src="' + signed.publicUrl + '"></video>';
+          note.textContent = "Uploaded. Press Add/Save, then Publish.";
+          var cl = $("#" + id + "-clear"); if (cl) cl.style.display = "";
+        } catch (e) {
+          note.textContent = "Upload failed: " + ((e && e.message) || e);
+        }
+      });
+    });
+    $$(".vid-file", form).length && $$("[id$='-clear']", form).forEach(function (b) {
+      if (b.dataset.vidWired) return;
+      b.dataset.vidWired = "1";
+    });
+  }
+
   function wireImageFields(form) {
     $$(".img-file", form).forEach(function (input) {
       input.addEventListener("change", async function () {
@@ -375,7 +446,8 @@
         var hidden = $("#" + id);
         if (hidden) hidden.value = "";
         var prev = $("#" + id + "-prev");
-        if (prev) prev.innerHTML = '<span class="muted small">No photo yet</span>';
+        if (prev) prev.innerHTML = '<span class="muted small">' +
+          (prev.classList.contains("vid-prev") ? "No video uploaded yet" : "No photo yet") + "</span>";
         var note = $("#" + id + "-note");
         if (note) note.textContent = "";
         this.style.display = "none";
@@ -386,6 +458,7 @@
   function wireList(key) {
     var sch = SCHEMAS[key], form = $("#af");
     wireImageFields(form);
+    wireVideoFields(form);
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var note = $("#af-note");

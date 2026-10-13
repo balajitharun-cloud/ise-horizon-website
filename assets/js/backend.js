@@ -129,6 +129,25 @@
   }
   async function saveContent(content, pass) { return saveJson("content", content, pass); }
 
+  /* ---------- ask the server for a signed media upload URL ---------- */
+  /* The file then goes straight to storage from the browser, so a large video
+     never passes through the serverless function. */
+  async function signMedia(path, pass) {
+    var r = await fetch("/api/media-sign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: path, pass: pass || "" })
+    });
+    if (!r.ok) {
+      var msg = "";
+      try { var j = await r.json(); msg = j.error || ""; } catch (e) {}
+      var err = new Error(msg || ("HTTP " + r.status));
+      err.status = r.status;
+      throw err;
+    }
+    return await r.json();
+  }
+
   /* ---------- upload a photo through the server ---------- */
   async function uploadFile(path, base64, pass) {
     var r = await fetch("/api/upload", {
@@ -210,7 +229,7 @@
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
     pull: pull, push: push, pushBinary: pushBinary, content: content,
-    saveContent: saveContent, saveJson: saveJson, uploadFile: uploadFile, verify: verify, stats: stats, diagnose: diagnose,
+    saveContent: saveContent, saveJson: saveJson, uploadFile: uploadFile, signMedia: signMedia, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();

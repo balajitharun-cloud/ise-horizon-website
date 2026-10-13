@@ -292,10 +292,20 @@ p { margin: 0 0 1rem; }
 .field label { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 6px; }
 .field .req { color: var(--brand-orange); }
 
+/* ---------- media page (videos) ---------- */
+.media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.video-card { height: 100%; }
+.video-frame { position: relative; border-radius: 12px; overflow: hidden; background: #0b0f17; aspect-ratio: 16 / 9; display: grid; place-items: center; }
+.video-frame video, .video-frame iframe { width: 100%; height: 100%; border: 0; display: block; object-fit: contain; background: #0b0f17; }
+.video-frame .video-none { color: #8892a6; font-size: .85rem; }
+
 /* ---------- photo upload (member panel) ---------- */
 .img-file { font-size: .85rem; margin-bottom: 4px; }
 .img-prev { margin-top: 6px; border: 1px dashed var(--border); border-radius: 10px; background: var(--surface-2); min-height: 120px; display: grid; place-items: center; overflow: hidden; padding: 6px; }
 .img-prev img { max-width: 100%; max-height: 240px; display: block; border-radius: 8px; }
+.vid-file { font-size: .85rem; margin-bottom: 4px; }
+.vid-prev { margin-top: 6px; border: 1px dashed var(--border); border-radius: 10px; background: var(--surface-2); min-height: 120px; display: grid; place-items: center; overflow: hidden; padding: 6px; }
+.vid-prev video { max-width: 100%; max-height: 260px; display: block; border-radius: 8px; background: #000; }
 .field input, .field select, .field textarea {
   width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
   background: var(--surface-2); transition: .15s;

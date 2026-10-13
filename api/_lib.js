@@ -191,6 +191,45 @@ function sha256hex(str) {
   return require("crypto").createHash("sha256").update(String(str), "utf8").digest("hex");
 }
 
+/* ---------- media storage (Supabase Storage) ---------- */
+/* The service key never leaves the server: we only hand the browser a
+   short-lived signed upload URL, so a 50 MB video goes straight to storage
+   without passing through this function (serverless bodies cap at ~4.5 MB). */
+const SB_URL    = env("SUPABASE_URL");
+const SB_KEY    = env("SUPABASE_SERVICE_KEY", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_KEY");
+const SB_BUCKET = env("SUPABASE_BUCKET") || "media";
+
+function mediaConfigured() { return !!(SB_URL && SB_KEY); }
+function mediaHint() {
+  return "Media storage is not set up. Create a Supabase project, make a public bucket (e.g. 'media'), "
+       + "then set SUPABASE_URL, SUPABASE_SERVICE_KEY and SUPABASE_BUCKET in this site's environment variables.";
+}
+function sbBase() { return SB_URL.replace(/\/+$/, ""); }
+function sbObjectPath(path) { return path.split("/").map(encodeURIComponent).join("/"); }
+
+async function signMediaUpload(path) {
+  if (!mediaConfigured()) throw new Error(mediaHint());
+  const clean = String(path || "").replace(/^\.+\//, "").replace(/[^A-Za-z0-9._/-]/g, "-");
+  const signUrl = sbBase() + "/storage/v1/object/upload/sign/" + encodeURIComponent(SB_BUCKET) + "/" + sbObjectPath(clean);
+  const r = await fetch(signUrl, {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + SB_KEY, "apikey": SB_KEY, "x-upsert": "true" }
+  });
+  if (!r.ok) throw new Error("Supabase sign failed (" + r.status + ")");
+  const j = await r.json();
+  let token = j.token || "";
+  if (!token && j.url) {
+    try { token = new URL(j.url, sbBase()).searchParams.get("token") || ""; } catch (e) {}
+  }
+  if (!token) throw new Error("Supabase returned no upload token");
+  return {
+    uploadUrl: signUrl + "?token=" + encodeURIComponent(token),
+    token: token,
+    path: clean,
+    publicUrl: sbBase() + "/storage/v1/object/public/" + encodeURIComponent(SB_BUCKET) + "/" + sbObjectPath(clean)
+  };
+}
+
 function configured() { return !!(BLOB || GH); }
 function activeBackend() { return BLOB ? "vercel-blob" : (GH ? "github-repo" : "none"); }
 function hint() {
@@ -200,4 +239,5 @@ function hint() {
        + "Alternatively connect a Blob store (Storage -> Create) which needs no token.";
 }
 
-module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, loadJson, saveJsonToRepo, filePath, FILES, sha256hex, configured, activeBackend, hint, KEY };
+module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, loadJson, saveJsonToRepo, filePath, FILES, sha256hex,
+         signMediaUpload, mediaConfigured, mediaHint, configured, activeBackend, hint, KEY };
