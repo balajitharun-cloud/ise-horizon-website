@@ -502,6 +502,119 @@
     if (nl) nl.addEventListener("submit", function (e) { e.preventDefault(); var n = $("#nlNote"); n.className = "notice ok show"; n.textContent = "Subscribed! Watch your inbox for club updates."; nl.reset(); });
   }
 
+  /* ---------- scroll motion ---------- */
+  /* Reveal-on-scroll, a reading-progress bar, a header that tightens, hero
+     parallax and counting stats. Everything is skipped when the visitor has
+     asked for reduced motion, and elements are only hidden once the script has
+     actually tagged them - so a failed script never blanks the page. */
+  var reduceMotion = false;
+  try { reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); } catch (e) {}
+
+  function motionEnabled() {
+    return !reduceMotion && !document.body.hasAttribute("data-no-motion");
+  }
+
+  var REVEAL_SELECTORS = [
+    ".page-hero h1", ".page-hero p", ".breadcrumb",
+    ".section-head", ".card", ".person", ".stat", ".gitem", ".video-card",
+    ".timeline li", ".empty-state", ".form-card"
+  ];
+  var REVEAL_VARIANTS = { ".gitem": "reveal--scale", ".person": "reveal--scale", ".video-card": "reveal--scale" };
+  var revealObserver = null;
+
+  function refreshReveal() {
+    if (!motionEnabled() || !("IntersectionObserver" in window)) return;
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          en.target.classList.add("is-in");
+          revealObserver.unobserve(en.target);
+        });
+      }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+    }
+    REVEAL_SELECTORS.forEach(function (sel) {
+      $$(sel).forEach(function (el) {
+        if (el.classList.contains("reveal")) return;
+        if (el.offsetParent === null) return;          // skip anything hidden right now
+        if (el.closest(".no-reveal")) return;
+        el.classList.add("reveal");
+        if (REVEAL_VARIANTS[sel]) el.classList.add(REVEAL_VARIANTS[sel]);
+        var parent = el.parentElement;
+        if (parent) {
+          var sibs = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains("reveal"); });
+          var i = sibs.indexOf(el);
+          if (i > 0 && i < 10) el.style.setProperty("--rd", (i * 60) + "ms");
+        }
+        revealObserver.observe(el);
+      });
+    });
+  }
+
+  function countUp(el, to) {
+    if (reduceMotion) { el.textContent = String(to); return; }
+    var dur = 900, t0 = null;
+    function step(ts) {
+      if (t0 === null) t0 = ts;
+      var k = Math.min(1, (ts - t0) / dur);
+      var eased = 1 - Math.pow(1 - k, 3);
+      el.textContent = String(Math.round(to * eased));
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  var statsAnimated = false;
+  function wireStatCount() {
+    var stats = $("#homeStats");
+    if (!stats || statsAnimated || !motionEnabled() || !("IntersectionObserver" in window)) return;
+    var nums = $$(".num", stats);
+    if (!nums.length) return;
+    var targets = nums.map(function (el) { return parseInt(String(el.textContent).replace(/[^0-9]/g, ""), 10) || 0; });
+    if (targets.every(function (t) { return t === 0; })) return;   // wait for the shared numbers to arrive
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting || statsAnimated) return;
+        statsAnimated = true;
+        io.disconnect();
+        nums.forEach(function (el, i) { countUp(el, targets[i]); });
+      });
+    }, { threshold: 0.35 });
+    io.observe(stats);
+  }
+
+  var paintChrome = null;
+  function initScrollChrome() {
+    var header = $("#siteHeader");
+    var bar = null;
+    if (motionEnabled()) {
+      bar = document.createElement("div");
+      bar.className = "scroll-progress";
+      document.body.appendChild(bar);
+    }
+    var ticking = false;
+    function paint() {
+      ticking = false;
+      var y = window.scrollY || window.pageYOffset || 0;
+      if (header) header.classList.toggle("is-scrolled", y > 8);
+      if (bar) {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - window.innerHeight;
+        var p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+        bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+      }
+      if (motionEnabled()) {
+        var hero = $(".hero-inner") || $(".page-hero");
+        if (hero && y < 700) hero.style.setProperty("--par", (Math.min(y, 400) * 0.12).toFixed(1) + "px");
+      }
+    }
+    paintChrome = paint;
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(paint); } }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    paint();
+  }
+
   /* ---------- boot ---------- */
   function boot() {
     initTheme();
@@ -510,10 +623,15 @@
     var page = document.body.getAttribute("data-page");
     if (page && RENDER[page]) { try { RENDER[page](); } catch (e) { console.error("render error", e); } }
     wireForms();
+    initScrollChrome();
+    refreshReveal();
+    wireStatCount();
     window.addEventListener("horizon:content", function (e) {
       if (!e || !e.detail) return;
       if (page && RENDER[page]) { try { RENDER[page](); } catch (err) { console.error("re-render error", err); } }
       buildFooter();
+      refreshReveal();
+      wireStatCount();
     });
     // Pull the shared member count from this site's own backend on every load.
     // Relying only on Store.sync() is not enough: that reads api.github.com,
@@ -539,5 +657,11 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 
-  window.HorizonApp = { $: $, $$: $$, esc: esc, fmtDate: fmtDate, slug: slug, emptyState: emptyState };
+  window.HorizonApp = {
+    $: $, $$: $$, esc: esc, fmtDate: fmtDate, slug: slug, emptyState: emptyState,
+    // repaint the scroll-driven chrome (progress bar, header state, hero parallax)
+    // on demand - handy after a layout change, and used by the layout tests
+    refreshScrollChrome: function () { if (paintChrome) paintChrome(); },
+    refreshReveal: refreshReveal
+  };
 })();

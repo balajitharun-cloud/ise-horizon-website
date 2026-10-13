@@ -699,3 +699,61 @@ p { margin: 0 0 1rem; }
   .cert-shine { display: none; }
   #certStageWrap { display: block !important; }
 }
+
+
+/* =====================================================================
+   Scroll motion — reveal on scroll, reading progress, header state
+   ===================================================================== */
+
+/* the bar that fills as the reader moves down the page */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 90;
+  transform: scaleX(0); transform-origin: 0 50%; pointer-events: none;
+  background: linear-gradient(90deg, var(--brand-blue-400), var(--brand-orange));
+  opacity: .92;
+}
+
+/* the header tightens and lifts once the page has moved */
+.site-header { transition: box-shadow .3s ease; }
+.header-inner { transition: height .3s ease; }
+.site-header.is-scrolled { box-shadow: 0 10px 30px rgba(4, 16, 40, .13); }
+.site-header.is-scrolled .header-inner { height: calc(var(--header-h) - 8px); }
+
+/* reveal on scroll. Only elements the script has tagged get this class, so if
+   the script fails nothing is ever hidden. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition: opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
+  transition-delay: var(--rd, 0ms);
+  will-change: opacity, transform;
+}
+.reveal--left  { transform: translate3d(-26px, 0, 0); }
+.reveal--right { transform: translate3d(26px, 0, 0); }
+.reveal--scale { transform: scale(.965); }
+.reveal.is-in  { opacity: 1; transform: none; will-change: auto; }
+
+/* gentle parallax on the hero, driven by a custom property */
+.hero-inner, .page-hero .container { transform: translate3d(0, var(--par, 0px), 0); }
+
+/* a little life on hover, pointer devices only */
+@media (hover: hover) {
+  .card, .person, .video-card, .gitem {
+    transition: transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s ease;
+  }
+  .card:hover, .person:hover, .video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(4, 16, 40, .15);
+  }
+  .gitem img { transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+  .gitem:hover img { transform: scale(1.045); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .scroll-progress { display: none !important; }
+  .site-header.is-scrolled .header-inner { height: var(--header-h); }
+  .hero-inner, .page-hero .container { transform: none !important; }
+  html { scroll-behavior: auto; }
+  .card:hover, .person:hover, .video-card:hover, .gitem:hover img { transform: none; }
+}
