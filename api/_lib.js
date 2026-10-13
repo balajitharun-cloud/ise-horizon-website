@@ -191,6 +191,49 @@ function sha256hex(str) {
   return require("crypto").createHash("sha256").update(String(str), "utf8").digest("hex");
 }
 
+/* ---------- media storage ----------
+   Two providers, picked automatically:
+     Cloudinary     - when CLOUDINARY_* is set. Free plan needs no card.
+     Supabase       - when SUPABASE_* is set instead.
+   Either way the secret stays on the server: we only hand the browser a
+   short-lived, signed authorisation so the file goes straight to storage. */
+const CL_CLOUD  = env("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_CLOUD");
+const CL_KEY    = env("CLOUDINARY_API_KEY");
+const CL_SEC    = env("CLOUDINARY_API_SECRET");
+const CL_FOLDER = env("CLOUDINARY_FOLDER") || "avyakt";
+
+function mediaProvider() {
+  if (CL_CLOUD && CL_KEY && CL_SEC) return "cloudinary";
+  if (SB_URL && SB_KEY) return "supabase";
+  return "none";
+}
+
+/* Cloudinary: sort the name=value pairs, join with &, append the secret with
+   no separator, SHA-1 hex. Verified against Cloudinary's own worked examples. */
+function cloudinarySignature(params, secret) {
+  const pairs = Object.keys(params)
+    .filter(function (k) { return params[k] !== undefined && params[k] !== null && params[k] !== ""; })
+    .map(function (k) { return k + "=" + params[k]; })
+    .sort();
+  return require("crypto").createHash("sha1").update(pairs.join("&") + secret, "utf8").digest("hex");
+}
+
+/* Sign only { timestamp, folder } - the smallest set, so the browser cannot
+   send an unsigned parameter and trigger "Invalid Signature". */
+function signCloudinaryUpload() {
+  if (!(CL_CLOUD && CL_KEY && CL_SEC)) throw new Error(mediaHint());
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const params = { timestamp: timestamp, folder: CL_FOLDER };
+  return {
+    provider: "cloudinary",
+    uploadUrl: "https://api.cloudinary.com/v1_1/" + encodeURIComponent(CL_CLOUD) + "/auto/upload",
+    apiKey: CL_KEY,
+    timestamp: timestamp,
+    signature: cloudinarySignature(params, CL_SEC),
+    folder: CL_FOLDER
+  };
+}
+
 /* ---------- media storage (Supabase Storage) ---------- */
 /* The service key never leaves the server: we only hand the browser a
    short-lived signed upload URL, so a 50 MB video goes straight to storage
@@ -199,16 +242,18 @@ const SB_URL    = env("SUPABASE_URL");
 const SB_KEY    = env("SUPABASE_SERVICE_KEY", "SUPABASE_SERVICE_ROLE_KEY", "SUPABASE_KEY");
 const SB_BUCKET = env("SUPABASE_BUCKET") || "media";
 
-function mediaConfigured() { return !!(SB_URL && SB_KEY); }
+function mediaConfigured() { return mediaProvider() !== "none"; }
 function mediaHint() {
-  return "Media storage is not set up. Create a Supabase project, make a public bucket (e.g. 'media'), "
-       + "then set SUPABASE_URL, SUPABASE_SERVICE_KEY and SUPABASE_BUCKET in this site's environment variables.";
+  return "Media storage is not set up. Create a free Cloudinary account (no card needed), then set "
+       + "CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET in this site's environment variables. "
+       + "(Supabase works too: set SUPABASE_URL, SUPABASE_SERVICE_KEY and SUPABASE_BUCKET instead.)";
 }
 function sbBase() { return SB_URL.replace(/\/+$/, ""); }
 function sbObjectPath(path) { return path.split("/").map(encodeURIComponent).join("/"); }
 
 async function signMediaUpload(path) {
   if (!mediaConfigured()) throw new Error(mediaHint());
+  if (mediaProvider() === "cloudinary") return signCloudinaryUpload();
   const clean = String(path || "").replace(/^\.+\//, "").replace(/[^A-Za-z0-9._/-]/g, "-");
   const signUrl = sbBase() + "/storage/v1/object/upload/sign/" + encodeURIComponent(SB_BUCKET) + "/" + sbObjectPath(clean);
   const r = await fetch(signUrl, {
@@ -223,6 +268,7 @@ async function signMediaUpload(path) {
   }
   if (!token) throw new Error("Supabase returned no upload token");
   return {
+    provider: "supabase",
     uploadUrl: signUrl + "?token=" + encodeURIComponent(token),
     token: token,
     path: clean,
@@ -240,4 +286,4 @@ function hint() {
 }
 
 module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, loadJson, saveJsonToRepo, filePath, FILES, sha256hex,
-         signMediaUpload, mediaConfigured, mediaHint, configured, activeBackend, hint, KEY };
+         signMediaUpload, mediaConfigured, mediaProvider, mediaHint, cloudinarySignature, configured, activeBackend, hint, KEY };

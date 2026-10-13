@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       res.status(401).json({ ok: false, error: "Wrong passcode" }); return;
     }
     const signed = await lib.signMediaUpload("videos/" + path);
-    res.status(200).json({ ok: true, uploadUrl: signed.uploadUrl, token: signed.token, publicUrl: signed.publicUrl });
+    res.status(200).json(Object.assign({ ok: true }, signed));
   } catch (e) {
     res.status(502).json({ ok: false, error: e.message });
   }

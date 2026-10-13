@@ -7,13 +7,36 @@ const GH    = process.env.GITHUB_TOKEN;
 const SB_URL = (process.env.SUPABASE_URL || "").replace(/\/+$/, "");
 const SB_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const SB_BUCKET = process.env.SUPABASE_BUCKET || "media";
+const CL_CLOUD  = process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD || "";
+const CL_KEY    = process.env.CLOUDINARY_API_KEY || "";
+const CL_SEC    = process.env.CLOUDINARY_API_SECRET || "";
+const CL_FOLDER = process.env.CLOUDINARY_FOLDER || "avyakt";
 const reply = (s,o) => new Response(JSON.stringify(o), { status:s, headers:{"Content-Type":"application/json","Cache-Control":"no-store"} });
 const enc = p => p.split("/").map(encodeURIComponent).join("/");
 
 export default async (req) => {
   if (req.method !== "POST") return reply(405, { ok:false, error:"Method not allowed" });
   if (!GH) return reply(500, { ok:false, error:"Set GITHUB_TOKEN in Netlify first." });
-  if (!SB_URL || !SB_KEY) return reply(501, { ok:false, error:"Media storage is not set up. Set SUPABASE_URL, SUPABASE_SERVICE_KEY and SUPABASE_BUCKET in Netlify." });
+  if (CL_CLOUD && CL_KEY && CL_SEC) {
+    try {
+      const cur = await fetch("https://api.github.com/repos/"+OWNER+"/"+REPO+"/contents/data/content.json?ref="+encodeURIComponent(BRANCH),
+        { headers: { "Accept":"application/vnd.github+json","User-Agent":"avyakt-site", ...(GH?{"Authorization":"Bearer "+GH}:{}) } });
+      if (!cur.ok) throw new Error("GitHub read failed ("+cur.status+")");
+      const meta = await cur.json();
+      const content = JSON.parse(Buffer.from(meta.content,"base64").toString("utf8"));
+      const want = (content.settings && content.settings.passcodeHash) || "";
+      if (!want || createHash("sha256").update(String(b.pass||"").trim(),"utf8").digest("hex") !== want)
+        return reply(401,{ok:false,error:"Wrong passcode"});
+      const timestamp = String(Math.floor(Date.now()/1000));
+      const folder = CL_FOLDER;
+      const pairs = ["folder="+folder, "timestamp="+timestamp].sort();
+      const signature = createHash("sha1").update(pairs.join("&") + CL_SEC, "utf8").digest("hex");
+      return reply(200, { ok:true, provider:"cloudinary",
+        uploadUrl: "https://api.cloudinary.com/v1_1/"+encodeURIComponent(CL_CLOUD)+"/auto/upload",
+        apiKey: CL_KEY, timestamp: timestamp, signature: signature, folder: folder });
+    } catch(e){ return reply(502,{ok:false,error:e.message}); }
+  }
+  if (!SB_URL || !SB_KEY) return reply(501, { ok:false, error:"Media storage is not set up. Set CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET in Netlify (no card needed), or the SUPABASE_* equivalents." });
   let b; try { b = await req.json(); } catch(e){ return reply(400,{ok:false,error:"Bad JSON"}); }
   const path = String(b.path||"").trim();
   if (!path || path.indexOf("..")!==-1 || path.charAt(0)==="/") return reply(400,{ok:false,error:"invalid path"});
@@ -34,7 +57,7 @@ export default async (req) => {
     let token = j.token || "";
     if (!token && j.url) { try { token = new URL(j.url, SB_URL).searchParams.get("token") || ""; } catch(e){} }
     if (!token) throw new Error("Supabase returned no upload token");
-    return reply(200, { ok:true, uploadUrl: signUrl+"?token="+encodeURIComponent(token), token: token,
+    return reply(200, { ok:true, provider:"supabase", uploadUrl: signUrl+"?token="+encodeURIComponent(token), token: token,
       publicUrl: SB_URL+"/storage/v1/object/public/"+encodeURIComponent(SB_BUCKET)+"/"+enc("videos/"+clean) });
   } catch(e){ return reply(502,{ok:false,error:e.message}); }
 };

@@ -208,11 +208,16 @@
     var m = String(u || "").match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
     return m ? m[1] : "";
   }
+  function isAudioUrl(u) {
+    return /\.(mp3|m4a|aac|wav|ogg|oga|opus|flac|weba|wma)(\?|$)/i.test(String(u || ""));
+  }
   function videoCard(v) {
     var frame = "";
     if (v.url) {
-      frame = '<video controls preload="metadata" playsinline src="' + esc(v.url) + '"' +
-        (v.poster ? ' poster="' + esc(v.poster) + '"' : "") + "></video>";
+      frame = isAudioUrl(v.url)
+        ? '<audio controls preload="metadata" src="' + esc(v.url) + '"></audio>'
+        : '<video controls preload="metadata" playsinline src="' + esc(v.url) + '"' +
+          (v.poster ? ' poster="' + esc(v.poster) + '"' : "") + "></video>";
     } else if (v.link) {
       var yt = youTubeId(v.link);
       frame = yt
@@ -221,7 +226,8 @@
         : '<a class="btn btn-ghost btn-sm" href="' + esc(v.link) + '" target="_blank" rel="noopener">Watch the video</a>';
     }
     return '<article class="card video-card"><div class="card-body">' +
-      '<div class="video-frame">' + (frame || '<span class="video-none">No video attached</span>') + "</div>" +
+      '<div class="video-frame' + (v.url && isAudioUrl(v.url) ? " is-audio" : "") + '">' +
+        (frame || '<span class="video-none">No media attached</span>') + "</div>" +
       '<h3 style="margin:.7em 0 .1em">' + esc(v.title) + "</h3>" +
       (v.date ? '<div class="small muted">' + esc(fmtDate(v.date)) + "</div>" : "") +
       (v.desc ? '<p class="bio">' + esc(v.desc) + "</p>" : "") +
@@ -443,7 +449,7 @@
       if (!m) return;
       var v = S.get().videos || [];
       m.innerHTML = v.length ? v.map(videoCard).join("")
-        : emptyState("🎬", "No videos yet", "Event videos are added here by the club committee.");
+        : emptyState("🎬", "No media yet", "Videos and audio are added here by the club committee.");
     },
     faculty: function () {
       var m = $("#facultyGrid");

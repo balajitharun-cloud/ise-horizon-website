@@ -121,7 +121,7 @@
         { k: "title", l: "Title", t: "text", req: true, ph: "HORIZON Hackathon — highlights" },
         { k: "date", l: "Date", t: "date" },
         { k: "desc", l: "Description", t: "textarea" },
-        { k: "url", l: "Video file (upload)", t: "video" },
+        { k: "url", l: "Video or audio file (upload)", t: "video" },
         { k: "link", l: "\u2026or paste a YouTube / video link instead", t: "url" }
       ],
       title: function (it) { return it.title; },
@@ -189,9 +189,11 @@
     else if (f.t === "list") h += '<input id="' + id + '" name="' + f.k + '" type="text" value="' + esc(Array.isArray(val) ? val.join(", ") : val) + '" placeholder="a, b, c">';
     else if (f.t === "video") {
       h += '<input type="hidden" id="' + id + '" name="' + f.k + '" value="' + esc(val) + '">' +
-        '<input type="file" class="vid-file" accept="video/*" data-for="' + id + '">' +
+        '<input type="file" class="vid-file" accept="video/*,audio/*" data-for="' + id + '">' +
         '<div class="vid-prev" id="' + id + '-prev">' +
-          (val ? '<video controls preload="metadata" src="' + esc(val) + '"></video>' : '<span class="muted small">No video uploaded yet</span>') +
+          (val ? (isAudioUrl(val) ? '<audio controls preload="metadata" src="' + esc(val) + '"></audio>'
+                                  : '<video controls preload="metadata" src="' + esc(val) + '"></video>')
+               : '<span class="muted small">No video or audio uploaded yet</span>') +
         "</div>" +
         '<div class="pill-row" style="margin-top:8px;gap:10px;align-items:center">' +
           '<span class="muted small" id="' + id + '-note"></span>' +
@@ -360,9 +362,13 @@
 
   /* Upload a video: ask the server for a signed URL, then PUT the file straight
      to storage from the browser, so a large file never hits the function. */
+  function isAudioUrl(u) {
+    return /\.(mp3|m4a|aac|wav|ogg|oga|opus|flac|weba|wma)(\?|$)/i.test(String(u || ""));
+  }
   function extOf(name, type) {
     var m = String(name || "").match(/\.([A-Za-z0-9]{2,5})$/);
     if (m) return "." + m[1].toLowerCase();
+    if (/audio/.test(type || "")) return ".mp3";
     if (/webm/.test(type || "")) return ".webm";
     if (/quicktime/.test(type || "")) return ".mov";
     return ".mp4";
@@ -376,8 +382,8 @@
         var hidden = $("#" + id), prev = $("#" + id + "-prev"), note = $("#" + id + "-note");
         this.value = "";
         if (!B || !B.signMedia) { note.textContent = "Backend not loaded."; return; }
-        if (file.size > 50 * 1024 * 1024) {
-          note.textContent = "That file is " + Math.round(file.size / 1048576) + " MB \u2014 the free storage plan allows 50 MB per file. Trim or compress it first.";
+        if (file.size > 100 * 1024 * 1024) {
+          note.textContent = "That file is " + Math.round(file.size / 1048576) + " MB \u2014 the free storage plan allows 100 MB per file. Trim or compress it first.";
           return;
         }
         try {
@@ -385,14 +391,35 @@
           var path = slugName(file.name) + "-" + Date.now().toString(36) + extOf(file.name, file.type);
           var signed = await B.signMedia(path, S.passcode());
           note.textContent = "Uploading " + Math.round(file.size / 1048576 * 10) / 10 + " MB\u2026 (keep this tab open)";
-          var r = await fetch(signed.uploadUrl, {
-            method: "PUT",
-            headers: { "x-upsert": "true", "content-type": file.type || "video/mp4", "cache-control": "max-age=3600" },
-            body: file
-          });
-          if (!r.ok) throw new Error("upload failed (" + r.status + ")");
-          hidden.value = signed.publicUrl;
-          prev.innerHTML = '<video controls preload="metadata" src="' + signed.publicUrl + '"></video>';
+          var url = "";
+          if (signed.provider === "cloudinary") {
+            // signed multipart POST straight to Cloudinary
+            var fd = new FormData();
+            fd.append("file", file);
+            fd.append("api_key", signed.apiKey);
+            fd.append("timestamp", signed.timestamp);
+            fd.append("signature", signed.signature);
+            fd.append("folder", signed.folder);
+            var cr = await fetch(signed.uploadUrl, { method: "POST", body: fd });
+            var cj = {};
+            try { cj = await cr.json(); } catch (e2) {}
+            if (!cr.ok || !cj.secure_url) {
+              throw new Error((cj.error && cj.error.message) || ("upload failed (" + cr.status + ")"));
+            }
+            url = cj.secure_url;
+          } else {
+            var r = await fetch(signed.uploadUrl, {
+              method: "PUT",
+              headers: { "x-upsert": "true", "content-type": file.type || "video/mp4", "cache-control": "max-age=3600" },
+              body: file
+            });
+            if (!r.ok) throw new Error("upload failed (" + r.status + ")");
+            url = signed.publicUrl;
+          }
+          hidden.value = url;
+          prev.innerHTML = isAudioUrl(url)
+            ? '<audio controls preload="metadata" src="' + esc(url) + '"></audio>'
+            : '<video controls preload="metadata" src="' + esc(url) + '"></video>';
           note.textContent = "Uploaded. Press Add/Save, then Publish.";
           var cl = $("#" + id + "-clear"); if (cl) cl.style.display = "";
         } catch (e) {
