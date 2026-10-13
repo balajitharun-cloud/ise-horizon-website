@@ -601,6 +601,11 @@
         '<div class="pill-row"><button class="btn btn-blue btn-sm" id="be-diag">Check shared sign-up</button></div>' +
         '<p class="muted small" id="be-diag-out" style="margin-top:12px">Not checked yet.</p>' +
       '</div>' +
+      '<div class="form-card" style="grid-column:1/-1"><h3 style="margin-top:0">Media storage (video &amp; audio)</h3>' +
+        '<p class="muted small">Videos and audio files are uploaded straight to your storage provider. This checks that the keys work and the service actually answers.</p>' +
+        '<div class="pill-row"><button class="btn btn-blue btn-sm" id="be-media">Check media storage</button></div>' +
+        '<p class="muted small" id="be-media-out" style="margin-top:12px">Not checked yet.</p>' +
+      '</div>' +
     '</div>';
   }
 
@@ -616,6 +621,22 @@
       } catch (e) { say("Could not reach the repo: " + e.message, false); }
     });
     $("#be-forget").addEventListener("click", function () { B.setToken(""); renderBody(); });
+    var mdiag = $("#be-media");
+    if (mdiag) mdiag.addEventListener("click", async function () {
+      var out = $("#be-media-out");
+      out.textContent = "Checking\u2026";
+      try {
+        var d = await B.checkMedia(S.passcode());
+        if (d.ok) {
+          out.innerHTML = "<strong>Connected.</strong> Storage: " + esc(d.provider) + " \u00b7 " + esc(d.target || "") +
+            "<br>Uploads will go here when you add a video or audio file.";
+        } else {
+          out.innerHTML = "<strong>Not connected.</strong> " + esc(d.detail || "unknown reason");
+        }
+      } catch (e) {
+        out.innerHTML = "<strong>Not connected.</strong> " + esc((e && e.message) || e);
+      }
+    });
     var diag = $("#be-diag");
     if (diag) diag.addEventListener("click", async function () {
       var out = $("#be-diag-out");

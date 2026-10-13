@@ -235,6 +235,41 @@ function signCloudinaryUpload() {
   };
 }
 
+/* ---------- does media storage actually work? ----------
+   Supabase: signing IS a live API call, so a successful sign proves the keys
+   work and the service is reachable.
+   Cloudinary: signing is computed locally, so we prove the credentials with a
+   real (read-only) Admin API call instead. */
+async function checkCloudinary() {
+  const auth = Buffer.from(CL_KEY + ":" + CL_SEC).toString("base64");
+  const r = await fetch("https://api.cloudinary.com/v1_1/" + encodeURIComponent(CL_CLOUD) +
+    "/resources/video?max_results=1", { headers: { "Authorization": "Basic " + auth } });
+  if (r.status === 401 || r.status === 403) {
+    throw new Error("Cloudinary rejected these credentials (" + r.status + "). Re-copy the API key and secret.");
+  }
+  if (!r.ok) throw new Error("Cloudinary check failed (" + r.status + ")");
+  return true;
+}
+
+async function checkMediaStorage() {
+  const p = mediaProvider();
+  if (p === "none") return { provider: "none", ok: false, detail: mediaHint() };
+  try {
+    if (p === "cloudinary") {
+      await checkCloudinary();
+      return { provider: "cloudinary", ok: true, target: CL_CLOUD + " (folder: " + CL_FOLDER + ")" };
+    }
+    await signMediaUpload("probe/check.mp4");
+    return { provider: "supabase", ok: true, target: SB_BUCKET + " bucket" };
+  } catch (e) {
+    const raw = (e && e.message) || String(e);
+    const extra = p === "supabase"
+      ? " Check that SUPABASE_SERVICE_KEY is the service_role key and that a public bucket named '" + SB_BUCKET + "' exists."
+      : "";
+    return { provider: p, ok: false, detail: raw + extra };
+  }
+}
+
 /* ---------- media storage (Supabase Storage) ---------- */
 /* The service key never leaves the server: we only hand the browser a
    short-lived signed upload URL, so a 50 MB video goes straight to storage
@@ -288,4 +323,4 @@ function hint() {
 }
 
 module.exports = { loadMembers, saveMembers, saveMembersToRepo, loadContent, saveContentToRepo, saveFileToRepo, loadJson, saveJsonToRepo, filePath, FILES, sha256hex,
-         signMediaUpload, mediaConfigured, mediaProvider, mediaHint, cloudinarySignature, configured, activeBackend, hint, KEY };
+         signMediaUpload, mediaConfigured, mediaProvider, mediaHint, cloudinarySignature, checkMediaStorage, configured, activeBackend, hint, KEY };

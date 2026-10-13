@@ -39,6 +39,27 @@ export default async (req) => {
   }
   if (!SB_URL || !SB_KEY) return reply(501, { ok:false, error:"Media storage is not set up. Set CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET in Netlify (no card needed), or the SUPABASE_* equivalents." });
   let b; try { b = await req.json(); } catch(e){ return reply(400,{ok:false,error:"Bad JSON"}); }
+  if (b.check === true) {
+    if (CL_CLOUD && CL_KEY && CL_SEC) {
+      try {
+        const auth = Buffer.from(CL_KEY + ":" + CL_SEC).toString("base64");
+        const cr = await fetch("https://api.cloudinary.com/v1_1/" + encodeURIComponent(CL_CLOUD) + "/resources/video?max_results=1",
+          { headers: { "Authorization": "Basic " + auth } });
+        if (cr.status === 401 || cr.status === 403) return reply(200, { provider:"cloudinary", ok:false, detail:"Cloudinary rejected these credentials ("+cr.status+"). Re-copy the API key and secret." });
+        if (!cr.ok) return reply(200, { provider:"cloudinary", ok:false, detail:"Cloudinary check failed ("+cr.status+")" });
+        return reply(200, { provider:"cloudinary", ok:true, target: CL_CLOUD + " (folder: " + CL_FOLDER + ")" });
+      } catch(e){ return reply(200, { provider:"cloudinary", ok:false, detail:e.message }); }
+    }
+    if (SB_URL && SB_KEY) {
+      try {
+        const sr = await fetch(SB_URL+"/storage/v1/object/upload/sign/"+encodeURIComponent(SB_BUCKET)+"/"+enc("probe/check.mp4"),
+          { method:"POST", headers:{ "Authorization":"Bearer "+SB_KEY, "apikey":SB_KEY, "x-upsert":"true" } });
+        if (!sr.ok) return reply(200, { provider:"supabase", ok:false, detail:"Supabase refused to sign ("+sr.status+"). Check the service key and that the '"+SB_BUCKET+"' bucket exists." });
+        return reply(200, { provider:"supabase", ok:true, target: SB_BUCKET + " bucket" });
+      } catch(e){ return reply(200, { provider:"supabase", ok:false, detail:e.message }); }
+    }
+    return reply(200, { provider:"none", ok:false, detail:"Media storage is not set up. Set CLOUDINARY_* or SUPABASE_* environment variables in Netlify." });
+  }
   const path = String(b.path||"").trim();
   if (!path || path.indexOf("..")!==-1 || path.charAt(0)==="/") return reply(400,{ok:false,error:"invalid path"});
   try {

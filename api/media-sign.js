@@ -12,6 +12,18 @@ module.exports = async (req, res) => {
   if (typeof body === "string") { try { body = JSON.parse(body || "{}"); } catch (e) { body = null; } }
   if (!body || typeof body !== "object") { res.status(400).json({ ok: false, error: "Bad JSON" }); return; }
 
+  // a diagnostics call: does the storage actually answer?
+  if (body.check === true) {
+    const current = await lib.loadContent();
+    const want = (current.data && current.data.settings && current.data.settings.passcodeHash) || "";
+    if (!want || lib.sha256hex(String(body.pass || "").trim()) !== want) {
+      res.status(401).json({ ok: false, error: "Wrong passcode" }); return;
+    }
+    const out = await lib.checkMediaStorage();
+    res.status(200).json(out);
+    return;
+  }
+
   const path = String(body.path || "").trim();
   if (!path || path.indexOf("..") !== -1 || path.charAt(0) === "/") {
     res.status(400).json({ ok: false, error: "invalid path" }); return;

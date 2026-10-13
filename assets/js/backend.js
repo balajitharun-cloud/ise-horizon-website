@@ -148,6 +148,23 @@
     return await r.json();
   }
 
+  /* ---------- is media storage actually connected? ---------- */
+  async function checkMedia(pass) {
+    var r = await fetch("/api/media-sign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ check: true, pass: pass || "" })
+    });
+    if (!r.ok) {
+      var msg = "";
+      try { var j = await r.json(); msg = j.error || ""; } catch (e) {}
+      var err = new Error(msg || ("HTTP " + r.status));
+      err.status = r.status;
+      throw err;
+    }
+    return await r.json();
+  }
+
   /* ---------- upload a photo through the server ---------- */
   async function uploadFile(path, base64, pass) {
     var r = await fetch("/api/upload", {
@@ -229,7 +246,8 @@
     cfg: cfg, setConfig: setConfig,
     token: token, setToken: setToken, canWrite: canWrite,
     pull: pull, push: push, pushBinary: pushBinary, content: content,
-    saveContent: saveContent, saveJson: saveJson, uploadFile: uploadFile, signMedia: signMedia, verify: verify, stats: stats, diagnose: diagnose,
+    saveContent: saveContent, saveJson: saveJson, uploadFile: uploadFile, signMedia: signMedia,
+    checkMedia: checkMedia, verify: verify, stats: stats, diagnose: diagnose,
     paths: { content: "data/content.json", certificates: "data/certificates.json", submissions: "data/submissions.json" }
   };
 })();
