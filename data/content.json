@@ -85,5 +85,14 @@
       "why": "Hello",
       "joined": "2026-10-11"
     }
+  ],
+  "faculty": [
+    {
+      "id": "f1",
+      "name": "Rajashekhar",
+      "designation": "HOD",
+      "dept": "",
+      "note": ""
+    }
   ]
 }
