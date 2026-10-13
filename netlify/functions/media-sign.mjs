@@ -33,7 +33,8 @@ export default async (req) => {
       const signature = createHash("sha1").update(pairs.join("&") + CL_SEC, "utf8").digest("hex");
       return reply(200, { ok:true, provider:"cloudinary",
         uploadUrl: "https://api.cloudinary.com/v1_1/"+encodeURIComponent(CL_CLOUD)+"/auto/upload",
-        apiKey: CL_KEY, timestamp: timestamp, signature: signature, folder: folder });
+        apiKey: CL_KEY, timestamp: timestamp, signature: signature, folder: folder,
+        maxBytes: 100 * 1024 * 1024 });
     } catch(e){ return reply(502,{ok:false,error:e.message}); }
   }
   if (!SB_URL || !SB_KEY) return reply(501, { ok:false, error:"Media storage is not set up. Set CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET in Netlify (no card needed), or the SUPABASE_* equivalents." });
@@ -57,7 +58,7 @@ export default async (req) => {
     let token = j.token || "";
     if (!token && j.url) { try { token = new URL(j.url, SB_URL).searchParams.get("token") || ""; } catch(e){} }
     if (!token) throw new Error("Supabase returned no upload token");
-    return reply(200, { ok:true, provider:"supabase", uploadUrl: signUrl+"?token="+encodeURIComponent(token), token: token,
+    return reply(200, { ok:true, provider:"supabase", maxBytes: 50 * 1024 * 1024, uploadUrl: signUrl+"?token="+encodeURIComponent(token), token: token,
       publicUrl: SB_URL+"/storage/v1/object/public/"+encodeURIComponent(SB_BUCKET)+"/"+enc("videos/"+clean) });
   } catch(e){ return reply(502,{ok:false,error:e.message}); }
 };

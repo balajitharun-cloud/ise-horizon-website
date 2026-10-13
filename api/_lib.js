@@ -230,7 +230,8 @@ function signCloudinaryUpload() {
     apiKey: CL_KEY,
     timestamp: timestamp,
     signature: cloudinarySignature(params, CL_SEC),
-    folder: CL_FOLDER
+    folder: CL_FOLDER,
+    maxBytes: 100 * 1024 * 1024   // Cloudinary free plan: 100 MB per video/audio file
   };
 }
 
@@ -272,6 +273,7 @@ async function signMediaUpload(path) {
     uploadUrl: signUrl + "?token=" + encodeURIComponent(token),
     token: token,
     path: clean,
+    maxBytes: 50 * 1024 * 1024,   // Supabase free plan: 50 MB per file
     publicUrl: sbBase() + "/storage/v1/object/public/" + encodeURIComponent(SB_BUCKET) + "/" + sbObjectPath(clean)
   };
 }

@@ -383,13 +383,19 @@
         this.value = "";
         if (!B || !B.signMedia) { note.textContent = "Backend not loaded."; return; }
         if (file.size > 100 * 1024 * 1024) {
-          note.textContent = "That file is " + Math.round(file.size / 1048576) + " MB \u2014 the free storage plan allows 100 MB per file. Trim or compress it first.";
+          note.textContent = "That file is " + Math.round(file.size / 1048576) + " MB, which is over every free plan's per-file limit. Trim or compress it first.";
           return;
         }
         try {
           note.textContent = "Requesting upload link\u2026";
           var path = slugName(file.name) + "-" + Date.now().toString(36) + extOf(file.name, file.type);
           var signed = await B.signMedia(path, S.passcode());
+          // the server knows which provider is in use and what its real cap is
+          if (signed.maxBytes && file.size > signed.maxBytes) {
+            note.textContent = "That file is " + Math.round(file.size / 1048576) + " MB \u2014 this storage plan allows "
+              + Math.round(signed.maxBytes / 1048576) + " MB per file. Trim or compress it first.";
+            return;
+          }
           note.textContent = "Uploading " + Math.round(file.size / 1048576 * 10) / 10 + " MB\u2026 (keep this tab open)";
           var url = "";
           if (signed.provider === "cloudinary") {
