@@ -104,6 +104,17 @@
         return it.img ? '<img src="' + esc(it.img) + '" alt="" style="width:38px;height:38px;object-fit:cover;border-radius:6px">' : "";
       }
     },
+    faculty: {
+      label: "Faculty", icon: "🎓", addLabel: "Add faculty member",
+      fields: [
+        { k: "name", l: "Name", t: "text", req: true, ph: "Prof. Rajashekhar" },
+        { k: "designation", l: "Designation", t: "text", req: true, ph: "HOD" },
+        { k: "dept", l: "Department", t: "text", ph: "Information Science & Engineering" },
+        { k: "note", l: "Short note (optional)", t: "textarea" }
+      ],
+      title: function (it) { return it.name; },
+      sub: function (it) { return [it.designation || "", it.dept || ""].filter(Boolean).join(" \u00b7 "); }
+    },
     members: {
       label: "Members", icon: "👥", addLabel: "Add member",
       fields: [
@@ -149,7 +160,7 @@
     }
   };
 
-  var TABS = ["events", "news", "projects", "gallery", "members", "history", "achievements", "hackathon", "stats", "backend", "data"];
+  var TABS = ["events", "news", "projects", "gallery", "faculty", "members", "history", "achievements", "hackathon", "stats", "backend", "data"];
   var current = "events";
   var editingId = null;
 

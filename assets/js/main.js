@@ -33,6 +33,7 @@
     { file: "events.html", label: "Events" },
     { file: "projects.html", label: "Projects" },
     { file: "team.html", label: "Team" },
+    { file: "faculty.html", label: "Faculty" },
     { file: "gallery.html", label: "Gallery" },
     { file: "join.html", label: "Join Us" },
     { file: "contact.html", label: "Contact" },
@@ -122,6 +123,7 @@
     (d.projects || []).forEach(function (p) { idx.push({ kind: "Project", title: p.title, url: "projects.html#pr-" + (p.id || slug(p.title)), extra: (p.stack || []).join(", ") }); });
     (d.news || []).forEach(function (a) { idx.push({ kind: "News", title: a.title, url: "about.html#news", extra: fmtDate(a.date) }); });
     (d.gallery || []).forEach(function (g) { idx.push({ kind: "Gallery", title: g.caption, url: "gallery.html", extra: g.emoji || "" }); });
+    (d.faculty || []).forEach(function (f) { idx.push({ kind: "Faculty", title: f.name, url: "faculty.html", extra: f.designation || "" }); });
     (H.team || []).forEach(function (t) { idx.push({ kind: "Team", title: t.name, url: "team.html", extra: t.role }); });
     (H.achievements || []).forEach(function (a) { idx.push({ kind: "Achievement", title: a.title, url: "about.html#achievements", extra: a.year }); });
     PAGES.forEach(function (p) { idx.push({ kind: "Page", title: p.label, url: p.file, extra: "Go to page" }); });
@@ -198,6 +200,15 @@
           (p.github ? '<a class="btn btn-ghost btn-sm" href="' + esc(p.github) + '" target="_blank" rel="noopener">GitHub ↗</a>' : "") +
           (p.demo ? '<a class="btn btn-blue btn-sm" href="' + esc(p.demo) + '">Live demo</a>' : "") +
         "</div>" +
+      "</div></article>";
+  }
+  function facultyCard(f) {
+    return '<article class="person card"><div class="card-body">' +
+      '<div class="avatar">' + (f.photo ? '<img src="' + esc(f.photo) + '" alt="' + esc(f.name) + '">' : esc(initials(f.name))) + "</div>" +
+      '<h3 style="margin-bottom:.1em">' + esc(f.name) + "</h3>" +
+      '<div class="role">' + esc(f.designation || "Faculty") + "</div>" +
+      (f.dept ? '<div class="small muted">' + esc(f.dept) + "</div>" : "") +
+      (f.note ? '<p class="bio">' + esc(f.note) + "</p>" : "") +
       "</div></article>";
   }
   function personCard(t) {
@@ -402,6 +413,13 @@
     },
 
     team: function () { var m = $("#teamGrid"); if (m) m.innerHTML = (H.team || []).map(personCard).join(""); },
+    faculty: function () {
+      var m = $("#facultyGrid");
+      if (!m) return;
+      var f = S.get().faculty || [];
+      m.innerHTML = f.length ? f.map(facultyCard).join("")
+        : emptyState("🎓", "Faculty list coming soon", "The department faculty are added here by the club committee.");
+    },
     contact: function () {},
     join: function () {}
   };
