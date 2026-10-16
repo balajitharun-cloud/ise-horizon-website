@@ -529,74 +529,11 @@
     return !reduceMotion && !document.body.hasAttribute("data-no-motion");
   }
 
-  var REVEAL_SELECTORS = [
-    ".page-hero h1", ".page-hero p", ".breadcrumb",
-    ".section-head", ".card", ".person", ".stat", ".gitem", ".video-card",
-    ".timeline li", ".empty-state", ".form-card"
-  ];
-  var revealObserver = null;
-  var revealCount = 0;          // alternate the direction of travel
-
-  function refreshReveal() {
-    if (!motionEnabled() || !("IntersectionObserver" in window)) return;
-    if (!revealObserver) {
-      revealObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (!en.isIntersecting) return;
-          en.target.classList.add("is-in");
-          revealObserver.unobserve(en.target);
-        });
-      }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
-    }
-    REVEAL_SELECTORS.forEach(function (sel) {
-      $$(sel).forEach(function (el) {
-        if (el.classList.contains("reveal")) return;
-        if (el.offsetParent === null) return;          // skip anything hidden right now
-        if (el.closest(".no-reveal")) return;
-        el.classList.add("reveal");
-        if (revealCount++ % 2 === 1) el.classList.add("reveal--right");   // even from the left, odd from the right
-        var parent = el.parentElement;
-        if (parent) {
-          var sibs = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains("reveal"); });
-          var i = sibs.indexOf(el);
-          if (i > 0 && i < 10) el.style.setProperty("--rd", (i * 60) + "ms");
-        }
-        revealObserver.observe(el);
-      });
-    });
-  }
-
-  function countUp(el, to) {
-    if (reduceMotion) { el.textContent = String(to); return; }
-    var dur = 900, t0 = null;
-    function step(ts) {
-      if (t0 === null) t0 = ts;
-      var k = Math.min(1, (ts - t0) / dur);
-      var eased = 1 - Math.pow(1 - k, 3);
-      el.textContent = String(Math.round(to * eased));
-      if (k < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  var statsAnimated = false;
-  function wireStatCount() {
-    var stats = $("#homeStats");
-    if (!stats || statsAnimated || !motionEnabled() || !("IntersectionObserver" in window)) return;
-    var nums = $$(".num", stats);
-    if (!nums.length) return;
-    var targets = nums.map(function (el) { return parseInt(String(el.textContent).replace(/[^0-9]/g, ""), 10) || 0; });
-    if (targets.every(function (t) { return t === 0; })) return;   // wait for the shared numbers to arrive
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting || statsAnimated) return;
-        statsAnimated = true;
-        io.disconnect();
-        nums.forEach(function (el, i) { countUp(el, targets[i]); });
-      });
-    }, { threshold: 0.35 });
-    io.observe(stats);
-  }
+  /* Nothing animates any more: no scroll reveals, no counting numbers, no page
+     transitions. The markup renders in place and stays put. These are kept as
+     no-ops so the rest of the engine keeps its shape. */
+  function refreshReveal() {}
+  function wireStatCount() {}
 
   var paintChrome = null;
   function initScrollChrome() {
@@ -611,7 +548,6 @@
     function paint() {
       ticking = false;
       var y = window.scrollY || window.pageYOffset || 0;
-      if (header) header.classList.toggle("is-scrolled", y > 8);
       if (bar) {
         var doc = document.documentElement;
         var max = doc.scrollHeight - window.innerHeight;

@@ -243,30 +243,13 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
 .hero-inner { position: relative; z-index: 2; padding: 30px 0 8px; }
 .hero-inner { text-align: center; }
 
-/* the emblem: it settles into place, breathes slowly, and a band of light
-   passes across the gold every few seconds (masked to the logo itself) */
-.hero-mark { position: relative; display: block; width: clamp(150px, 32vw, 210px); margin: 0 auto 22px;
-  animation: markIn .95s cubic-bezier(.22,.61,.36,1) both; }
-.hero-mark img { display: block; width: 100%; height: auto;
-  animation: markFloat 7.5s ease-in-out 1.2s infinite; }
+/* the emblem: still. no entrance, no float, no shine. */
+.hero-mark { position: relative; display: block; width: clamp(150px, 32vw, 210px); margin: 0 auto 22px; }
+.hero-mark img { display: block; width: 100%; height: auto; }
 .hero-mark .mark-on-dark, .certp-hero-art .mark-on-dark { display: none; }
 [data-theme="dark"] .hero-mark .mark-on-light, [data-theme="dark"] .certp-hero-art .mark-on-light { display: none; }
 [data-theme="dark"] .hero-mark .mark-on-dark, [data-theme="dark"] .certp-hero-art .mark-on-dark { display: block; }
-[data-theme="dark"] .hero-mark::after {
-  -webkit-mask-image: url(../images/avyakt-lockup.png); mask-image: url(../images/avyakt-lockup.png);
-}
-.hero-mark::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(105deg, transparent 42%, rgba(227,155,46,.55) 50%, transparent 58%);
-  -webkit-mask-image: url(../images/avyakt-lockup-ink.png); mask-image: url(../images/avyakt-lockup-ink.png);
-  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  transform: translateX(-135%);
-  animation: markShine 6s ease-in-out 1.8s infinite;
-}
-@keyframes markIn { from { opacity: 0; transform: translate3d(0, 16px, 0) scale(.93); } to { opacity: 1; transform: none; } }
-@keyframes markFloat { 0%, 100% { transform: translate3d(0, -5px, 0); } 50% { transform: translate3d(0, 5px, 0); } }
-@keyframes markShine { 0% { transform: translateX(-135%); } 22%, 100% { transform: translateX(135%); } }
+
 .hero-affil { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--brand); font-weight: 600; margin: 0 auto 24px; max-width: 60ch; }
 .hero .tagline { color: var(--text-muted); font-size: clamp(1rem, 2.3vw, 1.12rem); line-height: 1.6; max-width: 54ch; margin: 0 auto 28px; }
 
@@ -707,8 +690,6 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
 
 /* ---------- stage + toolbar ---------- */
 .certp-stage-wrap { margin-top: 22px; }
-.certp-stage-wrap:not(.hidden) { animation: certpReveal .5s cubic-bezier(.2,.85,.25,1) both; }
-@keyframes certpReveal { from { opacity: 0; transform: translate3d(-26px,0,0); } to { opacity: 1; transform: none; } }
 .certp-toolbar {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   padding: 12px 16px; margin-bottom: 14px; border-radius: var(--radius);
@@ -748,7 +729,6 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
   .certp-seg .tab { flex: 1; padding: 11px 10px; font-size: .84rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .certp-stage-wrap:not(.hidden) { animation: none !important; }
 }
 
 /* ---------- print: only the certificate ---------- */
@@ -775,28 +755,16 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
 }
 
 /* the header tightens and lifts once the page has moved */
-.site-header { transition: border-color .3s ease; }
-.header-inner { transition: height .3s ease; }
-.site-header.is-scrolled .header-inner { box-shadow: var(--shadow-lg); }
-.site-header.is-scrolled .header-inner { height: 56px; }
+.site-header { }
+.header-inner { }
+/* the header is identical at every scroll position */
+/* the header keeps a single height so scrolling never shifts the layout */
 
-/* reveal on scroll. Only elements the script has tagged get this class, so if
-   the script fails nothing is ever hidden. */
-/* everything arrives from the left */
-.reveal {
-  opacity: 0;
-  transform: translate3d(-30px, 0, 0);
-  transition: opacity .62s cubic-bezier(.22,.61,.36,1), transform .62s cubic-bezier(.22,.61,.36,1);
-  transition-delay: var(--rd, 0ms);
-  will-change: opacity, transform;
+/* Nothing animates on load or on scroll. The page sits still. The reveal class
+   is kept inert so an older cached page can never hide its own content. */
+.reveal, .reveal--right, .reveal--up, .reveal.is-in {
+  opacity: 1 !important; transform: none !important; transition: none !important;
 }
-.reveal--right { transform: translate3d(30px, 0, 0); }
-.reveal--up    { transform: translate3d(0, 20px, 0); }
-.reveal.is-in  { opacity: 1; transform: none; will-change: auto; }
-
-/* the page itself slides in from the left as you move between pages */
-@keyframes pageEnter { from { opacity: 0; transform: translate3d(-34px, 0, 0); } to { opacity: 1; transform: none; } }
-main { animation: pageEnter .45s cubic-bezier(.22,.61,.36,1) both; }
 
 /* hover is a state, not an animation: the rule darkens, nothing moves */
 @media (hover: hover) {
@@ -804,11 +772,6 @@ main { animation: pageEnter .45s cubic-bezier(.22,.61,.36,1) both; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   .scroll-progress { display: none !important; }
-  .site-header.is-scrolled .header-inner { height: var(--header-h); }
   html { scroll-behavior: auto; }
-  main { animation: none !important; }
-  .hero-mark, .hero-mark img, .hero-mark::after { animation: none !important; }
-  .hero-mark::after { display: none; }
 }
