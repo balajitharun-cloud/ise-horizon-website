@@ -1,5 +1,5 @@
 /* AVYAKT service worker (offline-first for the app shell) */
-var CACHE = "horizon-v53";
+var CACHE = "horizon-v54";
 var ASSETS = [
   "./",
   "index.html",
@@ -24,6 +24,8 @@ var ASSETS = [
   "assets/js/certificate.js",
   "assets/images/avyakt-emblem.png",
   "assets/images/avyakt-lockup.png",
+  "assets/images/avyakt-emblem-ink.png",
+  "assets/images/avyakt-lockup-ink.png",
   "assets/images/favicon-32.png",
   "assets/images/icon-192.png",
   "assets/images/icon-512.png",
