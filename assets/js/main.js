@@ -522,6 +522,7 @@
     ".timeline li", ".empty-state", ".form-card"
   ];
   var revealObserver = null;
+  var revealCount = 0;          // alternate the direction of travel
 
   function refreshReveal() {
     if (!motionEnabled() || !("IntersectionObserver" in window)) return;
@@ -540,6 +541,7 @@
         if (el.offsetParent === null) return;          // skip anything hidden right now
         if (el.closest(".no-reveal")) return;
         el.classList.add("reveal");
+        if (revealCount++ % 2 === 1) el.classList.add("reveal--right");   // even from the left, odd from the right
         var parent = el.parentElement;
         if (parent) {
           var sibs = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains("reveal"); });
