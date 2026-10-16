@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVYAKT — backend client
+   AVYAKT backend client
    The site's data lives in this GitHub repo (data/*.json), so every
    visitor reads the same content. Public pages only READ. Writing needs a
    GitHub token, which an elite member pastes into the member panel; it is
@@ -61,7 +61,7 @@
   async function ghError(r) {
     var msg = "";
     try { msg = (await r.json()).message || ""; } catch (e) {}
-    return new Error("GitHub " + r.status + (msg ? " — " + msg : ""));
+    return new Error("GitHub " + r.status + (msg ? ": " + msg : ""));
   }
 
   /* ---------- read ---------- */
@@ -76,7 +76,7 @@
 
   /* ---------- write ---------- */
   async function push(path, obj, message) {
-    if (!token()) throw new Error("No GitHub token set — connect the backend first.");
+    if (!token()) throw new Error("No GitHub token set. Connect the backend first.");
     var sha = null;
     try { var cur = await pull(path); if (cur) sha = cur.sha; } catch (e) {}
     var body = {

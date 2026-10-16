@@ -1,5 +1,5 @@
-/* AVYAKT — service worker (offline-first for the app shell) */
-var CACHE = "horizon-v50";
+/* AVYAKT service worker (offline-first for the app shell) */
+var CACHE = "horizon-v51";
 var ASSETS = [
   "./",
   "index.html",
@@ -22,13 +22,9 @@ var ASSETS = [
   "assets/js/main.js",
   "assets/js/admin.js",
   "assets/js/certificate.js",
-  "assets/images/college-logo.jpeg",
-  "assets/images/vtu-seal.jpeg",
-  "assets/images/ise-horizon-logo.png",
-  "assets/images/ise-horizon-badge.png",
-  "assets/images/cert-seal.png",
-  "assets/images/cert-club.png",
-  "assets/images/cert-college.png",
+  "assets/images/avyakt-emblem.png",
+  "assets/images/avyakt-lockup.png",
+  "assets/images/favicon-32.png",
   "assets/images/icon-192.png",
   "assets/images/icon-512.png",
   "manifest.webmanifest"

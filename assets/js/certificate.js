@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVYAKT — Certificate Portal
+   AVYAKT Certificate Portal
    Members upload the participant list (name + USN); participants enter
    their name + USN and the certificate is generated automatically.
    Data is kept in this browser's localStorage (no server needed).
@@ -154,8 +154,9 @@
 
   function showCert(p) {
     var e = DB.event;
-    $("#certUni").textContent = "Visvesvaraya Technological University, Belagavi";
-    $("#certCollege").textContent = "Kalpataru Institute of Technology, Tiptur";
+    // keep this in step with the canvas in exportPng() and with certificate.html
+    $("#certUni").textContent = "Kalpataru Institute of Technology, Tiptur";
+    $("#certCollege").textContent = "Department of Information Science & Engineering";
     $("#certSubtitle").textContent = e.subtitle || "of Participation";
     $("#certName").textContent = p.name;
     $("#certUsn").textContent = "USN: " + normUsn(p.usn);
@@ -192,7 +193,7 @@
     if (!stage || !cert) return;
     function cs(el, p) { return getComputedStyle(el)[p] || "0"; }
     var avail = stage.clientWidth - (parseFloat(cs(stage, "paddingLeft")) + parseFloat(cs(stage, "paddingRight")));
-    if (avail <= 0) return;                  // stage hidden — will fit again when shown
+    if (avail <= 0) return;                  // stage hidden; will fit again when shown
     var scale = Math.min(1, avail / 1000);
     cert.style.zoom = scale;                 // real layout scale, so it stays centred
   }
@@ -222,7 +223,7 @@
         return;
       }
       note.className = "notice ok show";
-      note.textContent = "Verified! Your certificate has been generated below. 🎉";
+      note.textContent = "Verified. Your certificate has been generated below.";
       showCert(p);
     });
 
@@ -297,7 +298,7 @@
     x.restore();
 
     // emblem watermark
-    var wm = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo-t.png");
+    var wm = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/avyakt-emblem.png");
     if (wm) {
       var wh = 960, ww = wh * (wm.width / wm.height);
       x.save();
@@ -331,38 +332,27 @@
     corner(BORD, BORD, 0); corner(W - BORD, BORD, Math.PI / 2);
     corner(W - BORD, H - BORD, Math.PI); corner(BORD, H - BORD, 1.5 * Math.PI);
 
-    // ---------- header: three logos, equal slots ----------
-    var seal = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.seal) || "assets/images/vtu-seal.jpeg");
-    var college = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.logo) || "assets/images/college-logo.jpeg");
-    var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/ise-horizon-logo.png");
-    var slotW = (W - 2 * (BORD + PAD)) / 3, slot0 = BORD + PAD;
-    function slot(i, img, h) {
-      if (!img) return;
-      var w = h * (img.width / img.height);
-      x.drawImage(img, slot0 + slotW * i + (slotW - w) / 2, CY, w, h);
+    // ---------- header: one emblem, the institution named beneath it ----------
+    var club = await loadImg((window.HORIZON_IMG && window.HORIZON_IMG.club) || "assets/images/avyakt-emblem.png");
+    if (club) {
+      var eh = 150, ew = eh * (club.width / club.height);
+      x.drawImage(club, cx - ew / 2, CY, ew, eh);
     }
-    slot(0, seal, 128); slot(1, club, 128); slot(2, college, 128);
 
     // ---------- headings ----------
-    txt("VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 286, "700 41px Georgia, serif", CF, "2px");
-    txt("KARNATAKA, INDIA", 320, "22px Arial, sans-serif", CM, "6px");
-    txt("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 378, "700 35px Georgia, serif", CF2, "1px");
-    txt("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING · AVYAKT", 425, "20px Arial, sans-serif", CIS, "3px");
+    txt("KALPATARU INSTITUTE OF TECHNOLOGY, TIPTUR", 296, "700 40px Georgia, serif", CF, "1.5px");
+    txt("AFFILIATED TO VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI", 334, "19px Arial, sans-serif", CM, "3px");
+    txt("DEPARTMENT OF INFORMATION SCIENCE & ENGINEERING", 386, "26px Georgia, serif", CF2, "1px");
+    txt("AVYAKT", 426, "20px Arial, sans-serif", CIS, "8px");
 
     // ornamental divider
     (function () {
       var halfW = 420, y = 462;
-      var g = x.createLinearGradient(cx - halfW, 0, cx + halfW, 0);
-      g.addColorStop(0, "rgba(201,162,39,0)"); g.addColorStop(.5, CG); g.addColorStop(1, "rgba(201,162,39,0)");
-      x.fillStyle = g; x.fillRect(cx - halfW, y, halfW * 2, 4);
+      x.fillStyle = CG; x.fillRect(cx - halfW, y, halfW * 2, 2);
       x.fillStyle = CG; diamond(cx, y + 2, 11);
     })();
 
-    // gold-foil title
-    var tg = x.createLinearGradient(0, 515, 0, 562);
-    tg.addColorStop(0, "#d9b23f"); tg.addColorStop(.42, "#f7e8ab");
-    tg.addColorStop(.68, "#c9a227"); tg.addColorStop(1, "#8f6f12");
-    txt("CERTIFICATE", 538, "700 62px Georgia, serif", tg, "14px");
+    txt("CERTIFICATE", 538, "700 62px Georgia, serif", CGD, "14px");
     txt((e.subtitle || "of Participation").toUpperCase(), 605, "22px Arial, sans-serif", CM, "8px");
 
     // ---------- recipient ----------
@@ -371,12 +361,9 @@
     x.font = '400 88px "Great Vibes", cursive';
     var nw = Math.max(560, Math.min(900, x.measureText(p.name).width + 180));
     var fy = 773, half = nw / 2;
-    var gl = x.createLinearGradient(cx - half, 0, cx, 0);
-    gl.addColorStop(0, "rgba(201,162,39,0)"); gl.addColorStop(1, CG);
-    x.fillStyle = gl; x.fillRect(cx - half, fy, half - 10, 3);
-    var gr = x.createLinearGradient(cx, 0, cx + half, 0);
-    gr.addColorStop(0, CG); gr.addColorStop(1, "rgba(201,162,39,0)");
-    x.fillStyle = gr; x.fillRect(cx + 10, fy, half - 10, 3);
+    x.fillStyle = CG;
+    x.fillRect(cx - half, fy, half - 10, 2);
+    x.fillRect(cx + 10, fy, half - 10, 2);
     x.fillStyle = CG; diamond(cx, fy + 1, 9);
     txt("USN: " + normUsn(p.usn), 806, "22px Arial, sans-serif", CIS, "5px");
 
@@ -388,9 +375,7 @@
 
     // ---------- gold seal medallion ----------
     var sy = 995, sr = 52;
-    var sg = x.createRadialGradient(cx, sy - 24, 6, cx, sy, sr);
-    sg.addColorStop(0, "#fdf3cf"); sg.addColorStop(.48, "#e7c65a"); sg.addColorStop(1, "#b8901c");
-    x.beginPath(); x.arc(cx, sy, sr, 0, Math.PI * 2); x.fillStyle = sg; x.fill();
+    x.beginPath(); x.arc(cx, sy, sr, 0, Math.PI * 2); x.fillStyle = "#d8b95a"; x.fill();
     x.lineWidth = 4; x.strokeStyle = CGD; x.stroke();
     x.save();
     x.setLineDash([7, 5]); x.lineWidth = 2; x.strokeStyle = "rgba(109,18,32,.45)";
@@ -504,7 +489,7 @@
     mount.innerHTML = DB.participants.map(function (p, i) {
       return '<div class="pill-row" style="justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding:7px 0">' +
         '<span class="small"><strong>' + esc(p.name) + '</strong> · ' + esc(normUsn(p.usn)) + "</span>" +
-        '<button class="btn btn-ghost btn-sm" data-rm="' + i + '" aria-label="Remove">✕</button></div>';
+        '<button class="btn btn-ghost btn-sm" data-rm="' + i + '" aria-label="Remove">Remove</button></div>';
     }).join("");
     $$("[data-rm]", mount).forEach(function (b) {
       b.addEventListener("click", function () { DB.participants.splice(+this.getAttribute("data-rm"), 1); renderList(); save(DB); schedulePublish(); });
@@ -519,7 +504,7 @@
         '<div class="field-row two"><div class="field"><label>Name</label><input data-sn="' + i + '" value="' + esc(s.name) + '" placeholder="e.g. Dr. Sunitha R."></div>' +
         '<div class="field"><label>Designation</label><input data-sd="' + i + '" value="' + esc(s.designation) + '" placeholder="e.g. Faculty Coordinator"></div></div>' +
         '<div class="field-row two"><div class="field"><label>Signature photo (optional)</label><input type="file" accept="image/*" data-sp="' + i + '">' +
-        (s.photo ? '<div class="small muted mt-1">✓ photo added</div>' : '<div class="hint">Leave blank for an empty placeholder box.</div>') + "</div>" +
+        (s.photo ? '<div class="small muted mt-1">Photo added</div>' : '<div class="hint">Leave blank for an empty placeholder box.</div>') + "</div>" +
         '<div class="field" style="display:flex;align-items:flex-end"><button class="btn btn-ghost btn-sm" data-srm="' + i + '">Remove</button></div></div>' +
       "</div>";
     }).join("");

@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVYAKT — member panel (admin.js)
+   AVYAKT member panel (admin.js)
    Elite members add/edit/remove events, news, projects, gallery items and
    members. Everything is stored via HorizonStore (localStorage).
    ===================================================================== */
@@ -48,7 +48,7 @@
   /* ---------- field schemas ---------- */
   var SCHEMAS = {
     events: {
-      label: "Events", icon: "📅", addLabel: "Add event",
+      label: "Events", addLabel: "Add event",
       fields: [
         { k: "title", l: "Title", t: "text", req: true },
         { k: "date", l: "Date", t: "date" },
@@ -57,7 +57,6 @@
         { k: "mode", l: "Mode", t: "select", o: ["Offline", "Online", "Hybrid"] },
         { k: "category", l: "Category", t: "text", ph: "Workshop / Competition / Cultural / Sports…" },
         { k: "registration", l: "Registration URL (optional)", t: "url" },
-        { k: "poster", l: "Poster emoji (optional)", t: "text", ph: "🚀" },
         { k: "description", l: "Description", t: "textarea" }
       ],
       title: function (it) { return it.title; },
@@ -65,7 +64,7 @@
       extra: function (it, key) { return '<button class="btn btn-ghost btn-sm" data-archive="' + it.id + '">Archive</button>'; }
     },
     news: {
-      label: "News", icon: "📰", addLabel: "Publish update",
+      label: "News", addLabel: "Publish update",
       fields: [
         { k: "title", l: "Title", t: "text", req: true },
         { k: "date", l: "Date", t: "date" },
@@ -77,7 +76,7 @@
       sub: function (it) { return (it.tag || "") + (it.date ? " · " + fmtDate(it.date) : ""); }
     },
     projects: {
-      label: "Projects", icon: "💡", addLabel: "Add project",
+      label: "Projects", addLabel: "Add project",
       fields: [
         { k: "title", l: "Title", t: "text", req: true },
         { k: "status", l: "Status", t: "select", o: ["Ongoing", "Completed"] },
@@ -91,11 +90,10 @@
       sub: function (it) { return (it.status || "") + (it.github ? " · " + it.github : ""); }
     },
     gallery: {
-      label: "Gallery", icon: "🖼️", addLabel: "Add photo",
+      label: "Gallery", addLabel: "Add photo",
       fields: [
         { k: "caption", l: "Caption", t: "text", req: true },
         { k: "img", l: "Photo (upload)", t: "image" },
-        { k: "emoji", l: "Emoji (used when there is no photo)", t: "text", ph: "🚀" },
         { k: "wide", l: "Wide tile", t: "check" }
       ],
       title: function (it) { return it.caption; },
@@ -105,7 +103,7 @@
       }
     },
     faculty: {
-      label: "Faculty", icon: "🎓", addLabel: "Add faculty member",
+      label: "Faculty", addLabel: "Add faculty member",
       fields: [
         { k: "name", l: "Name", t: "text", req: true, ph: "Prof. Rajashekhar" },
         { k: "designation", l: "Designation", t: "text", req: true, ph: "HOD" },
@@ -116,9 +114,9 @@
       sub: function (it) { return [it.designation || "", it.dept || ""].filter(Boolean).join(" \u00b7 "); }
     },
     videos: {
-      label: "Media", icon: "🎬", addLabel: "Add video",
+      label: "Media", addLabel: "Add video",
       fields: [
-        { k: "title", l: "Title", t: "text", req: true, ph: "HORIZON Hackathon — highlights" },
+        { k: "title", l: "Title", t: "text", req: true, ph: "HORIZON Hackathon highlights" },
         { k: "date", l: "Date", t: "date" },
         { k: "desc", l: "Description", t: "textarea" },
         { k: "url", l: "Video or audio file (upload)", t: "video" },
@@ -128,7 +126,7 @@
       sub: function (it) { return [it.date ? fmtDate(it.date) : "", it.url ? "uploaded" : (it.link ? "link" : "no video")].filter(Boolean).join(" \u00b7 "); }
     },
     members: {
-      label: "Members", icon: "👥", addLabel: "Add member",
+      label: "Members", addLabel: "Add member",
       fields: [
         { k: "name", l: "Name", t: "text", req: true },
         { k: "usn", l: "USN", t: "text" },
@@ -152,7 +150,7 @@
       }
     },
     history: {
-      label: "History", icon: "🕓", addLabel: "Add history entry",
+      label: "History", addLabel: "Add history entry",
       fields: [
         { k: "year", l: "Year", t: "text", req: true, ph: "2026" },
         { k: "text", l: "What happened", t: "textarea" }
@@ -161,7 +159,7 @@
       sub: function (it) { return it.text || ""; }
     },
     achievements: {
-      label: "Hall of Fame", icon: "🏆", addLabel: "Add achievement",
+      label: "Hall of Fame", addLabel: "Add achievement",
       fields: [
         { k: "year", l: "Year", t: "text", ph: "2026" },
         { k: "title", l: "Achievement / winner", t: "text", req: true },
@@ -301,8 +299,8 @@
       '<div class="form-card"><h2 style="margin-top:0">Backup &amp; restore</h2>' +
         '<p class="muted small">Content lives in the club repo (see the Backend tab). Export a JSON backup any time, or import one to restore.</p>' +
         '<div class="pill-row">' +
-          '<button class="btn btn-primary btn-sm" id="d-export">⬆️ Export JSON</button>' +
-          '<label class="btn btn-ghost btn-sm" style="cursor:pointer">⬇️ Import JSON<input type="file" id="d-import" accept=".json" hidden></label>' +
+          '<button class="btn btn-primary btn-sm" id="d-export">Export JSON</button>' +
+          '<label class="btn btn-ghost btn-sm" style="cursor:pointer">Import JSON<input type="file" id="d-import" accept=".json" hidden></label>' +
           '<button class="btn btn-ghost btn-sm" id="d-reset">Reset to defaults</button>' +
           '<button class="btn btn-ghost btn-sm" id="d-lock">Lock panel</button>' +
         "</div><div class=\"notice\" id=\"d-note\"></div>" +
@@ -317,7 +315,7 @@
   /* ---------- render ---------- */
   function renderTabs() {
     $("#adminTabs").innerHTML = TABS.map(function (k) {
-      var l = k === "hackathon" ? "🏆 Hackathon" : k === "stats" ? "📊 Stats" : k === "backend" ? "🔗 Backend" : k === "data" ? "💾 Data" : SCHEMAS[k].icon + " " + SCHEMAS[k].label;
+      var l = k === "hackathon" ? "Hackathon" : k === "stats" ? "Stats" : k === "backend" ? "Backend" : k === "data" ? "Data" : SCHEMAS[k].label;
       return '<button class="tab' + (k === current ? " active" : "") + '" data-tab="' + k + '">' + l + "</button>";
     }).join("");
     $$("#adminTabs .tab").forEach(function (b) {
@@ -617,7 +615,7 @@
       var t = $("#be-token").value.trim(); if (t) B.setToken(t);
       try {
         var info = await B.verify();
-        say("Connected to " + info.fullName + (info.canPush ? " — you can publish." : " — but this token cannot write. Give it Contents: Read and write."), true);
+        say("Connected to " + info.fullName + (info.canPush ? ". You can publish." : ", but this token cannot write. Give it Contents: Read and write."), true);
       } catch (e) { say("Could not reach the repo: " + e.message, false); }
     });
     $("#be-forget").addEventListener("click", function () { B.setToken(""); renderBody(); });

@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVYAKT — content store
+   AVYAKT content store
    Elite members manage events, news, projects, gallery, members, history
    and the Hall of Fame from the member panel (admin.html).
 
@@ -22,7 +22,7 @@
     try {
       var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(s)));
       return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
-    } catch (e) { return null; }   // no WebCrypto (e.g. file://) — fall back to the code passcode
+    } catch (e) { return null; }   // no WebCrypto (e.g. file://): fall back to the code passcode
   }
 
   function defaults() {
@@ -32,7 +32,7 @@
         title: "HORIZON Hackathon",
         date: "",
         venue: "",
-        description: "Our flagship build sprint — open to every department. Dates and the registration link are posted here by the club.",
+        description: "Our flagship build sprint, open to every department. Dates and the registration link are posted here by the club.",
         link: "",
         active: true
       },
@@ -42,20 +42,20 @@
         { id: "n1", title: "Welcome to the new AVYAKT website", date: today(), tag: "Update",
           excerpt: "Our new club portal is live.", body: "Events, projects and updates are published here by the core committee." }
       ],
-      projects: [],      // student projects (managed) — each may carry a GitHub URL
+      projects: [],      // student projects (managed); each may carry a GitHub URL
       history: [
         { id: "h1", year: "2026", text: "AVYAKT was founded by students of the Department of Information Science & Engineering at Kalpataru Institute of Technology." }
       ],
       achievements: [],  // Hall of Fame (managed by the committee)
       gallery: [
-        { id: "g1", caption: "HORIZON Hackathon — final demo round", emoji: "🚀", wide: true },
-        { id: "g2", caption: "Workshop in the computer lab", emoji: "🤖" },
-        { id: "g3", caption: "Weekly coding circle", emoji: "🧩" },
-        { id: "g4", caption: "Tech talk — packed auditorium", emoji: "🎙️" }
+        { id: "g1", caption: "HORIZON Hackathon, final demo round", wide: true },
+        { id: "g2", caption: "Workshop in the computer lab" },
+        { id: "g3", caption: "Weekly coding circle" },
+        { id: "g4", caption: "Tech talk in the auditorium" }
       ],
-      members: [],       // club members — added by the elite member (starts empty)
-      faculty: [],       // department faculty — name + designation, managed in the panel
-      videos: []         // event videos — stored on the media host, listed here
+      members: [],       // club members, added by the elite member (starts empty)
+      faculty: [],       // department faculty: name + designation, managed in the panel
+      videos: []         // event videos, stored on the media host, listed here
     };
   }
 

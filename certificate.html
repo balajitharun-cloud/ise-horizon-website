@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Certificate Portal — AVYAKT</title>
+<title>Certificate Portal · AVYAKT</title>
 <meta name="description" content="Participants of AVYAKT events: enter your name and USN to instantly generate your certificate. Club members upload the participant list here.">
-<meta name="theme-color" content="#0b2a5b">
+<meta name="theme-color" content="#14171d">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/images/icon-192.png">
+<link rel="icon" type="image/png" href="assets/images/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/images/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=50">
+<link rel="stylesheet" href="assets/css/style.css?v=51">
 <script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body data-page="certificate" data-no-motion>
@@ -26,16 +26,16 @@
       <div class="certp-hero-copy">
         <span class="certp-eyebrow">AVYAKT · Certificate Portal</span>
         <h1>Your certificate, <span class="certp-grad">in seconds</span>.</h1>
-        <p class="certp-lead">Enter your name and USN. If you're on the event list, your certificate is generated instantly — branded, signed and ready to download.</p>
+        <p class="certp-lead">Enter your name and USN. If you're on the event list, your certificate is generated instantly: branded, signed and ready to download.</p>
         <div class="certp-chips">
-          <span class="certp-chip">⚡ Instant</span>
-          <span class="certp-chip">✅ Verified</span>
-          <span class="certp-chip">⬇️ PNG &amp; PDF</span>
+          <span class="certp-chip">Instant</span>
+          <span class="certp-chip">Verified</span>
+          <span class="certp-chip">PNG and PDF</span>
         </div>
       </div>
       <div class="certp-hero-art" aria-hidden="true">
         <span class="certp-glow"></span>
-        <img src="assets/images/ise-horizon-logo-t.png" alt="">
+        <img src="assets/images/avyakt-lockup.png" alt="AVYAKT">
       </div>
     </div>
   </section>
@@ -45,8 +45,8 @@
 
       <!-- ===================== MODE SWITCH ===================== -->
       <div class="certp-seg" id="certModeTabs" role="tablist" aria-label="Certificate portal mode">
-        <button class="tab active" data-mode="student" role="tab">🎓 I'm a participant</button>
-        <button class="tab" data-mode="member" role="tab">🛠️ Club member panel</button>
+        <button class="tab active" data-mode="student" role="tab">I'm a participant</button>
+        <button class="tab" data-mode="member" role="tab">Club member panel</button>
       </div>
 
       <!-- ===================== STUDENT ===================== -->
@@ -74,12 +74,12 @@
                 <label for="s-event">Event</label>
                 <select id="s-event" name="event"></select>
               </div>
-              <button class="btn btn-primary btn-block certp-generate" type="submit">✨ Generate my certificate</button>
+              <button class="btn btn-primary btn-block certp-generate" type="submit">Generate my certificate</button>
               <div class="notice" id="certNote" role="status"></div>
             </form>
             <div class="certp-foot-note">
               <span class="chip chip--blue" id="certCountChip">Loading…</span>
-              <p class="small muted">Not on the list? <a href="contact.html">Contact the club</a> — a member needs to add your name and USN first.</p>
+              <p class="small muted">Not on the list? <a href="contact.html">Contact the club</a>. A member needs to add your name and USN first.</p>
             </div>
           </div>
 
@@ -93,12 +93,12 @@
             </ol>
             <div class="certp-preview">
               <div class="certp-preview-card">
-                <span class="certp-preview-uni">VTU · Belagavi</span>
+                <span class="certp-preview-uni">Kalpataru Institute of Technology, Tiptur</span>
                 <span class="certp-preview-title">CERTIFICATE</span>
                 <span class="certp-preview-name">Your Name</span>
                 <span class="certp-preview-sub">of Participation</span>
               </div>
-              <p class="small muted center mt-1">Preview only — your real certificate appears below.</p>
+              <p class="small muted center mt-1">Preview only. Your real certificate appears below.</p>
             </div>
           </div>
         </div>
@@ -106,10 +106,10 @@
         <!-- ===================== STAGE ===================== -->
         <div id="certStageWrap" class="hidden certp-stage-wrap">
           <div class="certp-toolbar no-print">
-            <span class="certp-ready"><span class="certp-tick">✓</span> Your certificate is ready</span>
+            <span class="certp-ready"><span class="certp-tick">Ready</span> Your certificate is ready</span>
             <div class="certp-toolbar-actions">
-              <button class="btn btn-primary btn-sm" id="certPrint">🖨️ Print / Save as PDF</button>
-              <button class="btn btn-blue btn-sm" id="certPng">⬇️ Download PNG</button>
+              <button class="btn btn-primary btn-sm" id="certPrint">Print / Save as PDF</button>
+              <button class="btn btn-blue btn-sm" id="certPng">Download PNG</button>
               <button class="btn btn-ghost btn-sm" id="certReset">Clear</button>
             </div>
           </div>
@@ -117,7 +117,7 @@
             <div class="cert-scaler" id="certScaler">
                                     <div class="certificate" id="certificate">
               <div class="cert-guilloche" aria-hidden="true"><svg viewBox="0 0 1000 707" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g fill="none" stroke="#c9a227" stroke-width="0.7" opacity="0.07"><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(0.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(3.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(7.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(11.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(15.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(18.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(22.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(26.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(30.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(33.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(37.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(41.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(45.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(48.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(52.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(56.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(60.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(63.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(67.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(71.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(75.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(78.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(82.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(86.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(90.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(93.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(97.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(101.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(105.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(108.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(112.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(116.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(120.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(123.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(127.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(131.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(135.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(138.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(142.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(146.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(150.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(153.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(157.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(161.25 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(165.00 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(168.75 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(172.50 500 353.5)"/><ellipse cx="500" cy="353.5" rx="440" ry="188" transform="rotate(176.25 500 353.5)"/></g></svg></div>
-              <div class="cert-watermark" aria-hidden="true"><img src="assets/images/ise-horizon-logo-t.png" alt=""></div>
+              <div class="cert-watermark" aria-hidden="true"><img src="assets/images/avyakt-emblem.png" alt=""></div>
               <span class="cert-corner tl" aria-hidden="true"></span>
               <span class="cert-corner tr" aria-hidden="true"></span>
               <span class="cert-corner bl" aria-hidden="true"></span>
@@ -125,21 +125,19 @@
               <span class="cert-shine" aria-hidden="true"></span>
               <div class="cert-inner">
                 <div class="cert-top">
-                  <span class="cert-logo"><img id="certUniSeal" src="assets/images/cert-seal.png" alt="Visvesvaraya Technological University seal"></span>
-                  <span class="cert-logo"><img id="certClubLogo" src="assets/images/cert-club.png" alt="AVYAKT logo"></span>
-                  <span class="cert-logo"><img id="certCollegeLogo" src="assets/images/cert-college.png" alt="Kalpataru Institute of Technology logo"></span>
+                  <span class="cert-logo"><img id="certClubLogo" src="assets/images/avyakt-emblem.png" alt="AVYAKT"></span>
                 </div>
-                <div class="cert-uni" id="certUni">Visvesvaraya Technological University, Belagavi</div>
-                <div class="cert-uni-sub">Karnataka, India</div>
-                <div class="cert-college" id="certCollege">Kalpataru Institute of Technology, Tiptur</div>
-                <div class="cert-college-sub">Department of Information Science &amp; Engineering · AVYAKT</div>
+                <div class="cert-uni" id="certUni">Kalpataru Institute of Technology, Tiptur</div>
+                <div class="cert-uni-sub">Affiliated to Visvesvaraya Technological University, Belagavi</div>
+                <div class="cert-college" id="certCollege">Department of Information Science &amp; Engineering</div>
+                <div class="cert-college-sub">AVYAKT</div>
                 <div class="cert-rule" aria-hidden="true"><i></i><b></b><i></i></div>
                 <div class="cert-title">Certificate</div>
                 <div class="cert-subtitle" id="certSubtitle">of Participation</div>
                 <div class="cert-lead">This is to certify that</div>
                 <div class="cert-name" id="certName">Participant Name</div>
                 <div class="cert-flourish" aria-hidden="true"><i></i><b></b><i></i></div>
-                <div class="cert-usn" id="certUsn">USN: —</div>
+                <div class="cert-usn" id="certUsn">USN: </div>
                 <div class="cert-body" id="certBody">has actively participated in the event and is hereby awarded this certificate of participation.</div>
                 <div class="cert-seal" aria-hidden="true"></div>
                 <div class="cert-foot">
@@ -162,7 +160,7 @@
       <div id="modeMember" class="hidden">
 
         <div id="memberGate" class="certp-gate">
-          <div class="certp-gate-icon">🔐</div>
+          
           <h2 class="mt-0">Member access</h2>
           <p class="muted small">Manage the participant list and certificate details for your event.</p>
           <div class="field">
@@ -212,7 +210,7 @@
               </div>
               <div class="pill-row mb-2">
                 <button class="btn btn-blue btn-sm" id="m-add">Add to list</button>
-                <label class="btn btn-ghost btn-sm" style="cursor:pointer">📄 Upload file<input type="file" id="m-file" accept=".csv,.txt" hidden></label>
+                <label class="btn btn-ghost btn-sm" style="cursor:pointer">Upload file<input type="file" id="m-file" accept=".csv,.txt" hidden></label>
                 <button class="btn btn-ghost btn-sm" id="m-sample">Load sample</button>
                 <button class="btn btn-ghost btn-sm" id="m-clear">Clear all</button>
               </div>
@@ -232,13 +230,13 @@
               <div class="certp-card">
                 <div class="certp-card-head">
                   <span class="certp-step">4</span>
-                  <div><h2>Save &amp; share</h2><p class="muted small">Stored in this browser — export a JSON backup to move it.</p></div>
+                  <div><h2>Save &amp; share</h2><p class="muted small">Stored in this browser. Export a JSON backup to move it.</p></div>
                 </div>
                 <div class="pill-row">
-                  <button class="btn btn-primary btn-sm" id="m-save">💾 Save</button>
-                  <button class="btn btn-blue btn-sm" id="m-export">⬆️ Export JSON</button>
-                  <label class="btn btn-ghost btn-sm" style="cursor:pointer">⬇️ Import JSON<input type="file" id="m-import" accept=".json" hidden></label>
-                  <button class="btn btn-blue btn-sm" id="m-publish">🌐 Publish to backend</button>
+                  <button class="btn btn-primary btn-sm" id="m-save">Save</button>
+                  <button class="btn btn-blue btn-sm" id="m-export">Export JSON</button>
+                  <label class="btn btn-ghost btn-sm" style="cursor:pointer">Import JSON<input type="file" id="m-import" accept=".json" hidden></label>
+                  <button class="btn btn-blue btn-sm" id="m-publish">Publish to backend</button>
                   <button class="btn btn-ghost btn-sm" id="m-logout">Lock panel</button>
                 </div>
                 <div class="notice" id="mSaveNote" role="status"></div>
@@ -253,11 +251,11 @@
 </main>
 
 <footer class="site-footer" id="siteFooter"></footer>
-<script src="assets/js/data.js?v=50"></script>
-<script src="assets/js/backend.js?v=50"></script>
-<script src="assets/js/store.js?v=50"></script>
-<script src="assets/js/assets-data.js?v=50"></script>
-<script src="assets/js/main.js?v=50"></script>
-<script src="assets/js/certificate.js?v=50"></script>
+<script src="assets/js/data.js?v=51"></script>
+<script src="assets/js/backend.js?v=51"></script>
+<script src="assets/js/store.js?v=51"></script>
+<script src="assets/js/assets-data.js?v=51"></script>
+<script src="assets/js/main.js?v=51"></script>
+<script src="assets/js/certificate.js?v=51"></script>
 </body>
 </html>

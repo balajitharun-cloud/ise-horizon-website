@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVYAKT — shared site engine
+   AVYAKT shared site engine
    Header/footer, theme, search, countdown and page renderers.
    Dynamic content (events, news, projects, gallery) comes from
    HorizonStore so elite members can manage it from the member panel.
@@ -18,9 +18,8 @@
   function fmtDate(iso, o) { var d = new Date(iso); return isNaN(d) ? (iso || "") : d.toLocaleDateString("en-IN", o || { day: "numeric", month: "short", year: "numeric" }); }
   function initials(n) { return String(n).split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join(""); }
 
-  function emptyState(icon, title, text, cta) {
-    return '<div class="card" style="grid-column:1/-1"><div class="card-body center" style="padding:34px 20px">' +
-      '<div style="font-size:2.6rem">' + icon + '</div>' +
+  function emptyState(title, text, cta) {
+    return '<div class="card" style="grid-column:1/-1"><div class="card-body" style="padding:34px 20px;max-width:62ch">' +
       '<h3>' + esc(title) + '</h3>' +
       '<p class="muted" style="max-width:48ch;margin:0 auto 14px">' + esc(text) + '</p>' +
       (cta ? cta : "") + "</div></div>";
@@ -48,7 +47,7 @@
     document.documentElement.setAttribute("data-theme", t);
     try { localStorage.setItem("horizon-theme", t); } catch (e) {}
     var b = $("#themeBtn");
-    if (b) { b.textContent = t === "dark" ? "☀️" : "🌙"; }
+    if (b) { b.innerHTML = t === "dark" ? '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.8M8 13.2V15M1 8h1.8M13.2 8H15M3.1 3.1l1.3 1.3M11.6 11.6l1.3 1.3M12.9 3.1l-1.3 1.3M4.4 11.6l-1.3 1.3"/></svg>' : '<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13 10.2A5.6 5.6 0 0 1 5.8 3a5.7 5.7 0 1 0 7.2 7.2Z"/></svg>'; }
   }
   function initTheme() {
     var saved = null; try { saved = localStorage.getItem("horizon-theme"); } catch (e) {}
@@ -66,9 +65,9 @@
     mount.innerHTML =
       '<div class="container header-inner">' +
         '<button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>' +
-        '<button class="header-search" id="searchBtn" aria-label="Search the site">🔍 <span>Search</span></button>' +
+        '<button class="header-search" id="searchBtn" aria-label="Search the site"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg> <span>Search</span></button>' +
         '<div class="header-actions">' +
-          '<button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme">🌙</button>' +
+          '<button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13 10.2A5.6 5.6 0 0 1 5.8 3a5.7 5.7 0 1 0 7.2 7.2Z"/></svg></button>' +
           '<a class="btn btn-primary btn-sm header-cta" href="join.html">Join Us</a>' +
         "</div>" +
         '<nav class="nav" id="mainNav" aria-label="Main"><ul>' + links + "</ul></nav>" +
@@ -86,8 +85,8 @@
   function buildFooter() {
     var mount = $("#siteFooter"); if (!mount) return;
     var s = club.socials || {};
-    var social = [["Instagram", "📷", s.instagram], ["LinkedIn", "in", s.linkedin], ["GitHub", "🐙", s.github],
-      ["WhatsApp", "💬", s.whatsapp], ["Discord", "🎮", s.discord], ["YouTube", "▶️", s.youtube]]
+    var social = [["Instagram", "IG", s.instagram], ["LinkedIn", "IN", s.linkedin], ["GitHub", "GH", s.github],
+      ["WhatsApp", "WA", s.whatsapp], ["Discord", "DC", s.discord], ["YouTube", "YT", s.youtube]]
       .filter(function (x) { return x[2]; })
       .map(function (x) { return '<a href="' + x[2] + '" target="_blank" rel="noopener" aria-label="' + x[0] + '" title="' + x[0] + '">' + x[1] + "</a>"; }).join("");
     var nav = PAGES.map(function (p) { return '<li><a href="' + p.file + '">' + p.label + "</a></li>"; }).join("");
@@ -96,8 +95,7 @@
         '<div class="footer-grid">' +
           "<div>" +
             '<div class="footer-brand">' +
-              '<img class="logo-badge" src="assets/images/ise-horizon-badge.png" alt="AVYAKT logo">' +
-              '<img class="logo-round" src="assets/images/college-logo.jpeg" alt="Kalpataru Institute of Technology logo">' +
+              '<img src="assets/images/avyakt-emblem.png" alt="AVYAKT">' +
               '<div><strong>AVYAKT</strong><br><span class="small">Kalpataru Institute of Technology, Tiptur</span></div>' +
             "</div>" +
             '<p class="small">' + esc(club.tagline) + "</p>" +
@@ -105,7 +103,7 @@
           "</div>" +
           '<div class="footer-col"><h4>Explore</h4><ul>' + nav + "</ul></div>" +
           '<div class="footer-col"><h4>Find us</h4><ul>' +
-            "<li>📍 " + esc(club.address) + "</li>" +
+            "<li>" + esc(club.address) + "</li>" +
             '<li><a href="contact.html">Contact page</a></li>' +
           "</ul></div>" +
         "</div>" +
@@ -177,11 +175,11 @@
   /* ---------- cards ---------- */
   function eventCard(e) {
     return '<article class="card" id="ev-' + esc(e.id) + '">' +
-      '<div class="card-media" style="background:linear-gradient(140deg,#0b2a5b,#123a7a)"><span class="ph" style="font-size:3rem">' + esc(e.poster || "📅") + "</span></div>" +
+      '<div class="card-media"><span class="ph">' + esc(fmtDate(e.date, { day: "numeric", month: "short" })) + "</span></div>" +
       '<div class="card-body">' +
         '<div class="pill-row mb-2"><span class="chip chip--orange">' + esc(e.category || "Event") + '</span><span class="chip">' + esc(e.mode || "On campus") + "</span></div>" +
         "<h3>" + esc(e.title) + "</h3>" +
-        '<p class="meta">📅 ' + esc(fmtDate(e.date, { weekday: "short", day: "numeric", month: "long", year: "numeric" })) + (e.time ? " · " + esc(e.time) : "") + "<br>📍 " + esc(e.venue || "Venue TBA") + "</p>" +
+        '<p class="meta">' + esc(fmtDate(e.date, { weekday: "short", day: "numeric", month: "long", year: "numeric" })) + (e.time ? " · " + esc(e.time) : "") + "<br>" + esc(e.venue || "Venue TBA") + "</p>" +
         (e.description ? "<p>" + esc(e.description) + "</p>" : "") +
         '<div class="card-actions">' +
           (e.registration ? '<a class="btn btn-primary btn-sm" href="' + esc(e.registration) + '" target="_blank" rel="noopener">Register</a>' : "") +
@@ -197,9 +195,9 @@
         "<h3>" + esc(p.title) + "</h3>" +
         (p.desc ? "<p>" + esc(p.desc) + "</p>" : "") +
         (tags ? '<div class="tags mb-2">' + tags + "</div>" : "") +
-        (p.team && p.team.length ? '<p class="meta small">👥 ' + esc(p.team.join(" · ")) + "</p>" : "") +
+        (p.team && p.team.length ? '<p class="meta small">' + esc(p.team.join(" · ")) + "</p>" : "") +
         '<div class="card-actions">' +
-          (p.github ? '<a class="btn btn-ghost btn-sm" href="' + esc(p.github) + '" target="_blank" rel="noopener">GitHub ↗</a>' : "") +
+          (p.github ? '<a class="btn btn-ghost btn-sm" href="' + esc(p.github) + '" target="_blank" rel="noopener">GitHub</a>' : "") +
           (p.demo ? '<a class="btn btn-blue btn-sm" href="' + esc(p.demo) + '">Live demo</a>' : "") +
         "</div>" +
       "</div></article>";
@@ -244,7 +242,7 @@
   }
   function personCard(t) {
     var soc = t.socials ? Object.keys(t.socials).map(function (k) {
-      var icon = { linkedin: "in", github: "🐙", instagram: "📷", twitter: "𝕏" }[k] || "🔗";
+      var icon = { linkedin: "in", github: "gh", instagram: "ig", twitter: "x" }[k] || "web";
       return '<a href="' + esc(t.socials[k]) + '" aria-label="' + k + '">' + icon + "</a>";
     }).join("") : "";
     return '<article class="person card"><div class="card-body">' +
@@ -273,7 +271,7 @@
         var evs = byDay[day];
         cells += '<div class="day' + (isToday ? " today" : "") + (evs ? " has-event" : "") + '"' + (evs ? ' data-ev="' + esc(evs[0].id) + '" title="' + esc(evs.map(function (x) { return x.title; }).join(", ")) + '"' : "") + '><span class="dn">' + day + "</span>" + (evs ? '<span class="dot"></span>' : "") + "</div>";
       }
-      mount.innerHTML = '<div class="cal-head"><div class="m">📅 ' + first.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) + "</div>" +
+      mount.innerHTML = '<div class="cal-head"><div class="m">' + first.toLocaleDateString("en-IN", { month: "long", year: "numeric" }) + "</div>" +
         '<div class="cal-nav"><button class="btn btn-ghost btn-sm" data-cal="prev" aria-label="Previous month">‹</button>' +
         '<button class="btn btn-ghost btn-sm" data-cal="today">Today</button>' +
         '<button class="btn btn-ghost btn-sm" data-cal="next" aria-label="Next month">›</button></div></div>' +
@@ -318,7 +316,7 @@
           startCountdown($("#heroCountdown"), nx.date);
         } else {
           heroCard.innerHTML = '<span class="label">Welcome</span><h3>AVYAKT</h3>' +
-            '<p>Events, competitions, cultural and sports meets — announced here by the club. No events are scheduled right now.</p>' +
+            '<p>Events, competitions, cultural and sports meets, announced here by the club. No events are scheduled right now.</p>' +
             '<div class="hero-cta" style="margin-top:14px"><a class="btn btn-light btn-sm" href="join.html">Join the club</a>' +
             '<a class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">Events</a></div>';
         }
@@ -335,7 +333,7 @@
       var up = $("#homeUpcoming");
       if (up) up.innerHTML = (d.events || []).length
         ? (d.events || []).slice(0, 3).map(eventCard).join("")
-        : emptyState("📅", "No events scheduled yet", "Upcoming events are published here by the club committee. Check back soon.", '<a class="btn btn-primary btn-sm" href="join.html">Join to get updates</a>');
+        : emptyState("No events scheduled yet", "Upcoming events are published here by the club committee. Check back soon.", '<a class="btn btn-primary btn-sm" href="join.html">Join to get updates</a>');
 
       // Horizon Hackathon section
       var hk = $("#homeHackathon");
@@ -361,7 +359,7 @@
               '<p class="small muted">' + esc(fmtDate(a.date)) + "</p><p>" + esc(a.excerpt || "") + "</p>" +
               '<div class="card-actions"><a class="btn btn-ghost btn-sm" href="about.html#news">Read more</a></div></div></article>';
           }).join("")
-        : emptyState("📰", "No announcements yet", "Club updates are posted here by the committee.");
+        : emptyState("No announcements yet", "Club updates are posted here by the committee.");
     },
 
     about: function () {
@@ -371,21 +369,21 @@
         var hist = (d.history || []).slice().sort(function (a, b) { return String(a.year || "") < String(b.year || "") ? -1 : 1; });
         tl.innerHTML = hist.length
           ? hist.map(function (h) { return '<div class="item"><div class="year">' + esc(h.year) + '</div><div>' + esc(h.text) + "</div></div>"; }).join("")
-          : emptyState("🕓", "No history yet", "The club history is added here by the committee.");
+          : emptyState("No history yet", "The club history is added here by the committee.");
       }
       var ach = $("#aboutAchievements");
       if (ach) ach.innerHTML = (d.achievements || []).length
         ? (d.achievements || []).map(function (a) {
             return '<article class="card"><div class="card-body"><span class="chip chip--orange mb-2">' + esc(a.year || "") + "</span><h3>" + esc(a.title) + '</h3><p class="muted small">' + esc(a.detail || "") + "</p></div></article>";
           }).join("")
-        : emptyState("🏆", "No achievements yet", "Event winners and awards are added here by the committee.");
+        : emptyState("No achievements yet", "Event winners and awards are added here by the committee.");
       var news = $("#aboutNews");
       if (news) news.innerHTML = (d.news || []).length
         ? (d.news || []).map(function (a) {
             return '<article class="card"><div class="card-body"><span class="chip chip--green mb-2">' + esc(a.tag || "Update") + "</span><h3>" + esc(a.title) + "</h3>" +
               '<p class="small muted">' + esc(fmtDate(a.date)) + "</p><p>" + esc(a.excerpt || "") + "</p>" + (a.body ? "<p>" + esc(a.body) + "</p>" : "") + "</div></article>";
           }).join("")
-        : emptyState("📰", "No announcements yet", "Only club members can publish updates here.");
+        : emptyState("No announcements yet", "Only club members can publish updates here.");
       var team = $("#aboutTeam");
       if (team) team.innerHTML = (H.team || []).slice(0, 4).map(personCard).join("");
     },
@@ -397,19 +395,19 @@
       var up = $("#eventList");
       if (up) up.innerHTML = (d.events || []).length
         ? (d.events || []).map(eventCard).join("")
-        : emptyState("📅", "No events scheduled yet", "When the club committee adds an upcoming event, it appears here with its registration link.", '<a class="btn btn-primary btn-sm" href="join.html">Join to get updates</a>');
+        : emptyState("No events scheduled yet", "When the club committee adds an upcoming event, it appears here with its registration link.", '<a class="btn btn-primary btn-sm" href="join.html">Join to get updates</a>');
       var past = $("#pastList");
       if (past) past.innerHTML = (d.pastEvents || []).length
         ? (d.pastEvents || []).map(function (e) {
             return '<article class="card"><div class="card-body">' +
               '<div class="pill-row mb-2"><span class="chip">' + esc(e.category || "Event") + '</span><span class="chip">' + esc(fmtDate(e.date)) + "</span></div>" +
               "<h3>" + (e.poster ? esc(e.poster) + " " : "") + esc(e.title) + "</h3>" +
-              (e.venue ? '<p class="muted small">📍 ' + esc(e.venue) + "</p>" : "") +
+              (e.venue ? '<p class="muted small">' + esc(e.venue) + "</p>" : "") +
               (e.description ? "<p>" + esc(e.description) + "</p>" : "") +
               (e.results ? '<p class="small"><strong>Results:</strong> ' + esc(e.results) + "</p>" : "") +
             "</div></article>";
           }).join("")
-        : emptyState("🗂️", "No past events yet", "Completed events are archived here by the committee.");
+        : emptyState("No past events yet", "Completed events are archived here by the committee.");
     },
 
     projects: function () {
@@ -419,7 +417,7 @@
       function render(f) {
         var list = (d.projects || []).filter(function (p) { return !f || f === "All" || p.status === f; });
         mount.innerHTML = list.length ? list.map(projectCard).join("")
-          : emptyState("💡", "No projects yet", "When a student project is added by the committee — with its GitHub link — it appears here.");
+          : emptyState("No projects yet", "When a student project is added by the committee, with its GitHub link, it appears here.");
       }
       var tabs = $("#projectTabs");
       if (tabs) $$(".tab", tabs).forEach(function (t) {
@@ -437,10 +435,10 @@
             return '<div class="gitem' + (g.wide ? " wide" : "") + '" role="button" tabindex="0" aria-label="' + esc(g.caption) + '">' +
               (g.img
                 ? '<img src="' + esc(g.img) + '" alt="' + esc(g.caption) + '" loading="lazy">'
-                : '<div class="avatar-ph" style="width:100%;height:100%;font-size:2.4rem">' + esc(g.emoji || "🖼️") + "</div>") +
+                : '<div class="avatar-ph" style="width:100%;height:100%;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase">Photo</div>') +
               '<span class="cap">' + esc(g.caption) + "</span></div>";
           }).join("")
-        : emptyState("🖼️", "Gallery is empty", "Photos from events and activities are added here by the committee after each event.");
+        : emptyState("Gallery is empty", "Photos from events and activities are added here by the committee after each event.");
     },
 
     team: function () { var m = $("#teamGrid"); if (m) m.innerHTML = (H.team || []).map(personCard).join(""); },
@@ -449,14 +447,14 @@
       if (!m) return;
       var v = S.get().videos || [];
       m.innerHTML = v.length ? v.map(videoCard).join("")
-        : emptyState("🎬", "No media yet", "Videos and audio are added here by the club committee.");
+        : emptyState("No media yet", "Videos and audio are added here by the club committee.");
     },
     faculty: function () {
       var m = $("#facultyGrid");
       if (!m) return;
       var f = S.get().faculty || [];
       m.innerHTML = f.length ? f.map(facultyCard).join("")
-        : emptyState("🎓", "Faculty list coming soon", "The department faculty are added here by the club committee.");
+        : emptyState("Faculty list coming soon", "The department faculty are added here by the club committee.");
     },
     contact: function () {},
     join: function () {}
@@ -525,7 +523,6 @@
     ".section-head", ".card", ".person", ".stat", ".gitem", ".video-card",
     ".timeline li", ".empty-state", ".form-card"
   ];
-  var REVEAL_VARIANTS = { ".gitem": "reveal--scale", ".person": "reveal--scale", ".video-card": "reveal--scale" };
   var revealObserver = null;
 
   function refreshReveal() {
@@ -545,7 +542,6 @@
         if (el.offsetParent === null) return;          // skip anything hidden right now
         if (el.closest(".no-reveal")) return;
         el.classList.add("reveal");
-        if (REVEAL_VARIANTS[sel]) el.classList.add(REVEAL_VARIANTS[sel]);
         var parent = el.parentElement;
         if (parent) {
           var sibs = Array.prototype.filter.call(parent.children, function (c) { return c.classList.contains("reveal"); });
@@ -608,10 +604,6 @@
         var max = doc.scrollHeight - window.innerHeight;
         var p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
         bar.style.transform = "scaleX(" + p.toFixed(4) + ")";
-      }
-      if (motionEnabled()) {
-        var hero = $(".hero-inner") || $(".page-hero");
-        if (hero && y < 700) hero.style.setProperty("--par", (Math.min(y, 400) * 0.12).toFixed(1) + "px");
       }
     }
     paintChrome = paint;

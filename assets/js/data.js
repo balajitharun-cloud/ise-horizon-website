@@ -1,5 +1,5 @@
 /* =====================================================================
-   AVYAKT — static site content (club info, leadership)
+   AVYAKT static site content (club info, leadership)
    Events, news, projects, gallery, members, history and the Hall of Fame
    are managed by elite members in the member panel (assets/js/store.js).
    ===================================================================== */
@@ -8,7 +8,7 @@ window.HORIZON = {
 
   club: {
     name: "AVYAKT",
-    tagline: "The Information Science & Engineering club of KIT Tiptur — building, competing and creating.",
+    tagline: "The Information Science & Engineering club of KIT Tiptur, building, competing and creating.",
     college: "Kalpataru Institute of Technology, Tiptur",
     university: "Visvesvaraya Technological University, Belagavi",
     founded: "2026",
