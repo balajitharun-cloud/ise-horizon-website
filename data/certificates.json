@@ -38,6 +38,10 @@
     {
       "name": "Priya Deshpande",
       "usn": "1KT23IS008"
+    },
+    {
+      "name": "Tharun",
+      "usn": "1ki25is002"
     }
   ],
   "signatories": [
@@ -56,5 +60,9 @@
       "designation": "Kalpataru Institute of Technology",
       "photo": ""
     }
-  ]
+  ],
+  "settings": {
+    "passcode": "ise@2007",
+    "sample": true
+  }
 }
