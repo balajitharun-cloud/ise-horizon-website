@@ -139,7 +139,7 @@ p { margin: 0 0 1rem; }
 .header-centre { justify-self: center; display: flex; align-items: center; gap: 18px; min-width: 0; }
 .brand-script {
   font-family: "Great Vibes", "Segoe Script", cursive;
-  font-size: 1.95rem; line-height: 1.2; font-weight: 400;
+  font-size: 1.7rem; line-height: 1.25; font-weight: 400; letter-spacing: .02em;
   color: var(--text); white-space: nowrap; padding: 0 2px;
 }
 .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; min-width: 0; }
@@ -247,9 +247,17 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
 .hero-inner { position: relative; z-index: 2; padding: 30px 0 8px; }
 .hero-inner { text-align: center; }
 
-/* the emblem: still. no entrance, no float, no shine. */
-.hero-mark { position: relative; display: block; width: clamp(150px, 32vw, 210px); margin: 0 auto 22px; }
+/* the centre emblem: large, and gently floating in place */
+.hero-mark {
+  position: relative; display: block;
+  width: clamp(210px, 46vw, 340px); margin: 0 auto 24px;
+  animation: markFloat 7s ease-in-out infinite;
+}
 .hero-mark img { display: block; width: 100%; height: auto; }
+@keyframes markFloat {
+  0%, 100% { transform: translate3d(0, -7px, 0); }
+  50%      { transform: translate3d(0, 7px, 0); }
+}
 .hero-mark .mark-on-dark, .certp-hero-art .mark-on-dark { display: none; }
 [data-theme="dark"] .hero-mark .mark-on-light, [data-theme="dark"] .certp-hero-art .mark-on-light { display: none; }
 [data-theme="dark"] .hero-mark .mark-on-dark, [data-theme="dark"] .certp-hero-art .mark-on-dark { display: block; }
@@ -559,7 +567,7 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
 /* ---------- Responsive (>=600) ---------- */
 @media (max-width: 620px) {
   .header-centre { gap: 8px; }
-  .brand-script { font-size: 1.4rem; padding: 0; }
+  .brand-script { font-size: 1.15rem; padding: 0; }
   .header-search span { display: none; }
   .header-search { width: min(30vw, 104px); padding: 11px 14px; gap: 0; flex: none; }
   .header-inner { padding: 0 8px 0 12px; gap: 8px; }
@@ -777,6 +785,7 @@ a.header-cta { display: none; }   /* beats .btn (same specificity, .btn comes la
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-mark { animation: none !important; }
   .scroll-progress { display: none !important; }
   html { scroll-behavior: auto; }
 }

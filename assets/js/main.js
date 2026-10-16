@@ -67,7 +67,7 @@
       '<div class="container header-inner">' +
         '<a class="brand" href="index.html" aria-label="AVYAKT home"><img src="assets/images/avyakt-emblem-ink.png" alt=""></a>' +
         '<div class="header-centre">' +
-          '<span class="brand-script">Avyakt</span>' +
+          '<span class="brand-script">AVYAKT</span>' +
           '<button class="header-search" id="searchBtn" aria-label="Search the site"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg> <span>Search</span></button>' +
         "</div>" +
         '<div class="header-actions">' +
