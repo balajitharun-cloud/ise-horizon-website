@@ -19,10 +19,11 @@
   function initials(n) { return String(n).split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join(""); }
 
   function emptyState(title, text, cta) {
-    return '<div class="card" style="grid-column:1/-1"><div class="card-body" style="padding:34px 20px;max-width:62ch">' +
+    return '<div class="empty-state">' +
       '<h3>' + esc(title) + '</h3>' +
-      '<p class="muted" style="max-width:48ch;margin:0 auto 14px">' + esc(text) + '</p>' +
-      (cta ? cta : "") + "</div></div>";
+      '<p>' + esc(text) + '</p>' +
+      (cta ? '<div class="pill-row">' + cta + '</div>' : "") +
+      "</div>";
   }
 
   /* ---------- pages / nav ---------- */
@@ -312,13 +313,10 @@
             '<div class="countdown" id="heroCountdown"></div>' +
             '<div class="hero-cta" style="margin-top:14px">' +
             (nx.registration ? '<a class="btn btn-primary btn-sm" href="' + esc(nx.registration) + '" target="_blank" rel="noopener">Register</a>' : "") +
-            '<a class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">See all events</a></div>';
+            '<a class="btn btn-ghost btn-sm" href="events.html">See all events</a></div>';
           startCountdown($("#heroCountdown"), nx.date);
         } else {
-          heroCard.innerHTML = '<span class="label">Welcome</span><h3>AVYAKT</h3>' +
-            '<p>Events, competitions, cultural and sports meets, announced here by the club. No events are scheduled right now.</p>' +
-            '<div class="hero-cta" style="margin-top:14px"><a class="btn btn-light btn-sm" href="join.html">Join the club</a>' +
-            '<a class="btn btn-ghost btn-sm" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">Events</a></div>';
+          heroCard.innerHTML = "";      // nothing to announce yet, so say nothing
         }
       }
       var stats = $("#homeStats");
@@ -339,15 +337,15 @@
       var hk = $("#homeHackathon");
       if (hk && hack && hack.active) {
         hk.innerHTML =
-          '<div class="card" style="background:linear-gradient(140deg,#0b2a5b,#123a7a);border:none;color:#fff">' +
+          '<div class="card panel-ink">' +
           '<div class="card-body" style="padding:30px 24px">' +
             '<div class="pill-row mb-2"><span class="chip chip--orange">Flagship event</span></div>' +
-            '<h2 style="color:#fff;margin-bottom:.3em">' + esc(hack.title) + "</h2>" +
-            '<p style="color:rgba(255,255,255,.88);max-width:60ch">' + esc(hack.description || "") + "</p>" +
-            (hack.date ? '<p style="color:rgba(255,255,255,.85)"><strong>Date:</strong> ' + esc(fmtDate(hack.date, { day: "numeric", month: "long", year: "numeric" })) + (hack.venue ? " · " + esc(hack.venue) : "") + "</p>" : "") +
+            '<h2 style="margin-bottom:.3em">' + esc(hack.title) + "</h2>" +
+            '<p style="max-width:60ch">' + esc(hack.description || "") + "</p>" +
+            (hack.date ? '<p><strong>Date:</strong> ' + esc(fmtDate(hack.date, { day: "numeric", month: "long", year: "numeric" })) + (hack.venue ? " · " + esc(hack.venue) : "") + "</p>" : "") +
             '<div class="hero-cta" style="margin-top:6px">' +
               (hack.link ? '<a class="btn btn-primary" href="' + esc(hack.link) + '" target="_blank" rel="noopener">Register / Learn more</a>' : "") +
-              '<a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" href="events.html">All events</a>' +
+              '<a class="btn btn-ghost" href="events.html">All events</a>' +
             "</div>" +
           "</div></div>";
       } else if (hk) { hk.innerHTML = ""; }

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=51">
+<link rel="stylesheet" href="assets/css/style.css?v=52">
 <script>(function(){try{var t=localStorage.getItem('horizon-theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body data-page="home">
@@ -28,7 +28,7 @@
       <div class="hero-cta">
         <a class="btn btn-primary" href="join.html">Join Us →</a>
         <a class="btn btn-light" href="events.html">Events</a>
-        <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" href="certificate.html">Certificate Portal</a>
+        <a class="btn btn-ghost" href="certificate.html">Certificate Portal</a>
       </div>
       <div class="hero-event" id="heroEventCard"></div>
     </div>
@@ -48,7 +48,7 @@
         <p>Events are added by the club committee: workshops, hackathons, tech talks, competitions and more.</p>
       </div>
       <div class="grid grid-3" id="homeUpcoming"></div>
-      <div class="mt-3"><a class="btn btn-blue" href="events.html">View full calendar →</a></div>
+      <div class="mt-3"><a class="btn btn-ghost" href="events.html">View full calendar →</a></div>
     </div>
   </section>
 
@@ -85,12 +85,12 @@
   <!-- NEWSLETTER -->
   <section class="section">
     <div class="container">
-      <div class="card" style="background:linear-gradient(140deg,#0b2a5b,#123a7a);color:#fff;border:none">
+      <div class="card panel-ink">
         <div class="card-body center" style="padding:34px 22px">
-          <h2 style="color:#fff">Never miss an update</h2>
-          <p style="color:rgba(255,255,255,.85);max-width:52ch;margin:0 auto 18px">Subscribe to the AVYAKT newsletter for event announcements and opportunities.</p>
+          <h2>Never miss an update</h2>
+          <p style="max-width:52ch;margin:0 auto 18px">Subscribe to the AVYAKT newsletter for event announcements and opportunities.</p>
           <form id="newsletterForm" style="max-width:440px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap">
-            <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address" style="flex:1;min-width:220px;padding:12px 14px;border-radius:999px;border:none">
+            <input type="email" name="email" required placeholder="you@example.com" aria-label="Email address" style="flex:1;min-width:220px;padding:12px 14px;border-radius:var(--radius);border:1px solid #3a3f48;background:#1b1f26;color:#eae6dd">
             <button class="btn btn-primary" type="submit">Subscribe</button>
           </form>
           <div class="notice" id="nlNote"></div>
@@ -101,9 +101,9 @@
 </main>
 
 <footer class="site-footer" id="siteFooter"></footer>
-<script src="assets/js/data.js?v=51"></script>
-<script src="assets/js/backend.js?v=51"></script>
-<script src="assets/js/store.js?v=51"></script>
-<script src="assets/js/main.js?v=51"></script>
+<script src="assets/js/data.js?v=52"></script>
+<script src="assets/js/backend.js?v=52"></script>
+<script src="assets/js/store.js?v=52"></script>
+<script src="assets/js/main.js?v=52"></script>
 </body>
 </html>
