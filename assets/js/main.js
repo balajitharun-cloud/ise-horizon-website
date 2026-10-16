@@ -65,8 +65,8 @@
     }).join("");
     mount.innerHTML =
       '<div class="container header-inner">' +
+        '<a class="brand-script" href="index.html" aria-label="AVYAKT home">Avyakt</a>' +
         '<div class="header-centre">' +
-          '<a class="brand-script" href="index.html" aria-label="AVYAKT home">Avyakt</a>' +
           '<button class="header-search" id="searchBtn" aria-label="Search the site"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg> <span>Search</span></button>' +
         "</div>" +
         '<div class="header-actions">' +
