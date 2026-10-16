@@ -65,11 +65,12 @@
     }).join("");
     mount.innerHTML =
       '<div class="container header-inner">' +
-        '<button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>' +
+        '<a class="brand" href="index.html"><img src="assets/images/avyakt-emblem-ink.png" alt=""><span class="brand-name">AVYAKT</span></a>' +
         '<button class="header-search" id="searchBtn" aria-label="Search the site"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg> <span>Search</span></button>' +
         '<div class="header-actions">' +
           '<button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13 10.2A5.6 5.6 0 0 1 5.8 3a5.7 5.7 0 1 0 7.2 7.2Z"/></svg></button>' +
           '<a class="btn btn-primary btn-sm header-cta" href="join.html">Join Us</a>' +
+          '<button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>' +
         "</div>" +
         '<nav class="nav" id="mainNav" aria-label="Main"><ul>' + links + "</ul></nav>" +
       "</div>";
@@ -328,6 +329,18 @@
           '<div class="stat"><div class="num">' + esc(hosted) + '</div><div class="lbl">Events hosted</div></div>';
       }
 
+      var col = $("#homeCollage");
+      if (col) {
+        var gi = (d.gallery || []).filter(function (g) { return g.img; }).slice(0, 4);
+        col.innerHTML = gi.length >= 3
+          ? '<div class="c-col"><img class="c1" src="' + esc(gi[0].img) + '" alt="' + esc(gi[0].caption || "") + '" loading="lazy"></div>' +
+            '<div class="c-col"><img class="c2" src="' + esc(gi[1].img) + '" alt="' + esc(gi[1].caption || "") + '" loading="lazy"></div>' +
+            '<div class="c-col"><img class="c3" src="' + esc(gi[2].img) + '" alt="' + esc(gi[2].caption || "") + '" loading="lazy">' +
+            (gi[3] ? '<img class="c4" src="' + esc(gi[3].img) + '" alt="' + esc(gi[3].caption || "") + '" loading="lazy">' : "") +
+            "</div>"
+          : "";
+        if (!col.innerHTML) { var cs = col.closest("section"); if (cs) cs.style.display = "none"; }
+      }
       var up = $("#homeUpcoming");
       if (up) up.innerHTML = (d.events || []).length
         ? (d.events || []).slice(0, 3).map(eventCard).join("")
