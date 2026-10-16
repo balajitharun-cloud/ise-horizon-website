@@ -65,8 +65,11 @@
     }).join("");
     mount.innerHTML =
       '<div class="container header-inner">' +
-        '<a class="brand" href="index.html"><img src="assets/images/avyakt-emblem-ink.png" alt=""><span class="brand-name">AVYAKT</span></a>' +
-        '<button class="header-search" id="searchBtn" aria-label="Search the site"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg> <span>Search</span></button>' +
+        '<a class="brand" href="index.html" aria-label="AVYAKT home"><img src="assets/images/avyakt-emblem-ink.png" alt=""></a>' +
+        '<div class="header-centre">' +
+          '<span class="brand-script">Avyakt</span>' +
+          '<button class="header-search" id="searchBtn" aria-label="Search the site"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="7" cy="7" r="4.4"/><path d="M10.4 10.4 14 14"/></svg> <span>Search</span></button>' +
+        "</div>" +
         '<div class="header-actions">' +
           '<button class="theme-btn" id="themeBtn" aria-label="Toggle theme" title="Toggle theme"><svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M13 10.2A5.6 5.6 0 0 1 5.8 3a5.7 5.7 0 1 0 7.2 7.2Z"/></svg></button>' +
           '<a class="btn btn-primary btn-sm header-cta" href="join.html">Join Us</a>' +
